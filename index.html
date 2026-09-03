@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<!-- MG Law Webapp v8.1e · return-home + automatic approval unlock + prominent BASE100 CTA -->
+<!-- MG Law Webapp v8.1g · final hardening: explanation-gated progress + verified BASE100 completion + mock-review gate -->
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FEE500">
 <meta name="description" content="새마을금고법 핵심문제와 단계형 해설·법령 근거를 모바일에서 학습하는 웹앱입니다.">
 <link rel="canonical" href="https://korealaw.github.io/mg-law-webapp/">
@@ -714,6 +714,7 @@ const ACCESS_CODE_KEY = 'mg_law_access_code';
 const PENDING_KEY = 'mg_law_pending';
 const ENTITLEMENT_KEY = 'mg_law_entitlement';
 const DEVICE_SECRET_KEY = 'mg_law_device_secret_v1';
+const BASE_PROGRESS_KEY = 'mg_law_base_progress_v1';
 
 // 지원용 복구 링크: 평소에는 노출하지 않으며, 관리자가 기기 연결을 초기화한 뒤
 // https://앱주소/?recover=MG-... 형태로 전달할 때만 기존 이용권 코드를 새 브라우저에 복원한다.
@@ -838,6 +839,17 @@ function buildSurveyUrl(){
 function daysLeft(ent){
   return Math.max(0,Math.ceil((new Date(ent.expiresAt).getTime()-Date.now())/86400000));
 }
+function readBaseProgress(){
+  try{
+    const raw=localStorage.getItem(BASE_PROGRESS_KEY); if(!raw) return 0;
+    const d=JSON.parse(raw); if(!d || d.code!==state.accessCode) return 0;
+    const n=Number(d.completed||0); return Number.isFinite(n)?Math.max(0,Math.min(APP_CONFIG.baseQuestionCommitment,n)):0;
+  }catch(e){ return 0; }
+}
+function saveBaseProgress(n){
+  try{ localStorage.setItem(BASE_PROGRESS_KEY,JSON.stringify({code:state.accessCode,completed:Math.max(0,Math.min(APP_CONFIG.baseQuestionCommitment,Number(n)||0))})); }catch(e){}
+}
+function clearBaseProgress(){ try{ localStorage.removeItem(BASE_PROGRESS_KEY); }catch(e){} }
 
 
 function jsonpApi(action, params={}){
@@ -869,17 +881,46 @@ function jsonpApi(action, params={}){
   });
 }
 
+function accessStatusMessage(data={}){
+  const status=String(data.status||'').toUpperCase();
+  if(status==='DEVICE_MISMATCH') return '이 이용권은 이미 다른 기기·브라우저에 연결되어 있습니다. 처음 활성화한 기기·브라우저에서 이용해 주세요.';
+  if(status==='EXPIRED') return '승인일부터 90일의 이용기간이 종료되었습니다.';
+  if(status==='REVIEW') return '설문 참여는 확인되었지만 아직 운영자 승인 대기 중입니다. 승인 후 같은 링크를 다시 열어 주세요.';
+  if(status==='NOT_FOUND') return '이 브라우저의 인증정보에 해당하는 승인 내역을 찾지 못했습니다. 설문에 참여했던 같은 기기·브라우저인지 확인해 주세요.';
+  if(status==='DEVICE_REQUIRED') return '기기 확인정보를 만들 수 없습니다. 시크릿 모드가 아닌 일반 브라우저에서 다시 시도해 주세요.';
+  if(status==='BUSY') return '서버 확인 요청이 겹쳤습니다. 잠시 후 다시 시도해 주세요.';
+  if(status==='PENDING') return '아직 운영자 승인 전입니다. 승인 후 같은 링크를 다시 열어 주세요.';
+  return data.message || '이용권 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.';
+}
+function applyAccessFailure(data={}){
+  const status=String(data.status||'').toUpperCase();
+  if(['DEVICE_MISMATCH','EXPIRED','REVIEW','NOT_FOUND'].includes(status)){
+    state.entitlement=null;
+    try{ localStorage.removeItem(ENTITLEMENT_KEY); }catch(e){}
+  }
+  if(['REVIEW','PENDING'].includes(status)){
+    state.pending=true;
+    try{ localStorage.setItem(PENDING_KEY,'1'); }catch(e){}
+  }
+  state.homeStatus=accessStatusMessage(data);
+}
+function accessError(data={}){
+  applyAccessFailure(data);
+  const e=new Error(accessStatusMessage(data));
+  e.status=String(data.status||'').toUpperCase();
+  return e;
+}
 async function loadContentManifest(force=false){
   if(state.contentManifest && !force) return state.contentManifest;
   const r=await jsonpApi('manifest');
-  if(r.status!=='APPROVED') throw new Error('이용권 확인이 필요합니다.');
+  if(r.status!=='APPROVED') throw accessError(r);
   state.contentManifest=r;
   return r;
 }
 
 async function loadProtectedBatch(tier,offset){
   const r=await jsonpApi('questions',{tier,offset,limit:APP_CONFIG.contentBatchSize||10});
-  if(r.status!=='APPROVED') throw new Error('이용권 확인이 필요합니다.');
+  if(r.status!=='APPROVED') throw accessError(r);
   return r;
 }
 
@@ -1079,7 +1120,8 @@ function advanceMock(){
   m.submitted=true;
   m.reviewIndex=0;
   m.reviewDone=false;
-  state.trial.mockCompleted=true;
+  // 모의고사는 10문항 답안 제출만으로 완료 처리하지 않는다.
+  // 1~10번 해설을 모두 확인한 뒤에만 설문 단계가 열린다.
   mockReviewView();
 }
 function categoryStats(){
@@ -1094,7 +1136,7 @@ function mockReviewView(){
   setTab('exam');
   const m=state.mock;
   if(!m || !m.submitted) return mockView();
-  if(m.reviewIndex>=TRIAL_MOCK.length){ m.reviewDone=true; return mockResultView(); }
+  if(m.reviewIndex>=TRIAL_MOCK.length){ m.reviewDone=true; state.trial.mockCompleted=true; return mockResultView(); }
   const i=m.reviewIndex, q=TRIAL_MOCK[i], pick=m.answers[i], ok=pick===q.answer;
   const right=TRIAL_MOCK.filter((x,j)=>m.answers[j]===x.answer).length;
   chrome('모의고사 해설',{progress:Math.round((i+1)/TRIAL_MOCK.length*100),right:`해설 ${i+1} / ${TRIAL_MOCK.length}`});
@@ -1115,11 +1157,12 @@ function mockReviewView(){
   });
   $('#mockReviewNext').onclick=()=>{
     m.reviewIndex++;
-    if(m.reviewIndex>=TRIAL_MOCK.length){ m.reviewDone=true; return mockResultView(); }
+    if(m.reviewIndex>=TRIAL_MOCK.length){ m.reviewDone=true; state.trial.mockCompleted=true; return mockResultView(); }
     mockReviewView();
   };
 }
 function mockResultView(){
+  if(state.mock && state.mock.reviewDone) state.trial.mockCompleted=true;
   setTab('exam'); chrome('이번 학습진단',{progress:100,right:'해설 10/10 완료'});
   const right=TRIAL_MOCK.filter((q,i)=>state.mock.answers[i]===q.answer).length;
   const stats=categoryStats();
@@ -1144,7 +1187,11 @@ function homeView(){
   const returning=!!(state.accessCode || state.pending || ent);
   let hero='';
   if(ent){
-    hero=`<section class="return-hero approved"><span class="hero-kicker">승인 완료</span><h2>기본 100문항을 바로 이용할 수 있습니다.</h2><p>앞서 풀었던 체험 8개념과 미니 모의고사 10문항을 다시 풀 필요가 없습니다.</p><button class="hero-btn" id="homeStart100">기본 100문항 바로 시작 →</button><div class="hero-sub">승인일부터 90일 · 현재 D-${daysLeft(ent)}</div></section>`;
+    const bp=readBaseProgress();
+    const done=bp>=APP_CONFIG.baseQuestionCommitment;
+    const titleText=done?'기본 100문항 학습을 완료했습니다.':(bp>0?`기본 100문항 ${bp}/100까지 학습했습니다.`:'기본 100문항을 바로 시작할 수 있습니다.');
+    const btnText=done?'기본 100문항 다시 학습하기 →':(bp>0?`${bp+1}번부터 이어서 학습하기 →`:'기본 100문항 학습 시작 →');
+    hero=`<section class="return-hero approved"><span class="hero-kicker">승인 완료</span><h2>${titleText}</h2><p>체험 8개념과 미니 모의고사 10문항은 다시 풀 필요가 없습니다. 기본 100문항 학습으로 바로 이동합니다.</p><button class="hero-btn" id="homeStart100">${btnText}</button><div class="hero-sub">승인일부터 90일 · 현재 D-${daysLeft(ent)} · 학습 위치는 이 브라우저에만 저장</div></section>`;
   }else if(returning){
     hero=`<section class="return-hero"><span class="hero-kicker">설문 참여 후</span><h2>승인을 확인하고 기본 100문항을 여세요.</h2><p>설문을 제출했다면 체험문제를 다시 풀 필요가 없습니다. 운영자 승인 후 이 버튼으로 바로 100문항 학습을 시작합니다.</p><button class="hero-btn" id="homeCheck100">승인 확인하고 100문항 열기 →</button><button class="hero-secondary" id="homeOpenSurvey">설문을 아직 제출하지 않았다면 설문 열기</button>${state.homeStatus?`<div class="hero-status">${esc(state.homeStatus)}</div>`:''}<div class="hero-sub">가능하면 설문에 참여한 것과 같은 기기·같은 브라우저에서 이용하세요.</div></section>`;
   }else if(both){
@@ -1152,17 +1199,12 @@ function homeView(){
   }
   body.innerHTML=`<div class="profile"><div class="pf-ico">法</div><div><div class="pf-t">새마을금고법 톡톡</div><div class="pf-s">문제로 먼저 익히고, 필요할 때 법령·해설을 펼쳐보는 모바일 학습도구</div></div></div>
   ${hero}
-  <div class="bar">학습 메뉴</div><ul class="menu">
-    <li data-go="learn"><div class="mi y">📘</div><div><div class="mt">학습 모드</div><div class="ms">8개념 + ANKI형 세션 반복 + 3단계 해설</div></div><span class="badge ${state.trial.studyCompleted?'g':''}">${state.trial.studyCompleted?'완료':'체험'}</span></li>
-    <li data-go="exam"><div class="mi b">📝</div><div><div class="mt">미니 모의고사</div><div class="ms">10문항 · 시험 종료 후 정답과 상세해설</div></div><span class="badge ${state.trial.mockCompleted?'g':''}">${state.trial.mockCompleted?'완료':'10'}</span></li>
-    ${ent?`<li data-go="full"><div class="mi y">🔓</div><div><div class="mt">기본 100문항 학습</div><div class="ms">승인 완료 · 체험 재응시 없이 바로 이용 · D-${daysLeft(ent)}</div></div><span class="badge g">이용중</span></li>`:
-      returning?`<li id="homeAccessMenu"><div class="mi y">🎓</div><div><div class="mt">설문 참여 후 기본 100문항 학습</div><div class="ms">승인 확인 → 기본 100문항 바로 시작</div></div><span class="badge y">확인</span></li>`:
-      `<li data-go="${both?'research':'home'}"><div class="mi">🎓</div><div><div class="mt">설문 참여 후 기본 100문항 학습</div><div class="ms">${both?'승인 후 90일 · 기본 100문항 + 단계별 해설':'학습·모의고사 체험 완료 후 설문 참여 안내'}</div></div><span class="badge ${both?'y':'g'}">${both?'100문항':'체험후'}</span></li>`}
-  </ul>
+  ${ent?`<div class="bar">승인 후 학습</div><ul class="menu"><li id="homeBase100Menu"><div class="mi y">📚</div><div><div class="mt">기본 100문항 학습</div><div class="ms">${readBaseProgress()>0&&readBaseProgress()<100?`${readBaseProgress()+1}번부터 이어서 학습`:'지금 바로 본 학습 시작'} · D-${daysLeft(ent)}</div></div><span class="badge g">100</span></li></ul><div class="bar">체험 다시보기</div><ul class="menu"><li data-go="learn"><div class="mi">📘</div><div><div class="mt">체험 8개념 다시보기</div><div class="ms">초기 체험문제를 다시 보고 싶을 때만 이용</div></div><span class="badge g">체험</span></li><li data-go="exam"><div class="mi">📝</div><div><div class="mt">미니 모의고사 다시보기</div><div class="ms">10문항 · 시험 종료 후 상세해설</div></div><span class="badge g">10</span></li></ul>`:`<div class="bar">학습 메뉴</div><ul class="menu"><li data-go="learn"><div class="mi y">📘</div><div><div class="mt">학습 모드</div><div class="ms">8개념 + ANKI형 세션 반복 + 3단계 해설</div></div><span class="badge ${state.trial.studyCompleted?'g':''}">${state.trial.studyCompleted?'완료':'체험'}</span></li><li data-go="exam"><div class="mi b">📝</div><div><div class="mt">미니 모의고사</div><div class="ms">10문항 · 시험 종료 후 정답과 상세해설</div></div><span class="badge ${state.trial.mockCompleted?'g':''}">${state.trial.mockCompleted?'완료':'10'}</span></li>${returning?`<li id="homeAccessMenu"><div class="mi y">🎓</div><div><div class="mt">설문 참여 후 기본 100문항 학습</div><div class="ms">승인 확인 → 기본 100문항 바로 시작</div></div><span class="badge y">확인</span></li>`:`<li data-go="${both?'research':'home'}"><div class="mi">🎓</div><div><div class="mt">설문 참여 후 기본 100문항 학습</div><div class="ms">${both?'승인 후 90일 · 기본 100문항 + 단계별 해설':'학습·모의고사 체험 완료 후 설문 참여 안내'}</div></div><span class="badge ${both?'y':'g'}">${both?'100문항':'체험후'}</span></li>`}</ul>`}
   <div class="bar">이 앱에서 기억할 것</div>
-  <div class="info" style="padding-top:5px"><div class="info-card"><h3>학습기록은 저장하지 않습니다</h3><p>정오답·점수·학습진도·학습시간은 서버에 저장하지 않습니다. 이용권 확인에 필요한 인증정보만 별도로 처리합니다.</p></div></div>${renderToast()}`;
+  <div class="info" style="padding-top:5px"><div class="info-card"><h3>학습기록은 저장하지 않습니다</h3><p>정오답·점수·학습시간은 서버에 저장하지 않습니다. 다만 기본 100문항을 같은 브라우저에서 이어서 볼 수 있도록 <b>해설 확인 후 완료한 마지막 문항 위치</b>만 기기 내부에 저장합니다.</p></div></div>${renderToast()}`;
   body.querySelectorAll('[data-go]').forEach(x=>x.onclick=()=>{const v=x.dataset.go;if(v==='home') showToast('학습과 모의고사를 모두 체험하면 안내가 열립니다.'); else go(v);});
-  const s100=$('#homeStart100'); if(s100) s100.onclick=()=>go('full');
+  const s100=$('#homeStart100'); if(s100) s100.onclick=()=>{ if(readBaseProgress()>=APP_CONFIG.baseQuestionCommitment) clearBaseProgress(); startProtectedTier('BASE'); };
+  const bm=$('#homeBase100Menu'); if(bm) bm.onclick=()=>{ if(readBaseProgress()>=APP_CONFIG.baseQuestionCommitment) clearBaseProgress(); startProtectedTier('BASE'); };
   const c100=$('#homeCheck100'); if(c100) c100.onclick=()=>checkAccessStatusFromHome(true);
   const am=$('#homeAccessMenu'); if(am) am.onclick=()=>checkAccessStatusFromHome(true);
   const hos=$('#homeOpenSurvey'); if(hos) hos.onclick=()=>{ state.pending=true; localStorage.setItem(PENDING_KEY,'1'); window.open(buildSurveyUrl(),'_blank','noopener'); };
@@ -1242,7 +1284,7 @@ async function checkAccessStatusFromHome(openWhenApproved=false){
       localStorage.removeItem(PENDING_KEY);
       localStorage.setItem(ENTITLEMENT_KEY,JSON.stringify(state.entitlement));
       state.homeStatus='승인이 완료되었습니다. 기본 100문항을 이용할 수 있습니다.';
-      if(openWhenApproved) return go('full');
+      if(openWhenApproved) return startProtectedTier('BASE');
       return homeView();
     }
     state.pending=true;
@@ -1263,7 +1305,7 @@ async function checkAccessStatusFromHome(openWhenApproved=false){
 function activateEntitlement(data){
   state.entitlement={code:data.code||ensureAccessCode(),approvedAt:data.approvedAt,expiresAt:data.expiresAt};
   state.pending=false; localStorage.removeItem(PENDING_KEY); localStorage.setItem(ENTITLEMENT_KEY,JSON.stringify(state.entitlement));
-  state.statusMessage=''; go('full');
+  state.statusMessage=''; return startProtectedTier('BASE');
 }
 async function checkAccessStatus(){
   if(state.statusBusy) return;
@@ -1309,46 +1351,83 @@ async function checkAccessStatus(){
 }
 
 function fullView(){
-  setTab('home'); chrome('승인 완료 · 100문항 학습',{showBack:true,progress:null,right:`D-${daysLeft(state.entitlement)}`});
-  body.innerHTML=`<div class="profile"><div class="pf-ico">✓</div><div><div class="pf-t">승인이 완료되었습니다</div><div class="pf-s">체험문제를 다시 풀 필요 없이 기본 100문항을 바로 시작하세요 · 승인일부터 90일</div></div></div>
-  <div class="approval-note" style="margin:14px 18px"><strong>이제 바로 본 학습으로 들어가면 됩니다.</strong><p>앞서 풀었던 체험 8개념과 미니 모의고사 10문항을 다시 통과할 필요가 없습니다.</p></div>
-  <div class="bar">승인 후 학습</div><ul class="menu">
-    <li id="base100"><div class="mi y">📚</div><div><div class="mt">기본 100문항 바로 시작</div><div class="ms">문제 → 1단계 핵심 → 2단계 이해 → 3단계 법령근거</div></div><span class="badge g">100</span></li>
-    <li id="extraLearn"><div class="mi">＋</div><div><div class="mt">100문항 이후 추가 학습</div><div class="ms">기본 100문항 이후 · 가능한 범위의 학습·참고 자료</div></div><span class="badge">추가</span></li>
-  </ul>
-  <div class="info"><div class="info-card"><h3>기본 제공 범위와 추가 학습</h3><p>연구 참여자에게 제공하는 <b>기본 학습지원 범위는 100문항</b>입니다. 그 이후 문항은 가능한 범위에서 더 학습할 수 있도록 제공하는 추가 자료이며, 지속적인 추가 제공·수정·업데이트를 보장하지 않습니다.</p></div>
-  <div class="info-card"><h3>운영·문의 안내</h3><p>운영자는 웹개발 전문가가 아니며 본업과 연구를 병행합니다. 앱 오류·질문·건의는 확인할 수 있으나 즉각적인 해결, 개별 회신, 기능 반영 또는 유지보수 시점을 약속드리기 어렵습니다. 학습 내용은 무료 참고용으로 이용해 주세요.</p></div>
-  <div class="info-card"><h3>이용기간과 기기 연결</h3><p>남은 기간 <b>D-${daysLeft(state.entitlement)}</b>. 이용권은 처음 활성화한 현재 기기·브라우저에 연결됩니다. 개인별 학습 데이터는 저장하지 않습니다.</p></div></div>
+  setTab('home'); chrome('승인 완료 · 학습 메뉴',{showBack:true,progress:null,right:`D-${daysLeft(state.entitlement)}`});
+  const bp=readBaseProgress();
+  const done=bp>=APP_CONFIG.baseQuestionCommitment;
+  const btnText=done?'기본 100문항 다시 학습하기 →':(bp>0?`${bp+1}번부터 이어서 학습하기 →`:'기본 100문항 학습 시작 →');
+  body.innerHTML=`<div class="profile"><div class="pf-ico">✓</div><div><div class="pf-t">승인이 완료되었습니다</div><div class="pf-s">체험문제를 다시 풀 필요 없이 기본 100문항을 이용하세요 · 승인일부터 90일</div></div></div>
+  <section class="return-hero approved"><span class="hero-kicker">본 학습</span><h2>${done?'기본 100문항 학습 완료':(bp>0?`기본 100문항 ${bp}/100 완료`:'기본 100문항 학습')}</h2><p>${done?'원하면 처음부터 다시 학습할 수 있습니다.':(bp>0?'마지막으로 완료한 위치 다음 문항부터 이어서 시작합니다.':'문제 → 1단계 핵심 → 2단계 이해 → 3단계 법령근거 순으로 학습합니다.')}</p><button class="hero-btn" id="base100Start">${btnText}</button><div class="hero-sub">학습 위치만 현재 브라우저에 저장하며 정오답·점수는 서버에 저장하지 않습니다.</div></section>
+  <div class="bar">추가 학습</div><div id="extraArea" class="info" style="padding-top:5px"><div class="info-card"><h3>추가 학습문항 상태 확인 중</h3><p>서버에서 현재 제공 가능한 추가 문항 수를 확인하고 있습니다.</p></div></div>
+  <div class="info"><div class="info-card"><h3>이용기간과 기기 연결</h3><p>남은 기간 <b>D-${daysLeft(state.entitlement)}</b>. 이용권은 처음 활성화한 현재 기기·브라우저에 연결됩니다.</p></div></div>
   <div id="contentState" class="center-note">문제은행 상태를 확인하는 중입니다…</div>${renderToast()}`;
-  $('#base100').onclick=()=>startProtectedTier('BASE');
-  $('#extraLearn').onclick=()=>go('extraNotice');
+  $('#base100Start').onclick=()=>{ if(done) clearBaseProgress(); startProtectedTier('BASE'); };
   loadContentManifest(true).then(m=>{
     state.contentManifest=m;
-    const el=$('#contentState'); if(!el) return;
-    if(m.releaseReady){ el.innerHTML=`기본 ${m.baseCount}/${m.baseRequired}문항 준비됨 · 추가 ${m.extraCount}문항`; }
-    else { el.innerHTML=`개발 점검: 기본 검증문항 ${m.baseLoaded||0}/${m.baseRequired||100}. <b>100문항 검증 전에는 공개 배포하지 않습니다.</b>`; }
-  }).catch(e=>{const el=$('#contentState'); if(el) el.textContent='현재 문제은행 상태를 확인하지 못했습니다.';});
+    const el=$('#contentState');
+    if(el){
+      if(m.releaseReady) el.innerHTML=`기본 ${m.baseCount}/${m.baseRequired}문항 준비됨 · 추가 ${m.extraCount||0}문항`;
+      else el.innerHTML=`기본 검증문항 ${m.baseLoaded||0}/${m.baseRequired||100}. 현재 공개 준비 중입니다.`;
+    }
+    const extra=$('#extraArea'); if(!extra) return;
+    if((m.extraCount||0)>0){
+      extra.innerHTML=`<div class="info-card"><h3>추가 학습문항 ${m.extraCount}문항 이용 가능</h3><p>기본 100문항과 별도의 참고용 추가 학습자료입니다.</p><button class="wide b-g" id="extraStart" style="margin:12px 0 0;width:100%">추가 학습문항 보기 →</button></div>`;
+      $('#extraStart').onclick=()=>go('extraNotice');
+    }else{
+      extra.innerHTML=`<div class="info-card"><h3>현재 추가 학습문항은 없습니다</h3><p>현재 서버에 등록된 추가 문항은 <b>0문항</b>입니다. 위의 <b>기본 100문항 학습</b>을 이용해 주세요. 추가 문항이 준비되면 이 영역에 버튼이 나타납니다.</p></div>`;
+    }
+  }).catch(e=>{
+    const el=$('#contentState'); if(el) el.textContent='현재 문제은행 상태를 확인하지 못했습니다.';
+    const extra=$('#extraArea'); if(extra) extra.innerHTML=`<div class="info-card"><h3>추가 학습 상태를 확인하지 못했습니다</h3><p>잠시 후 다시 시도해 주세요. 기본 100문항은 위 버튼에서 다시 확인할 수 있습니다.</p></div>`;
+  });
 }
 
 async function startProtectedTier(tier){
   try{
     const manifest=await loadContentManifest(true);
+    state.contentManifest=manifest;
     if(tier==='BASE' && !manifest.releaseReady){
       state.statusMessage=`기본 100문항의 법령·해설 검증이 완료된 뒤 공개됩니다. 현재 ${manifest.baseLoaded||0}/${manifest.baseRequired||100}문항입니다.`;
       return fullViewWithMessage();
     }
     if(tier==='EXTRA' && !state.extraAcknowledged) return go('extraNotice');
     if(tier==='EXTRA' && !(manifest.extraCount>0)){
-      state.statusMessage='현재 추가 학습문항을 준비 중입니다.';
+      state.statusMessage='현재 서버에 등록된 추가 학습문항은 0문항입니다. 기본 100문항을 이용해 주세요.';
       return fullViewWithMessage();
     }
-    const r=await loadProtectedBatch(tier,0);
-    state.protected={tier,total:r.total||0,nextOffset:r.nextOffset,queue:(r.questions||[]).map(q=>({question:q,isReview:false})),index:0,completed:0,answered:false,selected:null,loading:false};
+    const resumeOffset=tier==='BASE'?readBaseProgress():0;
+    if(tier==='BASE' && resumeOffset>=APP_CONFIG.baseQuestionCommitment){
+      clearBaseProgress();
+    }
+    const offset=tier==='BASE'?readBaseProgress():0;
+    const r=await loadProtectedBatch(tier,offset);
+    const rawQs=Array.isArray(r.questions)?r.questions:[];
+    const initialIds=new Set();
+    let qs=rawQs.filter(q=>{
+      if(!q) return false;
+      if(!q.id) return true;
+      if(initialIds.has(q.id)) return false;
+      initialIds.add(q.id); return true;
+    });
+    if(tier==='BASE') qs=qs.slice(0,Math.max(0,APP_CONFIG.baseQuestionCommitment-offset));
+    if(!qs.length){
+      state.statusMessage=tier==='BASE'?'기본 문제를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.':'현재 이용 가능한 추가 학습문항이 없습니다.';
+      return fullViewWithMessage();
+    }
+    const expectedTotal=tier==='BASE'?APP_CONFIG.baseQuestionCommitment:Number(r.total||manifest.extraCount||qs.length||0);
+    const parsedNext=(r.nextOffset===null||r.nextOffset===undefined||r.nextOffset==='')?null:Number(r.nextOffset);
+    const safeNext=(parsedNext!==null && Number.isFinite(parsedNext) && parsedNext>offset)?parsedNext:null;
+    state.protected={tier,total:expectedTotal,nextOffset:safeNext,queue:qs.map(q=>({question:q,isReview:false})),index:0,completed:offset,answered:false,selected:null,loading:false,lastOffset:offset};
     go('protected');
-  }catch(e){ state.statusMessage=e.message||'문제은행을 불러오지 못했습니다.'; fullViewWithMessage(); }
+  }catch(e){
+    state.statusMessage=e.message||'문제은행을 불러오지 못했습니다.';
+    if(!state.entitlement){ state.homeStatus=state.statusMessage; state.statusMessage=''; return go('home'); }
+    fullViewWithMessage();
+  }
 }
 function fullViewWithMessage(){
-  const msg=state.statusMessage; state.statusMessage=''; fullView();
+  const msg=state.statusMessage; state.statusMessage='';
+  if(!state.entitlement){ state.homeStatus=msg||state.homeStatus; return go('home'); }
+  fullView();
   if(msg){ const el=$('#contentState'); if(el) el.textContent=msg; }
 }
 
@@ -1368,46 +1447,115 @@ async function protectedView(){
   setTab('home');
   const s=state.protected;
   if(!s || !s.queue || !s.queue.length) return go('full');
+
   if(s.index>=s.queue.length){
+    // BASE는 실제로 100개의 새 문항을 '해설 확인 후' 완료한 경우에만 완료 처리한다.
+    if(s.tier==='BASE' && s.completed>=APP_CONFIG.baseQuestionCommitment){
+      return protectedEndView();
+    }
     if(s.nextOffset!==null && s.nextOffset!==undefined && !s.loading){
       s.loading=true;
       try{
-        const r=await loadProtectedBatch(s.tier,s.nextOffset);
-        s.queue.push(...(r.questions||[]).map(q=>({question:q,isReview:false})));
-        s.nextOffset=r.nextOffset; s.loading=false;
-      }catch(e){s.loading=false;state.statusMessage='다음 문제를 불러오지 못했습니다.';return fullViewWithMessage();}
+        const requestedOffset=Number(s.nextOffset);
+        const r=await loadProtectedBatch(s.tier,requestedOffset);
+        const knownIds=new Set(s.queue.map(x=>x.question&&x.question.id).filter(Boolean));
+        const raw=Array.isArray(r.questions)?r.questions:[];
+        const fresh=raw.filter(q=>!q.id || !knownIds.has(q.id));
+        const parsedNext=(r.nextOffset===null||r.nextOffset===undefined||r.nextOffset==='')?null:Number(r.nextOffset);
+        const stalledNext=parsedNext!==null && (!Number.isFinite(parsedNext) || parsedNext<=requestedOffset);
+        s.loading=false;
+
+        if(!fresh.length){
+          if(s.tier==='BASE') return protectedIncompleteView('서버에서 이어지는 기본 문항을 받지 못했습니다. 중복 문항 또는 빈 배치가 감지되었습니다.');
+          return protectedEndView();
+        }
+
+        let accepted=fresh;
+        if(s.tier==='BASE'){
+          const remaining=Math.max(0,APP_CONFIG.baseQuestionCommitment-s.completed);
+          accepted=fresh.slice(0,remaining);
+        }
+        if(!accepted.length){
+          if(s.tier==='BASE' && s.completed>=APP_CONFIG.baseQuestionCommitment) return protectedEndView();
+          return protectedIncompleteView('기본 100문항 완료 전에 유효한 다음 문항을 확인하지 못했습니다.');
+        }
+
+        s.queue.push(...accepted.map(q=>({question:q,isReview:false})));
+        // nextOffset이 뒤로 진행하지 않으면 현재 배치는 학습하되, 이후에는 완료로 오인하지 않고 재시도 안내를 표시한다.
+        s.nextOffset=stalledNext?null:parsedNext;
+        s.lastOffset=requestedOffset;
+      }catch(e){
+        s.loading=false;
+        if(!state.entitlement && e.status){ state.homeStatus=e.message; return go('home'); }
+        return protectedIncompleteView(e.message||'다음 문제를 불러오지 못했습니다.');
+      }
     }else{
+      if(s.tier==='BASE') return protectedIncompleteView('서버가 기본 100문항 완료 전에 다음 문항 위치를 제공하지 않았습니다.');
       return protectedEndView();
     }
   }
+
   const item=s.queue[s.index],q=item.question;
-  chrome(s.tier==='BASE'?'기본 100문항':'추가 학습',{showBack:true,progress:s.total?Math.round(Math.min(s.completed,s.total)/s.total*100):0,right:s.tier==='BASE'?'기본 학습':'추가 자료'});
-  body.innerHTML=`<div class="chatbg">${questionBubble(q,Math.min(s.completed+1,s.total),s.total,s.tier==='BASE'?'기본':'추가')}${optionsHtml(q)}<div id="protectedAfter"></div></div>`;
+  const isReview=!!item.isReview;
+  const label=isReview?'복습':(s.tier==='BASE'?'기본':'추가');
+  const displayNo=isReview?Math.max(1,Math.min(s.completed,s.total)):Math.min(s.completed+1,s.total);
+  chrome(s.tier==='BASE'?'기본 100문항':'추가 학습',{showBack:true,progress:s.total?Math.round(Math.min(s.completed,s.total)/s.total*100):0,right:isReview?'복습 문항':(s.tier==='BASE'?'기본 학습':'추가 자료')});
+  body.innerHTML=`<div class="chatbg">${isReview?'<div class="session-note"><b>복습 문항입니다.</b> 앞에서 ‘다시’ 또는 ‘어려움’으로 표시한 문제를 한 번 더 확인합니다. 새 문항 수에는 포함되지 않습니다.</div>':''}${questionBubble(q,displayNo,s.total,label)}${optionsHtml(q)}<div id="protectedAfter"></div></div>`;
   body.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>answerProtected(+b.dataset.pick));
 }
 function answerProtected(pick){
   const s=state.protected;if(!s||s.answered)return;const item=s.queue[s.index],q=item.question;s.answered=true;s.selected=pick;
-  if(!item.isReview)s.completed++;
+  // 답 선택만으로는 진도를 저장하지 않는다. 상세해설을 확인한 뒤 기억 정도를 선택해야 완료된다.
   markLearnOptions(q.answer,pick);
   const ok=pick===q.answer;
-  $('#protectedAfter').innerHTML=`<div class="row me"><span class="tm">지금</span><div class="bub">${pick+1}번</div></div>${explanationHtml(q,pick)}<section class="next-step"><div class="next-step-head"><span class="next-kicker">해설 확인 후 다음 문제</span><strong>해설을 확인했다면 기억 정도를 선택하세요.</strong><p>하나를 누르면 다음 문제로 이동합니다.</p></div><div class="rating-grid"><button class="memory-btn again" data-prate="again"><span class="rate-word">다시</span><span class="rate-desc">2문제 뒤 다시</span><span class="rate-arrow">›</span></button><button class="memory-btn hard" data-prate="hard"><span class="rate-word">어려움</span><span class="rate-desc">5문제 뒤 다시</span><span class="rate-arrow">›</span></button><button class="memory-btn good ${ok?'recommended':''}" data-prate="good"><span class="rate-word">보통</span><span class="rate-desc">이해했어요 · 다음</span><span class="rate-arrow">›</span></button><button class="memory-btn easy" data-prate="easy"><span class="rate-word">쉬움</span><span class="rate-desc">확실해요 · 다음</span><span class="rate-arrow">›</span></button></div></section>`;
+  $('#protectedAfter').innerHTML=`<div class="row me"><span class="tm">지금</span><div class="bub">${pick+1}번</div></div>${explanationHtml(q,pick)}<section class="next-step"><div class="next-step-head"><span class="next-kicker">해설 확인 후 다음 문제</span><strong>해설을 확인했다면 기억 정도를 선택하세요.</strong><p>하나를 누르면 이 문항이 완료 처리되고 다음 문제로 이동합니다.</p></div><div class="rating-grid"><button class="memory-btn again" data-prate="again"><span class="rate-word">다시</span><span class="rate-desc">2문제 뒤 다시</span><span class="rate-arrow">›</span></button><button class="memory-btn hard" data-prate="hard"><span class="rate-word">어려움</span><span class="rate-desc">5문제 뒤 다시</span><span class="rate-arrow">›</span></button><button class="memory-btn good ${ok?'recommended':''}" data-prate="good"><span class="rate-word">보통</span><span class="rate-desc">이해했어요 · 다음</span><span class="rate-arrow">›</span></button><button class="memory-btn easy" data-prate="easy"><span class="rate-word">쉬움</span><span class="rate-desc">확실해요 · 다음</span><span class="rate-arrow">›</span></button></div></section>`;
   body.querySelectorAll('[data-prate]').forEach(b=>b.onclick=()=>rateProtected(b.dataset.prate));
   setTimeout(()=>{const el=body.querySelector('#protectedAfter .exp');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},120);
 }
 function rateProtected(rate){
   const s=state.protected,item=s.queue[s.index];
-  if((rate==='again'||rate==='hard') && item && !item.isReview){
+  if(!s || !item) return;
+  const isCore=!item.isReview;
+  if((rate==='again'||rate==='hard') && isCore){
     const offset=rate==='again'?2:5;
     const pos=Math.min(s.queue.length,s.index+offset);
     s.queue.splice(pos,0,{question:item.question,isReview:true});
   }
+  // 새 문항은 기억 정도 선택 시점에만 완료 및 이어하기 위치를 저장한다.
+  if(isCore){
+    s.completed++;
+    if(s.tier==='BASE') saveBaseProgress(s.completed);
+  }
   s.index++;s.answered=false;s.selected=null;protectedView();
+}
+function protectedIncompleteView(message){
+  const s=state.protected;
+  if(!s) return go('full');
+  const total=s.tier==='BASE'?APP_CONFIG.baseQuestionCommitment:(s.total||0);
+  const completed=Math.max(0,Math.min(s.completed,total||s.completed));
+  setTab('home');
+  chrome(s.tier==='BASE'?'기본 100문항 · 연결 확인':'추가 학습 · 연결 확인',{showBack:true,progress:total?Math.round(completed/total*100):0,right:s.tier==='BASE'?`${completed}/100 완료`:'재시도 필요'});
+  body.innerHTML=`<section class="gate"><div class="lk">!</div><h2>${s.tier==='BASE'?'100문항 학습이 아직 끝나지 않았습니다.':'추가 학습을 더 불러오지 못했습니다.'}</h2><p>${s.tier==='BASE'?`현재 <b>${completed}/100문항</b>까지 해설 확인을 완료했습니다.`:'현재까지 완료한 위치는 유지됩니다.'}</p><div class="approval-note"><strong>완료로 처리하지 않았습니다.</strong><p>${esc(message||'다음 문제를 불러오지 못했습니다.')}<br>네트워크가 안정된 뒤 다시 시도해 주세요.</p></div><button class="wide b-y" id="retryProtected" style="margin-left:0;width:100%">${s.tier==='BASE'?`${Math.min(completed+1,100)}번부터 다시 불러오기`:'추가 학습 다시 불러오기'}</button><button class="wide b-g" id="incompleteHome" style="margin-left:0;width:100%;margin-top:-5px">홈으로 돌아가기</button></section>`;
+  $('#retryProtected').onclick=()=>startProtectedTier(s.tier);
+  $('#incompleteHome').onclick=()=>go('home');
 }
 function protectedEndView(){
   const s=state.protected;
-  chrome(s.tier==='BASE'?'기본 학습 완료':'추가 학습',{showBack:true,progress:100,right:s.tier==='BASE'?'100문항 범위':'추가 자료'});
-  body.innerHTML=`<section class="gate"><div class="lk">✓</div><h2>${s.tier==='BASE'?'기본 학습세트를 모두 확인했습니다.':'이번 추가 학습세트를 마쳤습니다.'}</h2>${s.tier==='BASE'?'<p>기본 학습지원 범위 이후에도 더 풀고 싶다면 추가 학습자료를 이용할 수 있습니다.</p><button class="wide b-y" id="goExtra" style="margin-left:0;width:100%">추가 학습문항 보기</button>':''}<button class="wide b-g" id="goFull" style="margin-left:0;width:100%;margin-top:-5px">전체 메뉴로 돌아가기</button></section>`;
-  const x=$('#goExtra');if(x)x.onclick=()=>go('extraNotice');$('#goFull').onclick=()=>go('full');
+  if(s.tier==='BASE' && s.completed<APP_CONFIG.baseQuestionCommitment){
+    return protectedIncompleteView('기본 100문항의 실제 완료 수가 100문항에 도달하지 않았습니다.');
+  }
+  if(s.tier==='BASE') saveBaseProgress(APP_CONFIG.baseQuestionCommitment);
+  const extraCount=(state.contentManifest&&Number(state.contentManifest.extraCount))||0;
+  chrome(s.tier==='BASE'?'기본 학습 완료':'추가 학습 완료',{showBack:true,progress:100,right:s.tier==='BASE'?'100문항 완료':'추가 자료'});
+  const extraHtml=s.tier==='BASE'
+    ? (extraCount>0
+      ? `<p>기본 100문항 학습을 마쳤습니다. 현재 <b>추가 학습문항 ${extraCount}문항</b>도 이용할 수 있습니다.</p><button class="wide b-y" id="goExtra" style="margin-left:0;width:100%">추가 학습문항 ${extraCount}문항 보기 →</button>`
+      : `<div class="approval-note"><strong>현재 추가 학습문항은 없습니다.</strong><p>서버에 등록된 추가 문항은 0문항입니다. 추가 문항이 준비되기 전까지는 기본 100문항을 복습해 주세요.</p></div>`)
+    : `<p>현재 제공된 추가 학습세트를 모두 확인했습니다.</p>`;
+  body.innerHTML=`<section class="gate"><div class="lk">✓</div><h2>${s.tier==='BASE'?'기본 100문항 학습을 완료했습니다.':'추가 학습을 완료했습니다.'}</h2>${extraHtml}<button class="wide b-g" id="goHome" style="margin-left:0;width:100%;margin-top:8px">홈으로 돌아가기</button>${s.tier==='BASE'?'<button class="wide b-g" id="restartBase" style="margin-left:0;width:100%;margin-top:-5px">기본 100문항 처음부터 다시 학습</button>':''}</section>`;
+  const x=$('#goExtra');if(x)x.onclick=()=>go('extraNotice');
+  $('#goHome').onclick=()=>go('home');
+  const rb=$('#restartBase'); if(rb) rb.onclick=()=>{clearBaseProgress();startProtectedTier('BASE');};
 }
 
 /* ---------- info ---------- */
@@ -1418,7 +1566,7 @@ function infoView(){
     <div class="info-card"><h3>기본 학습지원 범위</h3><p>연구 참여가 확인된 이용자에게 승인일부터 90일 동안 <b>검증된 기본 100문항</b>과 단계별 해설을 제공하는 것을 기본 범위로 합니다. 100문항 이후의 문항은 추가 학습을 돕기 위한 부가 자료입니다.</p></div>
     <div class="info-card"><h3>운영·유지보수에 관한 안내</h3><p>이 앱은 개인이 연구와 본업을 병행하며 운영하는 무료 학습도구입니다. 운영자는 웹개발 전문가가 아니므로 앱 오류·기술 질문·건의에 대해 즉시 해결하거나 모든 요청을 반영하기 어려울 수 있습니다. 문의나 제안은 참고할 수 있으나 개별 회신, 수정·업데이트 여부 및 처리 시점을 보장하지 않습니다.</p><p style="margin-top:8px">특히 기본 100문항 이후의 추가 학습자료는 이러한 운영 특성을 인지한 상태에서 단순 학습·참고용으로 이용해 주세요.</p></div>
     <div class="info-card"><h3>정답과 해설의 기준</h3><p>법·시행령·시행규칙을 정답 판단의 우선 근거로 사용하고, 중앙회 「새마을금고법 해설」을 이해를 돕는 자료로 연결합니다. 앱 학습해설은 이를 학습하기 쉽게 재구성한 내용입니다.</p></div>
-    <div class="info-card"><h3>학습 데이터</h3><p>정오답, 점수, 학습진도, 학습시간, 모의고사 결과는 서버에 저장하지 않습니다. 이용권 확인을 위한 내부 인증값·승인일·만료일과 1기기 이용을 위한 무작위 기기 연결값만 별도로 처리할 수 있습니다.</p></div>
+    <div class="info-card"><h3>학습 데이터</h3><p>정오답, 점수, 학습시간, 모의고사 결과는 서버에 저장하지 않습니다. 기본 100문항을 같은 브라우저에서 이어서 볼 수 있도록 <b>해설 확인 후 완료한 마지막 문항 위치만 기기 내부에 저장</b>합니다. 이용권 확인을 위한 내부 인증값·승인일·만료일과 1기기 이용을 위한 무작위 기기 연결값만 별도로 처리할 수 있습니다.</p></div>
     <div class="info-card"><h3>실제 업무에 적용할 때</h3><p>문제의 정답은 제시된 조건과 표시된 기준일 자료에 따른 학습용 판단입니다. 실제 업무·권리·의무에 영향을 미치는 판단에는 해당 시점의 현행 법령과 정관·규정·업무방법 및 공식 해석을 다시 확인해 주세요.</p></div>
     <div class="info-card"><h3>설문 제출 후 이용방법</h3><p>설문 제출 후에는 체험문제를 다시 풀 필요가 없습니다. 운영자의 참여 확인·승인 후 같은 기기·브라우저에서 승인 여부를 확인하면 기본 100문항 학습으로 바로 이동합니다. 확인은 통상 1~2일 정도 소요될 수 있습니다.</p></div>
     <div class="info-card"><h3>문의</h3><p>급한 이용 확인 문의는 <a href="mailto:${esc(APP_CONFIG.supportEmail)}" style="color:inherit;font-weight:800">${esc(APP_CONFIG.supportEmail)}</a>으로 요청할 수 있습니다. 다만 기술 문의·개선 제안의 개별 회신이나 반영은 어려울 수 있습니다.</p></div>
@@ -1443,7 +1591,10 @@ function render(){
 tabs.addEventListener('click',e=>{
   const b=e.target.closest('.tab'); if(!b) return;
   const v=b.dataset.t;
-  if(v==='learn'){ state.study=null; go('learn'); }
+  if(v==='learn'){
+    if(state.entitlement) return startProtectedTier('BASE');
+    state.study=null; go('learn');
+  }
   else if(v==='exam'){ state.mock=null; go('exam'); }
   else go(v);
 });
