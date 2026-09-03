@@ -1,12 +1,16 @@
-[GitHub 업로드 체크리스트]
-1. 저장소: korealaw/mg-law-webapp
-2. Code 탭 > Add file > Upload files
-3. 이 폴더의 아래 5개 파일을 저장소 루트에 업로드
+[v8.1a 업로드 체크리스트]
+
+1. GitHub > korealaw/mg-law-webapp > Code > Add file > Upload files
+2. ZIP을 풀고 아래 파일을 저장소 루트에 업로드/덮어쓰기
    - index.html
+   - og-image.jpg
    - README.md
    - CHANGELOG.md
    - PROJECT_HANDOFF_LATEST.md
    - .nojekyll
-4. Commit message: Release v8.1 audited frontend
-5. main 브랜치에 커밋
-6. Pages 주소 확인: https://korealaw.github.io/mg-law-webapp/
+3. Commit message: Release v8.1a mobile readability and Kakao preview
+4. main 브랜치에 직접 커밋
+5. Pages 재배포 완료 후 https://korealaw.github.io/mg-law-webapp/ 접속
+6. 카카오톡 채팅방에 위 URL 붙여넣기
+7. 이미지/제목/설명 카드가 뜨는지 확인
+8. 예전 미리보기가 남으면 Kakao URL 캐시 갱신이 필요할 수 있음

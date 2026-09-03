@@ -5,12 +5,29 @@
 - 공개 저장소: `korealaw/mg-law-webapp`
 - 기본 브랜치: `main`
 - GitHub Pages: `main` / `(root)`
-- 공개 예정 주소: https://korealaw.github.io/mg-law-webapp/
+- 공개 주소: https://korealaw.github.io/mg-law-webapp/
 
 ## 현재 기준 버전
-- Frontend: v8.1
+- Frontend: v8.1a
 - Backend: Google Apps Script v8.1
 - 기준일: 2026-09-03
+
+## v8.1a 변경점
+- 40~50대 학습자 기준 모바일 시인성 강화
+- 문제/선택지/해설/하단 탭 글자 및 터치영역 확대
+- 2단계 해설 기본 펼침
+- 오답 시 3단계 법령근거 자동 펼침
+- 해설 상단 강조 안내 추가
+- 430px/390px/350px 이하 화면폭 대응
+- 카카오톡 URL 공유용 Open Graph 메타데이터 적용
+- 공개 이미지: `/og-image.jpg`
+
+## 카카오톡 공유 미리보기
+- 공유 URL: https://korealaw.github.io/mg-law-webapp/
+- `og:title`: MG 새마을금고법 톡톡 · 간부자격 학습
+- `og:description`: 핵심문제 → 1단계 핵심 → 2단계 이해 → 3단계 법령근거로 이어지는 모바일 학습 웹앱
+- `og:image`: https://korealaw.github.io/mg-law-webapp/og-image.jpg?v=20260903a
+- 카카오톡은 URL 미리보기를 캐시할 수 있으므로 기존 URL을 이미 공유했다면 Kakao Developers의 URL 디버거/스크랩 갱신이 필요할 수 있다.
 
 ## 운영 구조
 1. GitHub Pages에는 공개 프런트엔드만 둔다.
@@ -19,36 +36,9 @@
 4. `main`을 운영 기준 원본으로 사용한다.
 5. 변경 시: 최신 `main` 확인 → 수정 → QA → 커밋 → Pages 반영 → 실제 URL 점검 순서로 진행한다.
 
-## v8.1 검증 완료 사항
-- Apps Script 기존 canonical deployment를 새 버전으로 갱신
-- Health: `status=OK`, `version=8.1`
-- BASE 문제은행: 100/100, `releaseReady=true`
-- 관리자 self-test 전체 통과
-  - 승인 전 PENDING
-  - 승인 후 APPROVED
-  - 최초 기기 귀속
-  - 동일 기기 허용
-  - 다른 기기 차단 DEVICE_MISMATCH
-  - 기기 초기화 후 새 기기 허용
-  - 만료 EXPIRED
-- 미승인 `manifest` 요청: NOT_FOUND
-- 미승인 `questions` 요청: NOT_FOUND + 빈 questions
-- 공개 HTML에서 보호 문항 B001~B100 미노출 확인
-
-## 공개 프런트엔드 핵심 흐름
-- 신규 접속 시 체험 학습 진입
-- 체험 학습 8개념
-- 미니 모의고사 10문항
-- 설문 이동
-- 동일 인증코드로 설문 화면 다시 열기 가능
-- 설문 제출 후 승인 상태 확인
-- 승인된 이용자에게만 서버에서 BASE100 전달
-- 기본 제공 범위: 100문항 / 승인일부터 90일
-- 100문항 이후는 추가 학습·참고용이며 지속 제공·즉시 유지보수를 보장하지 않음
-
-## 다음 작업
-1. 이 폴더의 `index.html`, `README.md`, `CHANGELOG.md`, `PROJECT_HANDOFF_LATEST.md`, `.nojekyll`을 저장소 루트에 업로드한다.
-2. GitHub Pages 배포 완료를 확인한다.
-3. 공개 URL에서 PC/모바일 실사용 흐름을 점검한다.
-4. 첫 실제 승인 이용자가 발생하면 승인된 BASE20 로딩 E2E를 최종 확인한다.
-5. 이후 v8.2에서 필요할 때만 코드 모듈화를 검토한다.
+## 다음 검증
+1. `index.html`과 `og-image.jpg`를 포함한 v8.1a 파일을 저장소 루트에 반영
+2. GitHub Pages 재배포 확인
+3. Galaxy급 모바일에서 정답/오답 직후 화면 재점검
+4. 카카오톡 채팅방에 URL을 붙여 이미지·제목·설명 미리보기 확인
+5. 첫 실제 승인 이용자가 발생하면 BASE20 로딩 E2E 최종 확인
