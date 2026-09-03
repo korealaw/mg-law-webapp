@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- MG Law Webapp v8.1b FINAL · explanation-first mobile UX -->
+<!-- MG Law Webapp v8.1d · post-survey approval flow + explanation-first UX -->
 <html lang="ko">
 <head>
 <meta charset="utf-8">
@@ -92,6 +92,7 @@ details .c{padding:0 16px 16px;font-size:15px;line-height:1.84;letter-spacing:-.
 
 /* mock */
 .mock-footer{margin:14px 0 0 49px;max-width:86%;display:flex;gap:8px}.mock-footer .btn{min-height:52px}.mock-hint{margin:10px 0 0 49px;max-width:86%;font-size:12px;line-height:1.58;color:#425560}
+.mock-review-note{margin:0 0 14px 49px;max-width:86%;background:#FFF8D6;border:1px solid #EBD869;border-radius:13px;padding:11px 12px;font-size:13.5px;line-height:1.65;color:#4B3D00}.mock-review-note b{font-size:14.5px}.mock-review-nav{margin:14px 0 4px 49px;max-width:90%;display:flex;gap:8px}.mock-review-nav .btn{min-height:56px;font-size:15px}.mock-review-score{margin:0 0 12px 49px;max-width:86%;display:flex;align-items:center;justify-content:space-between;gap:10px;background:rgba(255,255,255,.86);border-radius:13px;padding:10px 12px;font-size:13px;color:#43525C}.mock-review-score strong{font-size:16px;color:var(--kakao-brown)}
 
 /* home/menu */
 .profile{background:var(--kakao-yellow);padding:22px 20px 18px;display:flex;align-items:center;gap:15px}.pf-ico{width:58px;height:58px;border-radius:18px;background:var(--kakao-brown);color:var(--kakao-yellow);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;flex:0 0 58px}.pf-t{font-size:19px;font-weight:850;color:var(--kakao-brown);letter-spacing:-.5px}.pf-s{font-size:13.5px;color:#71563C;margin-top:4px;line-height:1.6}.bar{padding:13px 20px 7px;font-size:13px;font-weight:800;color:#707070}
@@ -114,6 +115,8 @@ details .c{padding:0 16px 16px;font-size:15px;line-height:1.84;letter-spacing:-.
 
 .hidden{display:none!important}.spacer{height:12px}.center-note{text-align:center;color:#666;font-size:12px;line-height:1.65;padding:10px 18px 22px}
 .toast{position:fixed;z-index:100;left:50%;bottom:86px;transform:translateX(-50%);width:min(410px,calc(100% - 28px));background:#252525;color:#fff;padding:13px 15px;border-radius:13px;font-size:14px;text-align:center;box-shadow:0 7px 26px rgba(0,0,0,.22)}
+.approval-note{background:#EAF7EF;border:1px solid #BFE4CB;border-radius:14px;padding:14px 15px;margin:14px 0;text-align:left}.approval-note strong{display:block;font-size:16px;color:#0B6B31;margin-bottom:5px}.approval-note p{margin:0;font-size:13px;line-height:1.68;color:#405149}
+.post-survey-backdrop{position:fixed;inset:0;z-index:150;background:rgba(0,0,0,.48);display:flex;align-items:flex-end;justify-content:center;padding:18px 14px calc(18px + env(safe-area-inset-bottom))}.post-survey-modal{width:min(500px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:22px;padding:20px 18px 18px;box-shadow:0 18px 54px rgba(0,0,0,.28)}.post-survey-modal .modal-kicker{display:inline-block;background:var(--kakao-yellow);color:var(--kakao-brown);border-radius:999px;padding:5px 9px;font-size:12px;font-weight:900;margin-bottom:8px}.post-survey-modal h2{font-size:21px;line-height:1.35;letter-spacing:-.5px;margin:0 0 8px}.post-survey-modal .modal-lead{font-size:15px;line-height:1.7;color:#333;margin:0 0 12px}.post-survey-modal .modal-steps{background:#F7F8FA;border-radius:14px;padding:13px 14px;margin:12px 0;font-size:13.5px;line-height:1.78;color:#333}.post-survey-modal .modal-steps b{color:var(--kakao-brown)}.post-survey-modal .modal-warn{background:#FFF9D8;border:1px solid #F1DF71;border-radius:12px;padding:11px 12px;font-size:12.5px;line-height:1.65;color:#5C5100;margin:12px 0}.post-survey-modal .wide{margin:12px 0 0;width:100%}@media (min-width:700px){.post-survey-backdrop{align-items:center}}
 
 /* v4: ANKI 선택을 '다음 문제로 가는 동작'으로 재설계 */
 .next-step{
@@ -740,14 +743,18 @@ function readEntitlement(){
   }catch(e){ return null; }
 }
 
+const bootstrapEntitlement = readEntitlement();
+const bootstrapPending = localStorage.getItem(PENDING_KEY) === '1';
+
 const state = {
-  view: (readEntitlement() || localStorage.getItem(PENDING_KEY)==='1') ? 'home' : 'learn',
+  // 승인된 이용자는 체험을 다시 거치지 않고 100문항 화면으로, 설문 제출자는 승인확인 화면으로 바로 이동한다.
+  view: bootstrapEntitlement ? 'full' : (bootstrapPending ? 'pending' : 'learn'),
   study: null,
   mock: null,
   trial: { studyCompleted:false, mockCompleted:false },
   accessCode: localStorage.getItem(ACCESS_CODE_KEY) || '',
-  pending: localStorage.getItem(PENDING_KEY) === '1',
-  entitlement: readEntitlement(),
+  pending: bootstrapPending,
+  entitlement: bootstrapEntitlement,
   statusBusy:false,
   statusMessage:'',
   toast:'',
@@ -880,6 +887,14 @@ function questionBubble(q,n,total,label){
 }
 function optionsHtml(q,mode='learn',selected=null){
   return `<div class="opts">${q.options.map((t,i)=>`<button class="opt ${selected===i?'chosen':''}" data-pick="${i}"><span class="n">${i+1}</span><span>${t}</span></button>`).join('')}</div>`;
+}
+function reviewOptionsHtml(q,pick){
+  return `<div class="opts">${q.options.map((t,i)=>{
+    let cls='dim';
+    if(i===q.answer) cls='ok';
+    else if(i===pick) cls='no';
+    return `<button class="opt ${cls}" disabled><span class="n">${i+1}</span><span>${t}</span></button>`;
+  }).join('')}</div>`;
 }
 function sourceClass(src){
   const s=(src.s||src.title||'');
@@ -1028,19 +1043,22 @@ function studyEndView(){
 
 /* ---------- mock ---------- */
 function newMockSession(){
-  state.mock={index:0,answers:Array(TRIAL_MOCK.length).fill(null),submitted:false};
+  state.mock={index:0,answers:Array(TRIAL_MOCK.length).fill(null),submitted:false,reviewIndex:0,reviewDone:false};
 }
 function mockView(){
   setTab('exam');
-  if(!state.mock || state.mock.submitted){ newMockSession(); }
+  if(!state.mock){ newMockSession(); }
+  if(state.mock.submitted){
+    return state.mock.reviewDone ? mockResultView() : mockReviewView();
+  }
   const m=state.mock, q=TRIAL_MOCK[m.index], selected=m.answers[m.index];
   chrome('미니 모의고사',{progress:Math.round(m.index/TRIAL_MOCK.length*100),right:`${m.index+1} / ${TRIAL_MOCK.length}`});
   body.innerHTML=`<div class="chatbg">
-    ${m.index===0?'<div class="session-note">시험 중에는 정답과 해설을 보여주지 않습니다. 10문항 제출 후 한 번에 확인합니다.</div>':''}
+    ${m.index===0?'<div class="session-note"><b>실전처럼 먼저 10문항을 풉니다.</b> 시험 중에는 정답과 해설을 공개하지 않고, 제출 직후 <b>1번부터 10번까지 해설 복습</b>이 자동으로 이어집니다.</div>':''}
     ${questionBubble(q,m.index+1,TRIAL_MOCK.length,'실전')}
     ${optionsHtml(q,'mock',selected)}
     <div class="mock-footer"><button class="btn b-y" id="mockNext" ${selected===null?'disabled style="opacity:.45"':''}>${m.index===TRIAL_MOCK.length-1?'답안 제출':'다음 문항 →'}</button></div>
-    <div class="mock-hint">선택 후 다음 문항으로 이동합니다. 정답 공개는 시험 종료 후입니다.</div>
+    <div class="mock-hint">선택 후 다음 문항으로 이동합니다. 정답·상세해설은 10문항 제출 직후 순서대로 확인합니다.</div>
   </div>${renderToast()}`;
   body.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>selectMock(+b.dataset.pick));
   const nx=$('#mockNext'); if(nx && selected!==null) nx.onclick=advanceMock;
@@ -1053,7 +1071,11 @@ function advanceMock(){
   const m=state.mock;
   if(m.answers[m.index]===null) return;
   if(m.index<TRIAL_MOCK.length-1){ m.index++; return mockView(); }
-  m.submitted=true; state.trial.mockCompleted=true; mockResultView();
+  m.submitted=true;
+  m.reviewIndex=0;
+  m.reviewDone=false;
+  state.trial.mockCompleted=true;
+  mockReviewView();
 }
 function categoryStats(){
   const map={};
@@ -1063,21 +1085,47 @@ function categoryStats(){
   });
   return map;
 }
+function mockReviewView(){
+  setTab('exam');
+  const m=state.mock;
+  if(!m || !m.submitted) return mockView();
+  if(m.reviewIndex>=TRIAL_MOCK.length){ m.reviewDone=true; return mockResultView(); }
+  const i=m.reviewIndex, q=TRIAL_MOCK[i], pick=m.answers[i], ok=pick===q.answer;
+  const right=TRIAL_MOCK.filter((x,j)=>m.answers[j]===x.answer).length;
+  chrome('모의고사 해설',{progress:Math.round((i+1)/TRIAL_MOCK.length*100),right:`해설 ${i+1} / ${TRIAL_MOCK.length}`});
+  body.innerHTML=`<div class="chatbg">
+    ${i===0?'<div class="mock-review-note"><b>지금부터가 핵심 학습입니다.</b><br>정답 번호만 확인하지 말고, 자동으로 펼쳐진 <b>2단계 ‘왜 그런가요?’</b>를 먼저 읽어보세요. 오답 문항은 <b>3단계 법령 근거</b>도 자동으로 펼쳐집니다.</div>':''}
+    <div class="mock-review-score"><span>채점 결과</span><strong>${right} / 10</strong><span>${ok?'이번 문항 정답':'이번 문항 오답'}</span></div>
+    ${questionBubble(q,i+1,TRIAL_MOCK.length,'해설')}
+    ${reviewOptionsHtml(q,pick)}
+    <div class="row me"><span class="tm">내 답</span><div class="bub">${pick+1}번</div></div>
+    ${explanationHtml(q,pick,{resultOnly:true})}
+    <div class="mock-review-nav">
+      <button class="btn b-y" id="mockReviewNext">${i===TRIAL_MOCK.length-1?'해설 완료 · 결과 보기':'해설 확인 후 다음 문항 →'}</button>
+    </div>
+  </div>${renderToast()}`;
+  requestAnimationFrame(()=>{
+    const explanation=body.querySelector('.exp');
+    if(explanation) explanation.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+  $('#mockReviewNext').onclick=()=>{
+    m.reviewIndex++;
+    if(m.reviewIndex>=TRIAL_MOCK.length){ m.reviewDone=true; return mockResultView(); }
+    mockReviewView();
+  };
+}
 function mockResultView(){
-  setTab('exam'); chrome('이번 학습진단',{progress:100,right:'결과 비저장'});
+  setTab('exam'); chrome('이번 학습진단',{progress:100,right:'해설 10/10 완료'});
   const right=TRIAL_MOCK.filter((q,i)=>state.mock.answers[i]===q.answer).length;
   const stats=categoryStats();
   const rows=Object.entries(stats).map(([k,v])=>`<div class="diag-row"><span>${esc(k)}</span><strong>${v.right}/${v.total}</strong></div>`).join('');
-  body.innerHTML=`<div class="res"><div class="sc">${right}<small> / 10</small></div><div class="msg">이번 10문항에서 확인된 결과입니다.<br>실제 시험 성적·합격 가능성이나 직무역량을 의미하지 않습니다.</div></div>
+  body.innerHTML=`<div class="res"><div class="sc">${right}<small> / 10</small></div><div class="msg"><b>10문항 해설까지 모두 확인했습니다.</b><br>아래 결과는 이번 학습 세션의 진단이며 실제 시험 성적·합격 가능성이나 직무역량을 의미하지 않습니다.</div></div>
   <div class="diag">${rows}</div>
-  <div class="bar">문항별 확인</div>
-  <div class="review-list">${TRIAL_MOCK.map((q,i)=>{
-    const pick=state.mock.answers[i], ok=pick===q.answer;
-    return `<div class="review-item"><div class="review-head"><span class="mk ${ok?'o':'x'}">${ok?'○':'✕'}</span><div><b>${i+1}. ${esc(q.category)}</b><br>${stripHtml(q.question)}</div></div><details><summary>정답·해설 확인</summary><div class="c">${explanationHtml(q,pick,{resultOnly:true})}</div></details></div>`;
-  }).join('')}</div>
+  <button class="wide b-y" data-action="review">10문항 해설 다시 보기</button>
   <button class="wide b-g" data-action="retry">모의고사 다시 풀기</button>
-  ${state.trial.studyCompleted ? `<button class="wide b-y" data-action="research">연구 참여자용 전체 학습도구 안내</button>` : `<button class="wide b-y" data-action="learn">학습 체험도 이어서 하기</button>`}
+  ${state.trial.studyCompleted ? `<button class="wide b-y" data-action="research">설문 참여 후 기본 100문항 학습 열기</button>` : `<button class="wide b-y" data-action="learn">학습 체험도 이어서 하기</button>`}
   <div class="center-note">개인별 정오답·점수·응시기록은 서버에 저장하지 않습니다.</div>${renderToast()}`;
+  body.querySelector('[data-action="review"]').onclick=()=>{state.mock.reviewIndex=0;state.mock.reviewDone=false;mockReviewView();};
   body.querySelector('[data-action="retry"]').onclick=()=>{state.mock=null;mockView();};
   const r=body.querySelector('[data-action="research"]'); if(r) r.onclick=()=>go('research');
   const l=body.querySelector('[data-action="learn"]'); if(l) l.onclick=()=>go('learn');
@@ -1092,9 +1140,9 @@ function homeView(){
   <div class="bar">학습 메뉴</div><ul class="menu">
     <li data-go="learn"><div class="mi y">📘</div><div><div class="mt">학습 모드</div><div class="ms">8개념 + ANKI형 세션 반복 + 3단계 해설</div></div><span class="badge ${state.trial.studyCompleted?'g':''}">${state.trial.studyCompleted?'완료':'체험'}</span></li>
     <li data-go="exam"><div class="mi b">📝</div><div><div class="mt">미니 모의고사</div><div class="ms">10문항 · 시험 종료 후 정답과 상세해설</div></div><span class="badge ${state.trial.mockCompleted?'g':''}">${state.trial.mockCompleted?'완료':'10'}</span></li>
-    ${ent?`<li data-go="full"><div class="mi y">🔓</div><div><div class="mt">전체 학습도구</div><div class="ms">승인일로부터 90일 · 현재 D-${daysLeft(ent)}</div></div><span class="badge g">이용중</span></li>`:
-      state.pending?`<li data-go="pending"><div class="mi">⏳</div><div><div class="mt">연구 참여 확인 중</div><div class="ms">통상 1~2일 정도 소요될 수 있습니다</div></div><span class="badge g">확인중</span></li>`:
-      `<li data-go="${both?'research':'home'}"><div class="mi">🎓</div><div><div class="mt">연구 참여자 학습지원</div><div class="ms">${both?'전체 학습도구 90일 무료 이용 안내':'학습·모의고사 체험 완료 후 안내'}</div></div><span class="badge ${both?'y':'g'}">${both?'열림':'체험후'}</span></li>`}
+    ${ent?`<li data-go="full"><div class="mi y">🔓</div><div><div class="mt">기본 100문항 학습</div><div class="ms">승인 완료 · 체험을 다시 풀 필요 없이 바로 이용 · D-${daysLeft(ent)}</div></div><span class="badge g">이용중</span></li>`:
+      state.pending?`<li data-go="pending"><div class="mi">⏳</div><div><div class="mt">설문 제출 완료 · 승인 확인</div><div class="ms">같은 기기·브라우저에서 승인 여부만 확인하면 됩니다</div></div><span class="badge g">대기중</span></li>`:
+      `<li data-go="${both?'research':'home'}"><div class="mi">🎓</div><div><div class="mt">설문 참여 후 기본 100문항 학습</div><div class="ms">${both?'승인 후 90일 · 기본 100문항 + 단계별 해설':'학습·모의고사 체험 완료 후 설문 참여 안내'}</div></div><span class="badge ${both?'y':'g'}">${both?'100문항':'체험후'}</span></li>`}
   </ul>
   <div class="bar">이 앱에서 기억할 것</div>
   <div class="info" style="padding-top:5px"><div class="info-card"><h3>학습기록은 저장하지 않습니다</h3><p>정오답·점수·학습진도·학습시간은 서버에 저장하지 않습니다. 이용권 확인에 필요한 인증정보만 별도로 처리합니다.</p></div></div>${renderToast()}`;
@@ -1103,30 +1151,50 @@ function homeView(){
 
 /* ---------- research / access ---------- */
 function researchView(){
-  setTab('home'); chrome('연구 참여자 학습지원',{showBack:true,progress:null,right:'90일 무료'});
+  setTab('home'); chrome('기본 100문항 이용 안내',{showBack:true,progress:null,right:'승인 후 90일'});
   ensureAccessCode();
-  body.innerHTML=`<section class="gate"><div class="lk">🎓</div><h2>연구에 참여해 주신 분에게<br>학습도구를 제공합니다.</h2>
-  <p class="lead">지금 경험하신 기능은 전체 학습도구의 일부입니다.</p>
-  <div class="steps"><b>기본 학습지원 범위</b><br>연구 참여가 확인되면 승인일부터 90일 동안 <b>검증된 기본 100문항</b>과 단계별 해설을 이용할 수 있도록 제공합니다.<br><br><b>100문항 이후</b>에 제공되는 문항은 학습에 도움을 드리기 위한 <b>추가 학습자료</b>입니다.</div>
-  <div class="info-card" style="margin:12px 0"><h3>운영 범위를 먼저 안내드립니다</h3><p>이 웹앱은 무료·비상업적 연구 및 학습지원 도구이며 상시 고객지원이 제공되는 상용 서비스가 아닙니다. 운영자는 웹개발 전문가가 아니며 본업과 연구를 병행하고 있어, 앱 오류·질문·건의에 대해 즉시 답변하거나 모든 요청을 수정·반영·업데이트하기는 어려울 수 있습니다.</p><p style="margin-top:8px">기본 100문항 이후의 추가 문항은 이러한 운영 특성을 인지한 상태에서 <b>단순 학습·참고용</b>으로 이용해 주세요. 문의나 제안은 참고할 수 있으나 개별 회신, 반영 여부 또는 처리 시점을 약속드리기 어렵습니다.</p></div>
-  <div class="steps"><b>설문은 연구자료로 활용됩니다.</b><br>문항 하나하나를 충분히 읽고 본인의 경험과 생각에 가장 가까운 응답을 선택해 주시면 연구에 큰 도움이 됩니다.<br><br>특정한 답변이나 응답의 방향을 요구하지 않습니다.</div>
-  <div class="pending-card"><div class="state">별도 인증코드 입력은 필요하지 않습니다</div><p>이 앱이 확인용 정보를 자동으로 만들고 설문에 연결합니다. 승인 후에는 <b>처음 이용을 활성화한 이 기기·브라우저</b>에서 90일간 이용됩니다.</p></div>
-  <button class="wide b-y" id="openSurvey" style="margin-left:0;width:100%">안내를 확인하고 연구 설문 참여하기</button>
-  <button class="wide b-g" id="surveyDone" style="margin-left:0;width:100%;margin-top:-5px">설문 제출을 마쳤어요</button>
-  <p style="margin-top:12px;font-size:11.5px;color:#777">이미 본 설문에 참여하신 경우에는 중복으로 응답하지 말아 주세요.</p></section>${renderToast()}`;
+  body.innerHTML=`<section class="gate"><div class="lk">🎓</div><h2>설문 참여 후<br>기본 100문항 학습이 열립니다.</h2>
+  <p class="lead"><b>체험 8개념과 미니 모의고사 10문항은 다시 풀 필요가 없습니다.</b></p>
+  <div class="steps"><b>이후 이용 순서</b><br>① 연구 설문 제출<br>② 운영자가 참여 내역 확인·승인<br>③ 같은 기기·같은 브라우저로 이 웹앱에 다시 접속<br>④ <b>‘승인 여부 확인하고 100문항 열기’</b>를 누르면 기본 100문항 학습으로 바로 이동<br><br>승인 확인은 통상 <b>1~2일 정도</b> 소요될 수 있습니다.</div>
+  <div class="steps"><b>승인 후 제공되는 학습</b><br>승인일부터 90일 동안 <b>기본 100문항 + 1단계 핵심 + 2단계 이해 + 3단계 법령근거</b>를 이용할 수 있습니다.<br><br>기본 100문항 이후의 문항은 가능한 범위에서 제공하는 추가 학습·참고 자료입니다.</div>
+  <div class="info-card" style="margin:12px 0"><h3>운영 범위를 먼저 안내드립니다</h3><p>이 웹앱은 무료·비상업적 연구 및 학습지원 도구이며 상시 고객지원이 제공되는 상용 서비스가 아닙니다. 운영자는 웹개발 전문가가 아니며 본업과 연구를 병행하고 있어, 앱 오류·질문·건의에 대해 즉시 답변하거나 모든 요청을 수정·반영·업데이트하기는 어려울 수 있습니다.</p></div>
+  <div class="pending-card"><div class="state">인증코드는 직접 입력하지 않아도 됩니다</div><p>웹앱이 확인용 코드를 자동으로 설문에 연결합니다. 승인 후에는 <b>승인을 확인한 이 기기·브라우저</b>에 90일 이용권이 연결됩니다.</p></div>
+  <button class="wide b-y" id="openSurvey" style="margin-left:0;width:100%">연구 설문 참여하기</button>
+  <button class="wide b-g" id="surveyDone" style="margin-left:0;width:100%;margin-top:-5px">설문 제출 완료 → 다음 단계 안내</button>
+  <p style="margin-top:12px;font-size:12px;line-height:1.6;color:#666">설문을 이미 제출했다면 중복 응답하지 말고 아래 ‘설문 제출 완료’ 버튼을 눌러 다음 안내로 이동하세요.</p></section>${renderToast()}`;
   $('#openSurvey').onclick=()=>window.open(buildSurveyUrl(),'_blank','noopener');
-  $('#surveyDone').onclick=()=>{ state.pending=true; localStorage.setItem(PENDING_KEY,'1'); go('pending'); };
+  $('#surveyDone').onclick=showPostSurveyGuide;
 }
+
+function showPostSurveyGuide(){
+  state.pending=true;
+  localStorage.setItem(PENDING_KEY,'1');
+  const old=document.getElementById('postSurveyGuide'); if(old) old.remove();
+  document.body.insertAdjacentHTML('beforeend',`<div class="post-survey-backdrop" id="postSurveyGuide" role="dialog" aria-modal="true" aria-labelledby="postSurveyGuideTitle">
+    <div class="post-survey-modal">
+      <span class="modal-kicker">설문 제출 후 다음 단계</span>
+      <h2 id="postSurveyGuideTitle">이제 체험문제를 다시 풀 필요가 없습니다.</h2>
+      <p class="modal-lead">설문 제출이 끝났다면 남은 절차는 <b>운영자의 참여 확인·승인</b>뿐입니다.</p>
+      <div class="modal-steps"><b>앞으로 이렇게 이용하세요</b><br>① 운영자가 설문 참여 내역을 확인합니다.<br>② 통상 <b>다음 날 또는 1~2일 뒤</b> 이 웹앱 주소를 다시 여세요.<br>③ 반드시 가능하면 <b>지금과 같은 스마트폰·같은 브라우저</b>로 접속하세요.<br>④ 화면의 <b>‘승인 여부 확인하고 100문항 열기’</b>를 누르세요.<br>⑤ 승인되었다면 체험 18문항을 반복하지 않고 <b>기본 100문항 학습으로 바로 이동</b>합니다.</div>
+      <div class="modal-warn"><b>중요</b> · 시크릿 모드 사용, 브라우저 데이터 삭제, 다른 기기·브라우저로 변경하면 기존 확인정보가 이어지지 않을 수 있습니다.</div>
+      <button class="wide b-y" id="postSurveyContinue">확인했습니다 · 승인 대기 화면으로</button>
+    </div>
+  </div>`);
+  const btn=document.getElementById('postSurveyContinue');
+  if(btn) btn.onclick=()=>{ const m=document.getElementById('postSurveyGuide'); if(m)m.remove(); go('pending'); };
+}
+
 function pendingView(){
-  setTab('home'); chrome('연구 참여 확인',{showBack:true,progress:null,right:'통상 1~2일'});
-  const code=ensureAccessCode();
-  body.innerHTML=`<section class="gate"><div class="lk">⏳</div><h2>참여 내역을 확인하고 있습니다.</h2>
-  <p>연구 참여 내역은 순차적으로 확인되며 <b>통상 1~2일 정도</b> 소요될 수 있습니다.</p>
-  <div class="pending-card"><div class="state">현재 상태 · 확인 중</div><p>확인이 완료되면 <b>지금 사용 중인 이 기기·브라우저에 이용권이 자동 연결</b>됩니다. 별도의 인증코드를 입력할 필요는 없습니다.</p></div>
-  <button class="wide b-y" id="checkStatus" style="margin-left:0;width:100%">이용 가능 여부 확인</button>
-  <button class="wide b-g" id="reopenSurvey" style="margin-left:0;width:100%;margin-top:-5px">설문 화면 다시 열기</button>
-  <div class="center-note">설문을 아직 제출하지 않았거나 중간에 닫은 경우에만 다시 열어 주세요. 이미 제출했다면 중복 응답하지 않아도 됩니다.</div>
-  <div class="mail">급한 문의사항은 <a href="mailto:${esc(APP_CONFIG.supportEmail)}">${esc(APP_CONFIG.supportEmail)}</a>으로 요청해 주세요.</div>
+  setTab('home'); chrome('설문 제출 후 승인 확인',{showBack:true,progress:null,right:'통상 1~2일'});
+  ensureAccessCode();
+  body.innerHTML=`<section class="gate"><div class="lk">⏳</div><h2>설문 제출을 마쳤다면<br>이제 승인만 확인하면 됩니다.</h2>
+  <div class="approval-note"><strong>체험문제는 다시 풀 필요 없습니다.</strong><p>운영자 승인이 확인되면 곧바로 <b>기본 100문항 학습</b>으로 이동합니다.</p></div>
+  <div class="steps"><b>다음 접속 때 할 일</b><br>① 통상 <b>다음 날 또는 1~2일 뒤</b> 같은 웹앱 주소로 다시 접속<br>② 가능하면 <b>같은 기기·같은 브라우저</b> 사용<br>③ 아래 <b>‘승인 여부 확인하고 100문항 열기’</b> 버튼 선택<br>④ 승인 완료 시 기본 100문항 학습 화면이 바로 열림</div>
+  <div class="pending-card"><div class="state">현재 상태 · 승인 확인 대기</div><p>운영자가 참여 내역을 확인하기 전에는 ‘아직 이용 활성화 전’으로 표시될 수 있습니다. 별도의 인증코드를 입력할 필요는 없습니다.</p></div>
+  <button class="wide b-y" id="checkStatus" style="margin-left:0;width:100%">승인 여부 확인하고 100문항 열기</button>
+  <button class="wide b-g" id="reopenSurvey" style="margin-left:0;width:100%;margin-top:-5px">설문 다시 열기 (미제출한 경우만)</button>
+  <div class="center-note">이미 설문을 제출했다면 다시 응답하지 마세요. 시크릿 모드·브라우저 데이터 삭제·기기 변경은 피하는 것이 좋습니다.</div>
+  <div class="mail">급한 이용 확인 문의는 <a href="mailto:${esc(APP_CONFIG.supportEmail)}">${esc(APP_CONFIG.supportEmail)}</a>으로 요청해 주세요.</div>
   ${state.statusMessage?`<div class="center-note">${esc(state.statusMessage)}</div>`:''}</section>${renderToast()}`;
   $('#checkStatus').onclick=checkAccessStatus;
   $('#reopenSurvey').onclick=()=>window.open(buildSurveyUrl(),'_blank','noopener');
@@ -1156,8 +1224,8 @@ async function checkAccessStatus(){
     else if(data && data.status==='BUSY'){
       state.statusMessage='현재 확인 요청이 겹쳤습니다. 잠시 후 다시 눌러 주세요.';
     }
-    else if(data && data.status==='REVIEW'){ state.statusMessage='참여 내역을 확인하고 있습니다. 통상 1~2일 정도 소요될 수 있습니다.'; }
-    else state.statusMessage='아직 이용 활성화 전입니다. 통상 1~2일 정도 소요될 수 있습니다.';
+    else if(data && data.status==='REVIEW'){ state.statusMessage='아직 운영자 확인 중입니다. 체험문제를 다시 풀 필요는 없습니다. 다음 날 또는 1~2일 뒤 다시 확인해 주세요.'; }
+    else state.statusMessage='아직 승인 전입니다. 체험문제를 다시 풀 필요는 없습니다. 다음 날 또는 1~2일 뒤 다시 확인해 주세요.';
     pendingView();
   };
   try{
@@ -1180,11 +1248,12 @@ async function checkAccessStatus(){
 }
 
 function fullView(){
-  setTab('home'); chrome('전체 학습도구',{showBack:true,progress:null,right:`D-${daysLeft(state.entitlement)}`});
-  body.innerHTML=`<div class="profile"><div class="pf-ico">✓</div><div><div class="pf-t">학습도구가 열렸습니다</div><div class="pf-s">연구에 참여해 주셔서 감사합니다 · 승인일부터 90일</div></div></div>
-  <div class="bar">기본 학습지원</div><ul class="menu">
-    <li id="base100"><div class="mi y">📚</div><div><div class="mt">기본 100문항</div><div class="ms">승인된 기기에서 필요한 문항만 서버에서 불러옵니다</div></div><span class="badge g">기본</span></li>
-    <li id="extraLearn"><div class="mi">＋</div><div><div class="mt">추가 학습문항</div><div class="ms">100문항 이후 · 단순 학습·참고용 추가 자료</div></div><span class="badge">추가</span></li>
+  setTab('home'); chrome('승인 완료 · 100문항 학습',{showBack:true,progress:null,right:`D-${daysLeft(state.entitlement)}`});
+  body.innerHTML=`<div class="profile"><div class="pf-ico">✓</div><div><div class="pf-t">승인이 완료되었습니다</div><div class="pf-s">체험문제를 다시 풀 필요 없이 기본 100문항을 바로 시작하세요 · 승인일부터 90일</div></div></div>
+  <div class="approval-note" style="margin:14px 18px"><strong>이제 바로 본 학습으로 들어가면 됩니다.</strong><p>앞서 풀었던 체험 8개념과 미니 모의고사 10문항을 다시 통과할 필요가 없습니다.</p></div>
+  <div class="bar">승인 후 학습</div><ul class="menu">
+    <li id="base100"><div class="mi y">📚</div><div><div class="mt">기본 100문항 바로 시작</div><div class="ms">문제 → 1단계 핵심 → 2단계 이해 → 3단계 법령근거</div></div><span class="badge g">100</span></li>
+    <li id="extraLearn"><div class="mi">＋</div><div><div class="mt">100문항 이후 추가 학습</div><div class="ms">기본 100문항 이후 · 가능한 범위의 학습·참고 자료</div></div><span class="badge">추가</span></li>
   </ul>
   <div class="info"><div class="info-card"><h3>기본 제공 범위와 추가 학습</h3><p>연구 참여자에게 제공하는 <b>기본 학습지원 범위는 100문항</b>입니다. 그 이후 문항은 가능한 범위에서 더 학습할 수 있도록 제공하는 추가 자료이며, 지속적인 추가 제공·수정·업데이트를 보장하지 않습니다.</p></div>
   <div class="info-card"><h3>운영·문의 안내</h3><p>운영자는 웹개발 전문가가 아니며 본업과 연구를 병행합니다. 앱 오류·질문·건의는 확인할 수 있으나 즉각적인 해결, 개별 회신, 기능 반영 또는 유지보수 시점을 약속드리기 어렵습니다. 학습 내용은 무료 참고용으로 이용해 주세요.</p></div>
@@ -1290,7 +1359,7 @@ function infoView(){
     <div class="info-card"><h3>정답과 해설의 기준</h3><p>법·시행령·시행규칙을 정답 판단의 우선 근거로 사용하고, 중앙회 「새마을금고법 해설」을 이해를 돕는 자료로 연결합니다. 앱 학습해설은 이를 학습하기 쉽게 재구성한 내용입니다.</p></div>
     <div class="info-card"><h3>학습 데이터</h3><p>정오답, 점수, 학습진도, 학습시간, 모의고사 결과는 서버에 저장하지 않습니다. 이용권 확인을 위한 내부 인증값·승인일·만료일과 1기기 이용을 위한 무작위 기기 연결값만 별도로 처리할 수 있습니다.</p></div>
     <div class="info-card"><h3>실제 업무에 적용할 때</h3><p>문제의 정답은 제시된 조건과 표시된 기준일 자료에 따른 학습용 판단입니다. 실제 업무·권리·의무에 영향을 미치는 판단에는 해당 시점의 현행 법령과 정관·규정·업무방법 및 공식 해석을 다시 확인해 주세요.</p></div>
-    <div class="info-card"><h3>연구 참여자 학습지원</h3><p>연구 설문 참여는 자발적이며 특정한 답변이나 응답 방향을 요구하지 않습니다. 참여 내역 확인은 통상 1~2일 정도 소요될 수 있습니다.</p></div>
+    <div class="info-card"><h3>설문 제출 후 이용방법</h3><p>설문 제출 후에는 체험문제를 다시 풀 필요가 없습니다. 운영자의 참여 확인·승인 후 같은 기기·브라우저에서 승인 여부를 확인하면 기본 100문항 학습으로 바로 이동합니다. 확인은 통상 1~2일 정도 소요될 수 있습니다.</p></div>
     <div class="info-card"><h3>문의</h3><p>급한 이용 확인 문의는 <a href="mailto:${esc(APP_CONFIG.supportEmail)}" style="color:inherit;font-weight:800">${esc(APP_CONFIG.supportEmail)}</a>으로 요청할 수 있습니다. 다만 기술 문의·개선 제안의 개별 회신이나 반영은 어려울 수 있습니다.</p></div>
   </div>${renderToast()}`;
 }
