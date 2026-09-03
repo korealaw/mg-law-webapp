@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- MG Law Webapp v8.1b FINAL · explanation-first mobile UX -->
 <html lang="ko">
 <head>
 <meta charset="utf-8">
@@ -8,22 +9,6 @@
 <link rel="canonical" href="https://korealaw.github.io/mg-law-webapp/">
 <link rel="icon" href="icon.jpg">
 <link rel="apple-touch-icon" href="icon.jpg">
-<meta property="og:type" content="website">
-<meta property="og:locale" content="ko_KR">
-<meta property="og:site_name" content="MG 새마을금고법 톡톡">
-<meta property="og:url" content="https://korealaw.github.io/mg-law-webapp/">
-<meta property="og:title" content="MG 새마을금고법 톡톡 · 간부자격 학습">
-<meta property="og:description" content="핵심문제 → 1단계 핵심 → 2단계 이해 → 3단계 법령근거로 이어지는 모바일 학습 웹앱">
-<meta property="og:image" content="https://korealaw.github.io/mg-law-webapp/og-image.jpg">
-<meta property="og:image:secure_url" content="https://korealaw.github.io/mg-law-webapp/og-image.jpg">
-<meta property="og:image:type" content="image/jpeg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="MG 새마을금고 로고">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="MG 새마을금고법 톡톡 · 간부자격 학습">
-<meta name="twitter:description" content="핵심문제와 단계형 해설·법령 근거를 모바일에서 학습합니다.">
-<meta name="twitter:image" content="https://korealaw.github.io/mg-law-webapp/og-image.jpg">
 <title>MG 새마을금고법 톡톡 · 간부자격 학습</title>
 <style>
 :root{
@@ -86,7 +71,7 @@ button{cursor:pointer}
 .opt[disabled]{cursor:default;opacity:1}.opt.dim{opacity:.52}
 
 /* explanation */
-.exp{margin:6px 0 0 49px;max-width:90%;background:#fff;border-radius:17px;overflow:hidden;box-shadow:0 8px 22px rgba(38,53,65,.12);border:1px solid rgba(0,0,0,.04)}
+.exp{margin:6px 0 0 49px;max-width:90%;background:#fff;border-radius:17px;overflow:hidden;box-shadow:0 8px 22px rgba(38,53,65,.12);border:1px solid rgba(0,0,0,.04);scroll-margin-top:72px}
 .vd{padding:14px 16px;border-bottom:1px solid var(--line)}.vd.o{background:var(--ok-bg)}.vd.x{background:var(--no-bg)}
 .vd b{font-size:17px;letter-spacing:-.3px}.vd .a{font-size:14px;color:#444;margin-top:5px;line-height:1.6}
 .l1{padding:15px 16px;font-size:16px;line-height:1.78;letter-spacing:-.28px;word-break:keep-all}
@@ -957,7 +942,7 @@ function studyView(){
   const progress=Math.round(coreDone/s.totalCore*100);
   chrome('학습 모드',{showBack:false,progress,right:item.isReview?'복습 확인':'체험 8개념'});
   body.innerHTML=`<div class="chatbg">
-    ${s.index===0?'<div class="session-note"><b>바로 한 문제 시작합니다.</b> 답을 고르면 해설과 <b>‘다음 문제로 가기’</b>가 나타납니다. 개인별 정오답·진도·점수는 서버에 저장하지 않습니다.</div>':''}
+    ${s.index===0?'<div class="session-note"><b>바로 한 문제 시작합니다.</b> 답을 고르면 <b>해설이 먼저</b> 나타납니다. 해설을 확인한 뒤 다음 문제로 진행합니다. 개인별 정오답·진도·점수는 서버에 저장하지 않습니다.</div>':''}
     ${questionBubble(q,Math.min(coreDone+1,s.totalCore),s.totalCore,item.isReview?'복습':'학습')}
     ${optionsHtml(q)}
     <div id="studyAfter"></div>
@@ -978,8 +963,8 @@ function answerStudy(pick){
     ${explanationHtml(q,pick)}
     <section class="next-step ${s.index===0?'coach':''}" aria-label="다음 문제로 이동">
       <div class="next-step-head">
-        <span class="next-kicker">다음 문제로 가기</span>
-        <strong>지금 이 문제, 얼마나 기억나나요?</strong>
+        <span class="next-kicker">해설 확인 후 다음 문제</span>
+        <strong>해설을 확인했다면, 지금 이 문제를 얼마나 기억하는지 선택하세요.</strong>
         <p>아래에서 하나를 누르면 <b>바로 다음 문제로 넘어갑니다.</b></p>
       </div>
       <div class="rating-grid">
@@ -1001,8 +986,8 @@ function answerStudy(pick){
     </section>`;
   after.querySelectorAll('[data-rate]').forEach(b=>b.onclick=()=>rateStudy(b.dataset.rate,b));
   requestAnimationFrame(()=>{
-    const panel=after.querySelector('.next-step');
-    if(panel) panel.scrollIntoView({behavior:'smooth',block:'center'});
+    const explanation=after.querySelector('.exp');
+    if(explanation) explanation.scrollIntoView({behavior:'smooth',block:'start'});
   });
 }
 function rateStudy(rate,button){
@@ -1275,9 +1260,9 @@ function answerProtected(pick){
   if(!item.isReview)s.completed++;
   markLearnOptions(q.answer,pick);
   const ok=pick===q.answer;
-  $('#protectedAfter').innerHTML=`<div class="row me"><span class="tm">지금</span><div class="bub">${pick+1}번</div></div>${explanationHtml(q,pick)}<section class="next-step"><div class="next-step-head"><span class="next-kicker">다음 문제로 가기</span><strong>지금 이 문제, 얼마나 기억나나요?</strong><p>하나를 누르면 다음 문제로 이동합니다.</p></div><div class="rating-grid"><button class="memory-btn again" data-prate="again"><span class="rate-word">다시</span><span class="rate-desc">2문제 뒤 다시</span><span class="rate-arrow">›</span></button><button class="memory-btn hard" data-prate="hard"><span class="rate-word">어려움</span><span class="rate-desc">5문제 뒤 다시</span><span class="rate-arrow">›</span></button><button class="memory-btn good ${ok?'recommended':''}" data-prate="good"><span class="rate-word">보통</span><span class="rate-desc">이해했어요 · 다음</span><span class="rate-arrow">›</span></button><button class="memory-btn easy" data-prate="easy"><span class="rate-word">쉬움</span><span class="rate-desc">확실해요 · 다음</span><span class="rate-arrow">›</span></button></div></section>`;
+  $('#protectedAfter').innerHTML=`<div class="row me"><span class="tm">지금</span><div class="bub">${pick+1}번</div></div>${explanationHtml(q,pick)}<section class="next-step"><div class="next-step-head"><span class="next-kicker">해설 확인 후 다음 문제</span><strong>해설을 확인했다면 기억 정도를 선택하세요.</strong><p>하나를 누르면 다음 문제로 이동합니다.</p></div><div class="rating-grid"><button class="memory-btn again" data-prate="again"><span class="rate-word">다시</span><span class="rate-desc">2문제 뒤 다시</span><span class="rate-arrow">›</span></button><button class="memory-btn hard" data-prate="hard"><span class="rate-word">어려움</span><span class="rate-desc">5문제 뒤 다시</span><span class="rate-arrow">›</span></button><button class="memory-btn good ${ok?'recommended':''}" data-prate="good"><span class="rate-word">보통</span><span class="rate-desc">이해했어요 · 다음</span><span class="rate-arrow">›</span></button><button class="memory-btn easy" data-prate="easy"><span class="rate-word">쉬움</span><span class="rate-desc">확실해요 · 다음</span><span class="rate-arrow">›</span></button></div></section>`;
   body.querySelectorAll('[data-prate]').forEach(b=>b.onclick=()=>rateProtected(b.dataset.prate));
-  setTimeout(()=>{const el=body.querySelector('.next-step');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});},120);
+  setTimeout(()=>{const el=body.querySelector('#protectedAfter .exp');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},120);
 }
 function rateProtected(rate){
   const s=state.protected,item=s.queue[s.index];
