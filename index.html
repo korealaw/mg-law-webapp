@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#FEE500">
+<title>새마을금고법 톡톡 · 학습체험 v8.1</title>
+<style>
+:root{
+  --kakao-yellow:#FEE500;
+  --kakao-yellow-dk:#F0D800;
+  --kakao-brown:#3C1E1E;
+  --chat-bg:#B2C7D9;
+  --bubble-in:#FFFFFF;
+  --bubble-out:#FEE500;
+  --list-bg:#FFFFFF;
+  --line:#EDEDED;
+  --sub:#8C8C8C;
+  --ink:#1A1A1A;
+  --ok:#0B8A3D;
+  --ok-bg:#EAF7EF;
+  --no:#D93025;
+  --no-bg:#FDECEA;
+  --lv2:#F5F7FA;
+  --lv3:#FBF6EC;
+  --page:#EDEDED;
+  --soft:#F6F7F8;
+  --blue:#355E9D;
+  --violet:#7557A5;
+  --shadow:0 1px 3px rgba(0,0,0,.08);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--page:#1c1c1e}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;min-height:100%}
+body{background:var(--page);font-family:"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",-apple-system,BlinkMacSystemFont,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+button,input{font:inherit}
+button{cursor:pointer}
+#app{max-width:460px;margin:0 auto;min-height:100vh;min-height:100dvh;background:var(--list-bg);display:flex;flex-direction:column;position:relative;box-shadow:0 0 24px rgba(0,0,0,.08)}
+
+/* header */
+.hd{height:54px;flex:0 0 54px;display:flex;align-items:center;gap:8px;padding:0 14px;background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30;padding-top:env(safe-area-inset-top)}
+.hd h1{font-size:17px;font-weight:800;margin:0;letter-spacing:-.45px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hd .back{width:30px;height:30px;margin-left:-6px;border:0;background:none;font-size:22px;color:var(--ink);padding:0;display:grid;place-items:center}
+.hd .right{margin-left:auto;font-size:10.5px;color:#6F6F6F;font-weight:800;border-radius:999px;background:#F4F4F4;padding:5px 8px;white-space:nowrap}
+.pg{height:3px;background:#E3E5E8;flex:0 0 3px}.pg i{display:block;height:100%;background:var(--kakao-yellow);transition:width .3s}
+.body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(60px + env(safe-area-inset-bottom))}
+
+/* chat */
+.chatbg{min-height:100%;background:var(--chat-bg);padding:13px 12px 30px}
+.session-note{margin:0 0 13px 45px;max-width:84%;font-size:10.5px;line-height:1.45;color:#3E5360;background:rgba(255,255,255,.48);border-radius:10px;padding:7px 9px}
+.who{font-size:11.5px;color:#37474F;margin:0 0 4px 45px;font-weight:650}
+.row{display:flex;margin-bottom:11px;align-items:flex-end;gap:7px}.row.me{justify-content:flex-end}
+.av{width:36px;height:36px;border-radius:13px;background:var(--kakao-brown);color:var(--kakao-yellow);flex:0 0 36px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900}
+.bub{max-width:80%;background:var(--bubble-in);border-radius:4px 15px 15px 15px;padding:11px 13px;font-size:14.5px;line-height:1.63;letter-spacing:-.32px;box-shadow:0 1px 1px rgba(0,0,0,.05);word-break:keep-all}
+.row.me .bub{background:var(--bubble-out);border-radius:15px 4px 15px 15px}.tm{font-size:10px;color:#4A5C68;align-self:flex-end;padding-bottom:2px}
+.qmeta{font-size:11px;color:#8A6D00;font-weight:850;margin-bottom:5px}.qmeta .dif{color:#52616B;margin-left:6px}
+
+/* options */
+.opts{margin:2px 0 0 45px;display:flex;flex-direction:column;gap:7px;max-width:84%}
+.opt{display:flex;gap:9px;align-items:flex-start;text-align:left;width:100%;background:#fff;border:1.5px solid #fff;border-radius:13px;padding:11px 12px;font-size:14px;line-height:1.5;letter-spacing:-.3px;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.06);word-break:keep-all}
+.opt:active{transform:scale(.985)}
+.opt .n{flex:0 0 22px;height:22px;border-radius:50%;background:#EDEFF2;color:#5A6470;font-size:11.5px;font-weight:850;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.opt.chosen{border-color:#756B59;background:#FFFDF2}.opt.chosen .n{background:var(--kakao-yellow);color:var(--kakao-brown)}
+.opt.ok{border-color:var(--ok);background:var(--ok-bg)}.opt.ok .n{background:var(--ok);color:#fff}
+.opt.no{border-color:var(--no);background:var(--no-bg)}.opt.no .n{background:var(--no);color:#fff}
+.opt[disabled]{cursor:default;opacity:1}.opt.dim{opacity:.52}
+
+/* explanation */
+.exp{margin:4px 0 0 45px;max-width:88%;background:#fff;border-radius:15px;overflow:hidden;box-shadow:var(--shadow)}
+.vd{padding:12px 14px;border-bottom:1px solid var(--line)}.vd.o{background:var(--ok-bg)}.vd.x{background:var(--no-bg)}
+.vd b{font-size:14.5px;letter-spacing:-.3px}.vd .a{font-size:12.5px;color:#555;margin-top:4px;line-height:1.5}
+.l1{padding:13px 14px;font-size:14px;line-height:1.68;letter-spacing:-.3px;word-break:keep-all}
+.l1 .tag{display:inline-block;font-size:10.5px;font-weight:850;color:#725D00;background:var(--kakao-yellow);border-radius:5px;padding:2px 6px;margin-right:6px;vertical-align:1px}
+details{border-top:1px solid var(--line)}
+summary{padding:12px 14px;font-size:13px;font-weight:750;cursor:pointer;list-style:none;display:flex;align-items:center;gap:7px;letter-spacing:-.3px;color:#2B3A45}
+summary::-webkit-details-marker{display:none}summary::after{content:"▾";margin-left:auto;font-size:12px;color:var(--sub);transition:transform .18s}details[open] summary::after{transform:rotate(180deg)}
+details .c{padding:0 14px 14px;font-size:13.5px;line-height:1.72;letter-spacing:-.3px;word-break:keep-all}details.d2{background:var(--lv2)}details.d3{background:var(--lv3)}
+.law{background:#fff;border:1px solid #E5DCC8;border-left:3px solid var(--kakao-yellow);border-radius:8px;padding:10px 12px;margin:8px 0;font-size:13px;line-height:1.7}.law .src{font-size:11px;font-weight:850;color:#8A6D00;display:block;margin-bottom:5px;letter-spacing:-.2px}
+.law.decree{border-left-color:var(--blue)}.law.rule{border-left-color:var(--violet)}
+.mini{font-size:11px;color:#777;margin-top:9px;line-height:1.55}
+
+/* rating */
+.acts{margin:10px 0 4px 45px;display:flex;gap:6px;max-width:88%}.btn{flex:1;border:0;border-radius:12px;padding:13px 6px;font-size:13px;font-weight:850;color:#222}.btn:active{transform:scale(.97)}
+.b-again{background:#FFE5E3;color:#C62B1D}.b-hard{background:#FFF1CC;color:#8D6E00}.b-good{background:#E9F3FF;color:#315E9F}.b-easy{background:#E1F3E8;color:#0B6B31}.b-y{background:var(--kakao-yellow);color:var(--kakao-brown)}.b-dark{background:var(--kakao-brown);color:#fff}.b-g{background:#F1F2F4;color:#333}
+.wide{margin:14px 12px;display:block;width:calc(100% - 24px);padding:15px;border-radius:13px;border:0;font-size:15px;font-weight:850}
+
+/* mock */
+.mock-footer{margin:12px 0 0 45px;max-width:84%;display:flex;gap:7px}.mock-footer .btn{min-height:46px}.mock-hint{margin:8px 0 0 45px;max-width:84%;font-size:11px;line-height:1.45;color:#425560}
+
+/* home/menu */
+.profile{background:var(--kakao-yellow);padding:20px 18px 17px;display:flex;align-items:center;gap:14px}.pf-ico{width:54px;height:54px;border-radius:18px;background:var(--kakao-brown);color:var(--kakao-yellow);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;flex:0 0 54px}.pf-t{font-size:17px;font-weight:850;color:var(--kakao-brown);letter-spacing:-.5px}.pf-s{font-size:12px;color:#71563C;margin-top:3px;line-height:1.5}.bar{padding:12px 18px 6px;font-size:12px;font-weight:750;color:var(--sub)}
+.menu{list-style:none;margin:0;padding:0}.menu li{display:flex;align-items:center;gap:13px;padding:14px 18px;border-bottom:1px solid var(--line);cursor:pointer;background:var(--list-bg)}.menu li:active{background:#F6F6F6}.mi{width:42px;height:42px;border-radius:14px;flex:0 0 42px;display:flex;align-items:center;justify-content:center;font-size:19px;background:#F1F2F4}.mi.y{background:var(--kakao-yellow)}.mi.b{background:var(--kakao-brown);color:var(--kakao-yellow)}.mt{font-size:15px;font-weight:750;letter-spacing:-.3px}.ms{font-size:12px;color:var(--sub);margin-top:2px;line-height:1.45}.badge{margin-left:auto;background:#FF3B30;color:#fff;font-size:11px;font-weight:750;border-radius:11px;padding:2px 8px;min-width:22px;text-align:center}.badge.g{background:#E9EAEC;color:#666}.badge.y{background:var(--kakao-yellow);color:var(--kakao-brown)}
+
+/* result */
+.res{padding:26px 20px 10px;text-align:center}.res .sc{font-size:46px;font-weight:900;letter-spacing:-2px;color:var(--kakao-brown)}.res .sc small{font-size:19px;color:var(--sub);font-weight:750}.res .msg{font-size:14px;color:#555;margin-top:8px;line-height:1.65}.diag{margin:14px 18px;border:1px solid var(--line);border-radius:14px;overflow:hidden}.diag-row{display:flex;justify-content:space-between;gap:8px;padding:11px 13px;border-bottom:1px solid var(--line);font-size:13px}.diag-row:last-child{border-bottom:0}.diag-row strong{color:var(--kakao-brown)}
+.review-list{margin:12px 12px 0}.review-item{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:9px;overflow:hidden}.review-head{padding:12px 13px;display:flex;gap:9px;align-items:flex-start;font-size:13.5px;line-height:1.5}.review-head .mk{font-weight:900;font-size:15px}.review-head .mk.o{color:var(--ok)}.review-head .mk.x{color:var(--no)}.review-item details .c{background:#FAFAFA}.review-item .exp{margin:0;max-width:none;box-shadow:none;border-radius:0}
+
+/* research / access */
+.gate{padding:28px 22px;text-align:center}.gate .lk{font-size:42px}.gate h2{font-size:20px;margin:13px 0 8px;letter-spacing:-.5px}.gate p{font-size:13.5px;color:#555;line-height:1.75;margin:0 0 6px;word-break:keep-all}.gate .lead{font-size:15px;color:#2B2926}.steps{text-align:left;background:#F7F8FA;border-radius:14px;padding:14px 16px;margin:17px 0;font-size:13px;line-height:1.85;color:#333}.steps b{color:var(--kakao-brown)}
+.codebox{background:#FFF9D8;border:1px solid #F1DF71;border-radius:13px;padding:12px;margin:13px 0;text-align:left}.codebox .label{font-size:10.5px;color:#776400;font-weight:850}.codebox code{display:block;font-size:18px;letter-spacing:1.7px;font-weight:900;color:var(--kakao-brown);margin-top:4px;word-break:break-all}.code-actions{display:flex;gap:7px;margin-top:8px}.code-actions button{border:0;background:#fff;border-radius:9px;padding:8px 10px;font-size:11px;font-weight:800}
+.pending-card{background:#F7F8FA;border-radius:14px;padding:14px 15px;text-align:left;margin:16px 0}.pending-card .state{font-size:15px;font-weight:850;margin-bottom:5px}.pending-card p{font-size:12.5px;margin:0;color:#5F5F5F;line-height:1.6}.mail{font-size:12px;color:#555;margin-top:10px;line-height:1.55}.mail a{color:inherit;font-weight:800;text-decoration:none}
+
+/* info */
+.info{padding:18px}.info-card{border:1px solid var(--line);border-radius:15px;padding:14px 15px;margin-bottom:10px;background:#fff}.info-card h3{font-size:14px;margin:0 0 7px}.info-card p,.info-card li{font-size:12.5px;color:#5C5C5C;line-height:1.65}.info-card ul{padding-left:18px;margin:6px 0 0}.small-status{display:inline-block;background:#F2F2F2;border-radius:999px;padding:5px 8px;font-size:10.5px;font-weight:800;color:#666}
+
+/* tabs */
+.tabs{position:fixed;left:50%;transform:translateX(-50%);bottom:0;z-index:40;width:min(460px,100%);height:58px;display:flex;border-top:1px solid var(--line);background:rgba(255,255,255,.97);padding-bottom:env(safe-area-inset-bottom)}.tab{flex:1;border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#B0B4B9;padding:0}.tab .ic{font-size:18px;line-height:1}.tab .lb{font-size:10.5px;font-weight:750}.tab.on{color:var(--kakao-brown)}
+
+.hidden{display:none!important}.spacer{height:12px}.center-note{text-align:center;color:#777;font-size:11px;line-height:1.55;padding:8px 18px 20px}
+.toast{position:fixed;z-index:100;left:50%;bottom:78px;transform:translateX(-50%);width:min(390px,calc(100% - 32px));background:#252525;color:#fff;padding:11px 14px;border-radius:12px;font-size:12.5px;text-align:center;box-shadow:0 7px 26px rgba(0,0,0,.22)}
+
+/* v4: ANKI 선택을 '다음 문제로 가는 동작'으로 재설계 */
+.next-step{
+  margin:13px 0 6px 45px;max-width:88%;background:rgba(255,255,255,.98);
+  border:2px solid var(--kakao-yellow);border-radius:17px;padding:13px;
+  box-shadow:0 5px 18px rgba(38,53,65,.14);position:relative;overflow:hidden
+}
+.next-step::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--kakao-yellow)}
+.next-step-head{padding:2px 2px 10px}
+.next-kicker{display:inline-block;background:var(--kakao-yellow);color:var(--kakao-brown);border-radius:999px;padding:4px 8px;font-size:10.5px;font-weight:900;margin-bottom:7px}
+.next-step-head strong{display:block;font-size:15px;line-height:1.35;letter-spacing:-.4px;color:#202020}
+.next-step-head p{margin:4px 0 0;font-size:11.5px;line-height:1.5;color:#5C6870}
+.rating-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.memory-btn{
+  position:relative;min-height:67px;border:0;border-radius:13px;padding:10px 28px 9px 11px;
+  text-align:left;display:flex;flex-direction:column;justify-content:center;box-shadow:inset 0 0 0 1px rgba(0,0,0,.035);
+  transition:transform .12s ease,box-shadow .12s ease,opacity .12s ease
+}
+.memory-btn:active{transform:scale(.975)}
+.memory-btn .rate-word{font-size:14.5px;font-weight:900;line-height:1.15;letter-spacing:-.25px}
+.memory-btn .rate-desc{font-size:10.5px;font-weight:700;line-height:1.3;margin-top:5px;opacity:.82;white-space:nowrap}
+.memory-btn .rate-arrow{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:23px;line-height:1;font-weight:600;opacity:.55}
+.memory-btn.again{background:#FFE5E3;color:#B92A1D}.memory-btn.hard{background:#FFF0C4;color:#805F00}.memory-btn.good{background:#E7F1FF;color:#2D5794}.memory-btn.easy{background:#DFF3E7;color:#087033}
+.memory-btn.recommended{box-shadow:inset 0 0 0 2px currentColor,0 2px 8px rgba(0,0,0,.07)}
+.memory-btn .rec{position:absolute;right:8px;top:7px;background:rgba(255,255,255,.86);border-radius:999px;padding:2px 5px;font-size:8.5px;font-weight:900;letter-spacing:-.15px}
+.memory-btn.picked{box-shadow:inset 0 0 0 3px currentColor,0 2px 8px rgba(0,0,0,.09);transform:scale(.985)}
+.memory-btn:disabled:not(.picked){opacity:.42}
+.rate-guide{margin-top:9px;background:#F6F7F8;border-radius:10px;padding:8px 9px;font-size:10.5px;line-height:1.55;color:#53616A}
+.rate-guide b{color:#2D363B}
+.rate-status{min-height:0;margin-top:0;font-size:11px;font-weight:800;line-height:1.45;color:#3C1E1E;transition:all .15s ease}
+.rate-status:not(:empty){min-height:18px;margin-top:8px;background:#FFF9D3;border-radius:9px;padding:7px 8px}
+.next-step.coach{animation:nextStepGlow 1.15s ease-out 1}
+@keyframes nextStepGlow{0%{box-shadow:0 0 0 0 rgba(254,229,0,.72),0 5px 18px rgba(38,53,65,.14)}55%{box-shadow:0 0 0 8px rgba(254,229,0,.18),0 5px 18px rgba(38,53,65,.14)}100%{box-shadow:0 0 0 0 rgba(254,229,0,0),0 5px 18px rgba(38,53,65,.14)}}
+@media (prefers-reduced-motion:reduce){.next-step.coach{animation:none}.memory-btn{transition:none}}
+@media (max-width:350px){.next-step{margin-left:38px;max-width:calc(100% - 38px)}.rating-grid{gap:6px}.memory-btn{padding-left:9px;padding-right:22px}.memory-btn .rate-desc{font-size:9.5px}}
+
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="hd">
+    <button class="back hidden" id="back" aria-label="뒤로">‹</button>
+    <h1 id="title">새마을금고법 톡톡</h1>
+    <span class="right" id="hdright">학습용 · 2026.09</span>
+  </header>
+  <div class="pg" id="pgwrap"><i id="pgbar" style="width:0%"></i></div>
+  <main class="body" id="body"></main>
+  <nav class="tabs" id="tabs" aria-label="주요 메뉴">
+    <button class="tab" data-t="home"><span class="ic">💬</span><span class="lb">홈</span></button>
+    <button class="tab on" data-t="learn"><span class="ic">📘</span><span class="lb">학습</span></button>
+    <button class="tab" data-t="exam"><span class="ic">📝</span><span class="lb">모의고사</span></button>
+    <button class="tab" data-t="info"><span class="ic">ⓘ</span><span class="lb">안내</span></button>
+  </nav>
+</div>
+<script>
+const APP_CONFIG = {
+  lawBaseDate: '2026.09',
+  surveyUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSdoDduFRHLdQStizzB6liYztHv1PSduSa4zFdub-4yZF6E8lw/viewform',
+  surveyEntryId: 'entry.310247277', // 실제 Google Form '웹앱 이용 인증코드' 문항
+  statusEndpoint: 'https://script.google.com/macros/s/AKfycbyMu_dPSXJpcTNfer5uNQVYj9_Y1qzFxswuuR2jxu6Bn7C_ctAg6nVsLv36Dkfbt79e/exec', // 실제 배포된 Google Apps Script Web App URL
+  supportEmail: 'ok06250815ok@gmail.com',
+  accessDays: 90,
+  baseQuestionCommitment: 100,
+  contentBatchSize: 10
+};
+
+const TRIAL_STUDY = [
+  {
+    "id": "L01",
+    "category": "총론",
+    "question": "새마을금고법 제1조가 정한 이 법의 목적으로 <b>보기 어려운</b> 것은?",
+    "options": [
+      "자금의 조성과 이용",
+      "회원의 경제적·사회적·문화적 지위 향상",
+      "지역사회 개발을 통한 건전한 국민정신 함양",
+      "출자자의 투자수익 극대화"
+    ],
+    "answer": 3,
+    "step1": "금고는 <b>비영리법인</b>입니다. 투자수익 극대화는 목적에 없습니다.",
+    "step2": "해설서는 금고법의 목적을 ‘상부상조 정신에 입각한 협동조직’으로 설명합니다. 금고는 회원 상호간의 자금 조성·이용을 통해 지위를 향상시키고 지역사회를 개발하는 것이 존립 이유이며, 이익 분배를 목적으로 하는 영리법인(주식회사)과 근본적으로 다릅니다. 잉여금 배당이 있더라도 그것은 출자에 대한 이용 대가일 뿐, 영리성을 인정하는 근거가 되지 않습니다.<br><br>💡 <b>비교로 이해하기</b> — 주식회사는 ‘돈을 굴려 배당을 늘리는 조직’, 금고는 ‘회원끼리 돈을 모아 서로 빌려 쓰는 계(契)의 법인화’라고 보면 쉽습니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제1조(목적)",
+        "t": "이 법은 국민의 자주적인 협동 조직을 바탕으로 우리나라 고유의 상부상조 정신에 입각하여 자금의 조성과 이용, 회원의 경제적·사회적·문화적 지위의 향상, 지역사회 개발을 통한 건전한 국민정신의 함양과 국가경제 발전에 이바지함을 목적으로 한다."
+      },
+      {
+        "s": "새마을금고법 제2조(정의와 명칭) 제1항",
+        "t": "이 법에서 “금고”란 제1조의 목적을 달성하기 위하여 이 법에 따라 설립된 비영리법인인 새마을금고를 말한다."
+      }
+    ]
+  },
+  {
+    "id": "L02",
+    "category": "금고의 설립",
+    "question": "금고 설립에 필요한 <b>발기인</b>의 최소 인원은?",
+    "options": [
+      "20명 이상",
+      "30명 이상",
+      "50명 이상",
+      "100명 이상"
+    ],
+    "answer": 2,
+    "step1": "발기인 <b>50명</b> 이상 (제7조제1항).",
+    "step2": "금고 설립은 ①발기인 50명 이상이 회장이 정하는 정관례에 따라 정관 작성 → ②창립총회 의결 → ③회장을 거쳐 특별자치시장·특별자치도지사 또는 시장·군수·구청장의 <b>인가</b> → ④주된 사무소 소재지에서 <b>설립등기</b> 순으로 진행되며, 등기로 비로소 법인이 성립합니다.<br><br>⚠️ <b>혼동 주의</b> — 발기인 <b>50명</b> / 설립동의자 <b>100명</b> / 회원 수 <b>100명</b> 이상은 서로 다른 숫자입니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제7조(설립) 제1항",
+        "t": "금고는 50명 이상의 발기인이 중앙회장(이하 “회장”이라 한다)이 정하는 정관례에 따라 정관을 작성하여 창립총회의 의결을 거친 뒤에 회장을 거쳐 특별자치시장·특별자치도지사 또는 시장·군수·구청장의 인가를 받아 그 주된 사무소의 소재지에서 설립등기를 함으로써 성립한다."
+      },
+      {
+        "s": "새마을금고법 시행령 제4조(인가의 세부 요건) 제1항",
+        "t": "법 제7조의2제1항제1호에 따른 출자금은 법 제9조제1항에 따른 회원의 자격이 있는 설립동의자(100명 이상이어야 한다)가 납입한 출자금의 총액으로 하되, (이하 생략)"
+      }
+    ]
+  },
+  {
+    "id": "L03",
+    "category": "회원과 출자",
+    "question": "탈퇴한 회원의 환급청구권 소멸시효 기간이 옳게 짝지어진 것은?",
+    "options": [
+      "출자금 2년 / 예탁금·적금 5년",
+      "출자금 5년 / 예탁금·적금 2년",
+      "출자금·예탁금 모두 3년",
+      "출자금·예탁금 모두 5년"
+    ],
+    "answer": 0,
+    "step1": "<b>출자금 2년, 예탁금·적금 5년</b>입니다.",
+    "step2": "탈퇴 회원은 예탁금·적금의 환급을 청구할 수 있고, 출자금은 <b>탈퇴 당시 회계연도의 다음 회계연도부터</b> 청구할 수 있습니다. 출자금 환급 시기를 늦추는 것은 금고의 자본이 갑자기 빠져나가지 않도록 하기 위한 것입니다. 또한 금고 재산으로 채무를 다 갚을 수 없으면 탈퇴·제명 회원이 부담할 손실액을 빼고 환급할 수 있습니다.<br><br>💡 <b>암기 훅</b> — “출자는 <b>2</b>년, 예·적금은 <b>5</b>년 → 짧은 게 출자”",
+    "sources": [
+      {
+        "s": "새마을금고법 제10조(탈퇴 등) 제4항~제7항",
+        "t": "④ 탈퇴한 회원은 정관으로 정하는 바에 따라 그의 예탁금 및 적금의 환급을 청구할 수 있다.<br>⑤ 탈퇴한 회원은 탈퇴 당시 회계연도 다음 회계연도부터 정관으로 정하는 바에 따라 출자금의 환급을 청구할 수 있다.<br>⑥ 금고는 금고의 재산으로 그 채무를 다 갚을 수 없는 경우에는 출자금을 환급할 때 탈퇴하거나 제명된 회원이 부담하여야 할 손실액을 빼고 환급할 수 있다.<br>⑦ 제4항 및 제5항에 따른 환급청구권은 환급을 청구할 수 있는 날부터 출자금은 2년 간, 예탁금·적금은 5년 간 행사하지 아니하면 시효의 완성으로 소멸한다."
+      }
+    ]
+  },
+  {
+    "id": "L04",
+    "category": "금고의 기관",
+    "question": "정관 변경, 해산·합병·휴업의 총회 의결정족수는?",
+    "options": [
+      "재적회원 과반수 출석 + 출석회원 과반수 찬성",
+      "재적회원 과반수 출석 + 출석회원 3분의 2 이상 찬성",
+      "재적회원 3분의 2 출석 + 출석회원 과반수 찬성",
+      "재적회원 전원 출석 + 만장일치"
+    ],
+    "answer": 1,
+    "step1": "<b>특별의결</b> = 과반수 출석 + 출석 3분의 2 이상 찬성.",
+    "step2": "금고법은 보통결의(과반수 출석·출석 과반수 찬성)를 원칙으로 하되, ①정관 변경 ②해산·합병·휴업 ③긴급안건 채택 ④자본금 감소는 <b>특별결의</b>로 정합니다.<br><br>⚠️ <b>2025.1.7. 개정 포인트</b> — 재적회원이 <b>500명을 초과</b>하는 금고는 ‘251명 이상 출석’으로 개의할 수 있고, 특별결의에서도 ‘재적 과반수’ 대신 ‘251명 이상’ 기준을 적용합니다. 대형 금고에서 과반수 출석이 사실상 불가능한 현실을 반영한 것입니다.<br><br>💡 총회 의결이 가부동수이면 부결로 봅니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제13조(총회의 개의와 의결)",
+        "t": "① 총회는 이 법에 다른 규정이 있는 경우 외에는 재적회원 과반수의 출석으로 개의하고 출석회원 과반수의 찬성으로 의결한다. 다만, 재적회원이 500명을 초과하는 경우에는 251명 이상 출석으로 개의하고 출석회원 과반수의 찬성으로 의결할 수 있다.<br>② 제12조제4항제1호 및 제2호의 사항은 재적회원 과반수(제1항 단서의 경우에는 251명 이상의 회원)의 출석과 출석회원 3분의 2 이상의 찬성으로 의결하여야 한다.<br>④ 금고와 특정회원과의 관련 사항을 의결하는 경우에는 그 회원은 의결권이 없다."
+      }
+    ]
+  },
+  {
+    "id": "L05",
+    "category": "금고의 기관",
+    "question": "금고 임원의 임기로 옳은 것은?",
+    "options": [
+      "이사장·이사 4년, 감사 3년",
+      "이사장·이사 3년, 감사 2년",
+      "전 임원 4년",
+      "이사장 4년, 이사·감사 각 2년"
+    ],
+    "answer": 0,
+    "step1": "이사장·이사 <b>4년</b>, 감사 <b>3년</b>. 이사장은 <b>2차</b>에 한정하여 연임.",
+    "step2": "재선거로 선임된 임원은 ‘재선거 실시 전 선거로 선출된 임원의 남은 임기’, 보궐선거로 선임된 임원은 ‘전임자의 남은 임기’를 채웁니다.<br><br>⚠️ <b>연임 계산의 함정</b> (제20조제3항)<br>• 이사장이 임기만료일 전 <b>2년</b>부터 임기만료일 사이에 퇴임하면 → <b>1회 재임</b>한 것으로 본다<br>• 임기만료로 퇴임한 이사장이 <b>2년 이내</b>에 다시 선임되면 → <b>연임</b>한 것으로 본다<br>즉 사퇴나 징검다리로 연임 제한을 회피할 수 없습니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제20조(임원의 임기)",
+        "t": "① 이사장 및 이사의 임기는 4년으로 하고, 감사의 임기는 3년으로 한다.<br>② 임원 중 일부의 궐원으로 인한 재선거 또는 보궐선거로 선임된 임원의 임기는 1. 재선거의 경우에는 재선거 실시 전에 실시한 선거로 선출된 임원의 남은 임기 2. 보궐선거의 경우에는 전임자의 남은 임기<br>③ 이사장은 2차에 한정하여 연임할 수 있다. 이 경우 이사장이 임기만료일 전 2년부터 임기만료일까지 퇴임한 경우에는 1회를 재임한 것으로 보고, 임기만료에 따라 퇴임한 이사장이 임기만료 후 2년 이내에 이사장으로 선임되는 경우에는 연임한 것으로 본다."
+      }
+    ]
+  },
+  {
+    "id": "L06",
+    "category": "금고의 기관",
+    "question": "임원선거 후보자가 통상적 범위에서 1명에게 제공할 수 있는 축의·부의금품의 한도는?",
+    "options": [
+      "3만원 이내",
+      "5만원 이내",
+      "10만원 이내",
+      "제공 자체가 전면 금지"
+    ],
+    "answer": 1,
+    "step1": "축의·부의금품(화환·화분 포함) <b>5만원</b> 이내.",
+    "step2": "기부행위 제한은 임원 임기만료일 전 <b>180일</b>(재·보궐은 실시사유 확정일)부터 선거일까지 적용됩니다. 다만 통상적 범위의 의례적 행위는 기부행위로 보지 않으며, 그 금액 범위를 시행규칙이 정합니다.<br><br>📌 <b>금액 4종 암기</b><br>• 축의·부의금품(화환·화분 포함) — <b>5만원</b><br>• 음식물 — <b>3만원</b><br>• 답례품 — <b>1만원</b><br>• 의례적인 선물 — <b>3만원</b><br><br>⚠️ 위반 시 2년 이하 징역 또는 2천만원 이하 벌금(제85조제3항), 공소시효는 선거일 후 6개월입니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제22조의2(기부행위의 제한) 제1항",
+        "t": "금고의 임원 선거 후보자, 그 배우자 및 후보자가 속한 기관·단체·시설은 임원의 임기만료일 전 180일(재선거 또는 보궐선거의 경우에는 그 선거의 실시 사유가 확정된 날)부터 그 선거일까지 회원이나 그 가족 또는 회원이나 그 가족이 설립·운영하고 있는 기관·단체·시설에 대하여 금전·물품이나 그 밖의 재산상 이익의 제공, 이익 제공의 의사표시 또는 그 제공을 약속하는 행위를 할 수 없다."
+      },
+      {
+        "s": "새마을금고법 시행규칙 제5조의3(축의·부의금품 등의 금액 범위)",
+        "t": "1. 축의·부의금품(화환·화분을 포함한다): 5만원 이내 2. 음식물: 3만원 이내 3. 답례품: 1만원 이내 4. 의례적인 선물: 3만원 이내"
+      }
+    ]
+  },
+  {
+    "id": "L07",
+    "category": "금고의 사업",
+    "question": "2026년 9월 3일 현재 금고의 상환준비금 보유·예치 기준으로 옳은 것은?",
+    "options": [
+      "전월 말일 예탁금·적금 잔액의 10% 이상 보유, 그중 70% 이상 중앙회 예치",
+      "전월 말일 예탁금·적금 잔액의 10% 이상 보유, 그중 60% 이상 중앙회 예치",
+      "전월 말일 예탁금·적금 잔액의 10% 이상 보유, 그중 80% 이상 중앙회 예치",
+      "총자산의 10% 이상 보유, 전액 중앙회 예치"
+    ],
+    "answer": 0,
+    "step1": "<b>10% 이상 보유 → 2026.9.3. 현재 그중 70% 이상 중앙회 예치</b>",
+    "step2": "상환준비금 자체는 전월 말일 예탁금·적금 잔액의 <b>10% 이상</b>을 보유합니다. 법 본문은 중앙회 예치비율을 80% 이상으로 정하지만, 제20648호 부칙 제14조가 단계적 특례를 둡니다.<br><br>• 제28조제5항 개정규정 시행 — <b>2025.7.8.</b><br>• 시행일부터 첫 1년 — <b>60% 이상</b><br>• 그 다음 1년 — <b>70% 이상</b><br>• 따라서 2026.9.3. 현재 — <b>70% 이상</b><br>• 예치 시기 — 매월 말일 기준액을 <b>다음 달 5일까지</b><br><br>💡 본문 숫자만 외우지 말고 <b>기준일 + 부칙</b>을 함께 확인하는 문제입니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제28조제5항",
+        "t": "상환준비금은 전월 말일 현재 예탁금·적금 잔액의 100분의 10 이상을 보유하고, 본문상 중앙회 예치비율은 100분의 80 이상이다."
+      },
+      {
+        "s": "법률 제20648호 부칙 제14조(상환준비금 예치에 관한 특례)",
+        "t": "제28조제5항 개정규정의 시행일인 2025.7.8.부터 1년까지 60% 이상, 그 다음 1년까지 70% 이상을 적용한다. 따라서 2026.9.3.에는 70% 이상이다."
+      },
+      {
+        "s": "새마을금고법 시행령 제16조제1항",
+        "t": "중앙회 예치분은 다음 달 5일까지 예치한다. 예치비율은 법률 부칙의 특례를 함께 적용한다."
+      }
+    ]
+  },
+  {
+    "id": "L08",
+    "category": "예금보험제도",
+    "question": "예금자보호준비금에 관한 설명으로 <b>옳지 않은</b> 것은?",
+    "options": [
+      "중앙회에 설치·운영한다",
+      "금고 및 중앙회는 준비금에 가입하여야 한다",
+      "금고는 납입한 출연금의 반환을 청구할 수 있다",
+      "준비금의 운용 중요사항은 준비금관리위원회가 심의·결정한다"
+    ],
+    "answer": 2,
+    "step1": "납입한 <b>출연금은 반환 청구가 불가</b>합니다.",
+    "step2": "금고의 예금자보호는 예금보험공사가 아니라 <b>중앙회의 예금자보호준비금</b>이 담당합니다. 이 점이 은행·저축은행과 다른 결정적 차이입니다.<br><br>📌 <b>준비금 조성 재원</b> — ①금고·중앙회 출연금 ②타회계 전입금·차입금 ③운용 수익금 ④정부·한국은행·금융기관 차입금 ⑤그 밖의 수입금<br><br>💡 출연금 비율은 금고별 경영·재무 상황을 고려해 <b>다르게</b> 정할 수 있습니다(차등출연). 적립액이 목표규모에 도달하면 출연금을 감면할 수 있습니다(제72조의2).",
+    "sources": [
+      {
+        "s": "새마을금고법 제71조(예금자보호준비금 설치 등)",
+        "t": "① 중앙회는 금고의 회원(제30조에 따른 비회원을 포함한다)이 납입한 예탁금, 적금, 그 밖의 수입금과 중앙회의 공제금, 자기앞수표를 결제하기 위한 별단예탁금에 대한 환급을 보장하며 그 회원의 재산을 보호하고 금고의 건전한 육성을 도모하기 위하여 중앙회에 예금자보호준비금을 설치·운영한다.<br>② 금고 및 중앙회는 제1항에 따른 준비금에 가입하여야 한다.<br>③ 중앙회는 준비금의 운용에 관한 중요 사항을 심의·결정하기 위하여 준비금관리위원회를 둔다."
+      },
+      {
+        "s": "새마을금고법 제72조(준비금의 조성 등)",
+        "t": "① 준비금은 1. 금고 및 중앙회가 납입하는 출연금 2. 타회계에서 넘어온 전입금 및 차입금 3. 준비금의 운용에 의하여 생기는 수익금 4. 정부, 한국은행 또는 금융기관으로부터의 차입금 5. 그 밖의 수입금으로 조성한다.<br>③ 금고 및 중앙회는 제1항제1호에 따라 납입한 출연금의 반환을 청구할 수 없다.<br>④ 제1항제1호에 따른 출연금은 금고별로 경영 및 재무 상황 등을 고려하여 그 비율을 다르게 할 수 있다."
+      }
+    ]
+  }
+];
+
+const TRIAL_MOCK = [
+  {
+    "id": "M01",
+    "category": "금고의 설립",
+    "question": "창립총회의 의결 요건으로 옳은 것은?",
+    "options": [
+      "설립동의서 제출자 과반수 출석, 출석자 과반수 찬성",
+      "설립동의서 제출자 과반수 출석, 출석자 3분의 2 이상 찬성",
+      "발기인 전원 찬성",
+      "설립동의자 3분의 2 이상 출석, 출석자 과반수 찬성"
+    ],
+    "answer": 1,
+    "step1": "과반수 출석 + <b>출석자 3분의 2</b> 이상 찬성 (특별의결).",
+    "step2": "창립총회는 금고의 존립 자체를 결정하는 자리이므로 일반 총회보다 무거운 <b>특별의결</b> 요건을 둡니다. 개의(정족수)는 ‘설립 동의서를 개의 전까지 제출한 자’ 과반수 출석이고, 의결은 출석자 3분의 2 이상 찬성입니다.<br><br>💡 <b>정족수 두 종류</b><br>• 개의(의사)정족수 — 회의를 열고 유지하는 데 필요한 수<br>• 의결정족수 — 안건을 통과시키는 데 필요한 찬성 수",
+    "sources": [
+      {
+        "s": "새마을금고법 제7조(설립) 제2항",
+        "t": "창립총회의 의사(議事)는 발기인에게 금고 설립 동의서를 개의(開議) 전까지 제출한 자 과반수의 출석과 출석자 3분의 2 이상의 찬성으로 의결한다."
+      }
+    ]
+  },
+  {
+    "id": "M02",
+    "category": "회원과 출자",
+    "question": "한 회원이 가질 수 있는 출자좌수의 최고한도는?",
+    "options": [
+      "총출자좌수의 100분의 5",
+      "총출자좌수의 100분의 10",
+      "총출자좌수의 100분의 15",
+      "총출자좌수의 100분의 20"
+    ],
+    "answer": 2,
+    "step1": "총출자좌수의 <b>100분의 15</b>를 초과할 수 없습니다.",
+    "step2": "특정인이 출자를 과도하게 보유해 금고를 사실상 지배하는 것을 막기 위한 장치입니다. 협동조합의 기본원칙인 ‘1인 1표’와 짝을 이룹니다. 회원은 출자좌수와 관계없이 <b>평등한 의결권과 선거권</b>을 가집니다.<br><br>💡 <b>비교</b> — 주식회사는 1주 1의결권(자본 다수결), 금고는 1인 1표(인적 다수결)입니다.<br><br>⚠️ 다만 2025.1.7. 개정으로 미성년 회원, 자격 유지 6개월 미만 회원, 출자액이 고시 금액 미만인 회원은 정관으로 의결권·선거권을 제한할 수 있게 되었습니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제9조(회원과 자본금) 제4항~제6항",
+        "t": "④ 출자 1좌의 금액은 정관으로 정하며, 한 회원이 가질 수 있는 출자좌수의 최고한도는 총출자좌수의 100분의 15를 초과할 수 없다.<br>⑤ 회원은 출자좌수에 관계없이 평등한 의결권과 선거권을 가진다. 다만, 1. 미성년인 회원 2. 해당 금고의 회원 자격을 유지한 기간이 6개월 미만인 회원 3. 출자액이 행정안전부장관이 정하여 고시하는 금액 미만인 회원에 대하여는 정관으로 정하는 바에 따라 의결권과 선거권을 제한할 수 있다.<br>⑥ 회원은 다른 회원을 대리인으로 하여 의결권을 행사할 수 있다. 이 경우 한 회원이 대리할 수 있는 회원의 수는 두 명을 초과할 수 없다."
+      }
+    ]
+  },
+  {
+    "id": "M03",
+    "category": "금고의 기관",
+    "question": "총회의 의결사항이 <b>아닌</b> 것은?",
+    "options": [
+      "정관의 변경",
+      "해산, 합병 또는 휴업",
+      "규정의 제정·변경 또는 폐지",
+      "사업계획, 예산의 결정"
+    ],
+    "answer": 2,
+    "step1": "‘규정’의 제정·변경·폐지는 <b>이사회</b> 의결사항입니다.",
+    "step2": "총회는 최고의사결정기관으로 금고의 근본적 사항을 정합니다(정관변경, 해산·합병·휴업, 임원 선임·해임, 기본재산 처분, 결산보고서 승인, 사업계획·예산 결정, 경비의 부과·징수 방법 등).<br>이사회는 집행에 관한 사항을 정합니다(규정의 제·개정, 사업집행 기본방침, 소요자금 차입, 간부직원 임면과 직원 징계 등).<br><br>💡 <b>구분 기준</b> — “<b>정관</b>은 총회, <b>규정</b>은 이사회”. 자치규범 순위(정관&gt;규약&gt;규정)와 결정기관이 맞물립니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제12조(총회) 제4항",
+        "t": "1. 정관의 변경 2. 해산, 합병 또는 휴업 3. 임원의 선임과 해임 4. 기본 재산의 처분 5. 결산보고서의 승인 6. 사업계획, 예산의 결정 7. 경비의 부과와 징수 방법 8. 그 밖의 중요한 사항"
+      },
+      {
+        "s": "새마을금고법 제17조(이사회) 제5항",
+        "t": "1. 규정의 제정, 변경 또는 폐지 2. 사업 집행에 대한 기본 방침의 결정 3. 소요 자금의 차입 4. 정관으로 정하는 간부 직원의 임면과 직원의 징계 5. 상근이사에 대한 성과평가의 실시에 관한 사항 6. 총회로부터 위임된 사항과 총회에 부칠 사항 7. 그 밖에 이사장이 회의에 부치는 사항"
+      }
+    ]
+  },
+  {
+    "id": "M04",
+    "category": "금고의 기관",
+    "question": "금고 감사의 감사(監査) 실시 주기는?",
+    "options": [
+      "매월 1회 이상",
+      "분기마다 1회 이상",
+      "반기마다 1회 이상",
+      "매년 1회 이상"
+    ],
+    "answer": 1,
+    "step1": "<b>분기마다 1회 이상</b> 감사하고 총회와 이사회에 보고합니다.",
+    "step2": "해설서는 감사를 ‘회원의 감시기능을 대신하는 기관’으로 설명합니다. 소유와 경영이 분리된 결과 이사장·이사가 재산을 공정하게 관리한다는 보장이 없으므로, 견제 기구로 감사를 둡니다.<br><br>감사의 주요 권한<br>• 금고와 <b>이사장</b> 사이의 소송·계약 등 법률행위에서 금고를 <b>대표</b><br>• 총회·이사회 출석 의견진술권<br>• 부정한 사실 발견 시 이사장에게 총회 소집 요구<br>• 이사장이 기간 내 총회를 열지 않으면 <b>5일 이내</b> 감사가 직접 소집·의장 대행",
+    "sources": [
+      {
+        "s": "새마을금고법 제19조(임원과 직원) 제4항·제6항·제7항",
+        "t": "④ 감사는 금고의 재산과 업무 집행상황에 대하여 분기마다 1회 이상 감사하고 그 결과를 총회와 이사회에 보고하여야 한다.<br>⑥ 금고와 이사장 사이에 소송, 계약 등의 법률행위를 하는 경우에는 감사가 금고를 대표한다.<br>⑦ 감사는 총회나 이사회에 출석하여 그 의견을 진술할 수 있다."
+      },
+      {
+        "s": "새마을금고법 제14조(총회의 소집 요구) 제4항",
+        "t": "총회를 소집할 자가 없거나 제3항의 기간에 정당한 사유 없이 이사장이 총회를 개최하지 아니하면 감사가 5일 이내에 총회를 소집하여야 하며, 이 경우 감사가 의장의 직무를 대행한다."
+      }
+    ]
+  },
+  {
+    "id": "M05",
+    "category": "금고의 기관",
+    "question": "임시총회 소집을 요구할 수 있는 회원 수 요건은?",
+    "options": [
+      "회원 10분의 1 이상의 동의",
+      "회원 5분의 1 이상의 동의",
+      "회원 3분의 1 이상의 동의",
+      "회원 과반수의 동의"
+    ],
+    "answer": 2,
+    "step1": "회원 <b>3분의 1</b> 이상 동의 → 임시총회 소집 요구.",
+    "step2": "요구가 있으면 이사장은 요구가 있는 날부터 <b>2주일 이내</b>에 총회를 개최해야 합니다. 총회 소집 통지는 개최일 <b>7일 전</b>에 공고합니다.<br><br>⚠️ <b>숫자 구분</b><br>• 임시총회 소집 요구 — 회원 <b>3분의 1</b> 이상 (제14조)<br>• 임원 해임의결 요구 — 재적회원 <b>3분의 1</b> 이상 (시행령 제9조)<br>• 회원의 검사청구 — 재적회원 <b>10분의 1</b> 이상 (제81조)",
+    "sources": [
+      {
+        "s": "새마을금고법 제14조(총회의 소집 요구) 제1항·제3항",
+        "t": "① 회원은 회원 3분의 1 이상의 동의를 받아 회의의 목적과 이유를 적고 서명날인한 서면을 제출하여 임시총회의 소집을 이사장에게 요구할 수 있다.<br>③ 제1항, 제2항 또는 제7항의 요구가 있으면 이사장은 요구가 있는 날부터 2주일 이내에 총회를 개최하여야 한다."
+      },
+      {
+        "s": "새마을금고법 제15조(회원에 대한 통지 등) 제2항",
+        "t": "총회의 소집 통지는 총회 개최일 7일 전에 개회 일시, 개회 장소, 회의 목적사항을 제시하여 정관으로 정한 방법에 따라 공고하여야 한다."
+      }
+    ]
+  },
+  {
+    "id": "M06",
+    "category": "금고의 사업",
+    "question": "금고의 동일인 대출한도 산정 기준으로 옳은 것은?",
+    "options": [
+      "자기자본의 100분의 20 또는 총자산의 100분의 1 중 <b>큰</b> 금액",
+      "자기자본의 100분의 20 또는 총자산의 100분의 1 중 <b>작은</b> 금액",
+      "자기자본의 100분의 10",
+      "총자산의 100분의 5"
+    ],
+    "answer": 0,
+    "step1": "둘 중 <b>큰</b> 금액의 범위에서 시행령이 정하는 한도.",
+    "step2": "동일인 대출한도는 특정 차주에게 대출이 몰려 금고가 함께 무너지는 것을 막는 <b>신용집중 위험 규제</b>입니다.<br><br>⚠️ <b>실무 함정 2가지</b><br>① 본인의 계산으로 <b>타인 명의</b>로 하는 대출은 그 본인의 대출로 봅니다(차명대출 규제).<br>② 주무부장관이 정하는 기준에 따라 <b>회장의 승인</b>을 받으면 한도 초과가 가능합니다.<br><br>위반 시 제85조제2항에 따라 <b>3년 이하 징역 또는 3천만원 이하 벌금</b>입니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제29조(동일인 대출한도)",
+        "t": "① 금고의 동일인에 대한 대출은 제35조제1항에 따른 자기자본의 100분의 20 또는 총자산의 100분의 1 중 큰 금액의 범위에서 대통령령으로 정하는 한도를 초과하지 못한다. 다만, 주무부장관이 정하는 기준에 따라 회장의 승인을 받은 경우에는 그러하지 아니하다.<br>② 제1항을 적용할 때에 본인의 계산으로 다른 사람의 명의에 의하여 행하는 대출은 그 본인의 대출로 본다."
+      },
+      {
+        "s": "새마을금고법 시행령 제16조의4(동일인에 대한 대출 등의 한도) 제1항",
+        "t": "1. 직전 사업연도말 자기자본의 100분의 20에 해당하는 금액 2. 직전 사업연도말 자산총액의 100분의 1에 해당하는 금액 중 큰 금액을 말한다."
+      }
+    ]
+  },
+  {
+    "id": "M07",
+    "category": "금고의 회계",
+    "question": "금고의 결산 및 결산보고서 처리에 관한 설명으로 <b>옳지 않은</b> 것은?",
+    "options": [
+      "사업연도 종료 후 2개월 이내에 결산을 끝내야 한다",
+      "이사장은 정기총회 개회일 1주 전까지 결산보고서를 감사에게 제출해야 한다",
+      "총회 승인일부터 7일 이내에 중앙회에 제출해야 한다",
+      "결산보고서는 이사회 승인만으로 확정된다"
+    ],
+    "answer": 3,
+    "step1": "결산보고서는 <b>총회</b>의 승인을 받아야 합니다.",
+    "step2": "결산 절차의 시간 흐름<br>① 사업연도 종료 → <b>2개월 이내</b> 결산 완료(시행령 제19조)<br>② 정기총회 개회일 <b>1주 전</b>까지 이사장이 결산보고서를 감사에게 제출·주된 사무소 비치<br>③ 감사 의견서를 붙여 <b>정기총회</b>에 제출 → 승인<br>④ 승인일부터 <b>7일 이내</b> 중앙회 제출<br><br>💡 회원이나 채권자는 결산 관계 서류를 열람하고 비용을 내고 사본을 청구할 수 있습니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제34조(결산 관계 서류의 제출, 비치 및 열람 등)",
+        "t": "① 이사장은 정기총회 개회일 1주 전까지 결산보고서(사업보고서, 재무상태표, 손익계산서, 잉여금처분안 또는 손실금처리안을 포함한다)를 감사에게 제출하고 이를 주된 사무소에 갖추어 두어야 한다.<br>② 이사장은 감사의 의견서를 붙인 결산보고서를 정기총회에 제출하여 그 승인을 받아야 한다.<br>③ 회원이나 금고의 채권자는 제1항에 열거한 서류를 열람할 수 있으며, 금고가 정한 비용을 지급하고 그 서류의 사본을 청구할 수 있다."
+      },
+      {
+        "s": "새마을금고법 시행령 제19조(금고의 결산)",
+        "t": "① 금고는 매 사업연도 종료 후 2개월 이내에 해당 사업연도의 결산을 끝내고 결산보고서를 작성하여 총회의 승인을 받아야 한다.<br>② 금고는 제1항의 결산보고서를 총회의 승인을 받은 날부터 7일 이내에 중앙회에 제출하여야 한다."
+      }
+    ]
+  },
+  {
+    "id": "M08",
+    "category": "합병·해산·청산",
+    "question": "금고의 해산 사유가 <b>아닌</b> 것은?",
+    "options": [
+      "정관에 정한 해산 사유의 발생",
+      "총회의 해산 의결",
+      "설립인가의 취소",
+      "회원 수가 100명 미만이 된 경우"
+    ],
+    "answer": 3,
+    "step1": "해산 사유는 ①정관상 사유 ②총회 의결 ③합병·파산 ④설립인가 취소, 4가지뿐입니다.",
+    "step2": "회원 수 100명은 설립·존속의 이상적 기준이지만, 미달했다고 곧바로 법정 해산 사유가 되지는 않습니다. 실무상으로는 합병 권고나 감독 조치로 이어집니다.<br><br>📌 <b>청산 관련 숫자</b><br>• 청산인 선임 — 파산의 경우 외에는 <b>총회</b>에서 선임<br>• 총회를 <b>2회 이상</b> 소집해도 구성되지 않으면 → 회장이 청산인 선임<br>• 청산인은 취임 후 지체 없이 재산 상황 조사, 재산목록·재무상태표 작성 → 총회 승인<br>• 잔여재산은 정관으로 정하는 바에 따라 처분",
+    "sources": [
+      {
+        "s": "새마을금고법 제36조(해산 사유 등)",
+        "t": "금고는 다음 각 호의 어느 하나에 해당하는 사유가 있을 때에는 해산한다. 1. 정관에 정한 해산 사유의 발생 2. 총회의 해산 의결 3. 합병이나 파산 4. 설립인가의 취소"
+      },
+      {
+        "s": "새마을금고법 제41조(청산인)",
+        "t": "① 금고가 해산한 때에는 파산으로 인한 경우 외에는 총회에서 청산인을 선임한다.<br>② 제1항의 경우에 총회를 2회 이상 소집하여도 총회가 구성되지 아니하는 경우에는 회장이 청산인을 선임할 수 있다.<br>③ 회장은 금고의 청산 사무를 감독한다."
+      }
+    ]
+  },
+  {
+    "id": "M09",
+    "category": "지도·감독",
+    "question": "회원이 소속 금고의 업무·회계에 대한 검사를 청구하려면 몇 명의 동의가 필요한가?",
+    "options": [
+      "재적회원 10분의 1 이상",
+      "재적회원 5분의 1 이상",
+      "재적회원 3분의 1 이상",
+      "재적회원 과반수"
+    ],
+    "answer": 0,
+    "step1": "재적회원 <b>10분의 1</b> 이상의 동의.",
+    "step2": "회원의 검사청구권은 감독기관을 통해 금고 경영을 견제하는 회원의 <b>공익권</b>입니다. 청구 취지·이유와 위반 사항을 적어 청구합니다.<br><br>⚠️ <b>분수 3형제 구분</b> (시험 단골)<br>• <b>10분의 1</b> — 회원의 검사 청구(제81조)<br>• <b>3분의 1</b> — 임시총회 소집 요구(제14조) / 이사회 소집 요구(재적이사, 제17조제3항) / 임원 해임의결 요구(시행령 제9조)<br>• <b>3분의 2</b> — 특별의결 찬성 요건",
+    "sources": [
+      {
+        "s": "새마을금고법 제81조(회원의 검사 청구) 제1항",
+        "t": "회원이 재적회원 10분의 1 이상의 동의를 받아 소속 금고의 업무 또는 회계의 검사를 청구할 수 있다."
+      },
+      {
+        "s": "새마을금고법 제17조(이사회) 제3항",
+        "t": "이사장은 재적이사 3분의 1 이상의 요구가 있는 경우에는 지체 없이 이사회를 소집하여야 한다. 이 경우 이사장이 정당한 이유 없이 소집 요구를 받은 날부터 2주일 이내에 이사회를 소집하지 아니하는 경우에는 그 소집을 요구한 이사의 대표가 이사회를 소집하고, 의장의 직무를 대행한다."
+      }
+    ]
+  },
+  {
+    "id": "M10",
+    "category": "벌칙",
+    "question": "‘5년 이하의 징역 또는 5천만원 이하의 벌금’에 처해지는 행위는?",
+    "options": [
+      "거짓으로 등기를 한 경우",
+      "감독기관의 검사를 거부·방해한 경우",
+      "자금을 금고의 사업 목적 외에 사용·대출한 임직원",
+      "임원 선거에서 금품을 제공한 자"
+    ],
+    "answer": 2,
+    "step1": "목적 외 사용·대출, 투기목적 처분 → <b>5년/5천만원</b> (최고형).",
+    "step2": "📌 <b>금고법 벌칙 사다리</b><br>• <b>5년 이하 징역 / 5천만원 이하 벌금</b> — ①목적 외 사용·대출, 재산의 투기목적 처분·이용 ②경영지도 사항 불이행 ③경영개선명령·이행계획제출명령 불이행<br>• <b>3년 / 3천만원</b> — 인가·승인 없이 업무 수행, 거짓 등기, 거짓 자료 제출, 총회·이사회 의결 없이 집행, 동일인 대출한도 위반, 검사 거부·방해, 경영공시 위반 등<br>• <b>2년 / 2천만원</b> — 선거운동 제한·기부행위 제한 위반<br>• <b>1년 / 1천만원</b> — 정치 관여, 명칭 무단사용<br><br>💡 <b>양벌규정</b> — 제85조 제1·2항 위반 시 행위자 외에 금고·중앙회에도 벌금형. 다만 상당한 주의·감독을 게을리하지 않았다면 면책됩니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제85조(벌칙) 제1항",
+        "t": "1. 자금을 금고나 중앙회의 사업 목적 외에 사용·대출하거나 금고나 중앙회의 재산을 투기 목적으로 처분하거나 이용한 금고 또는 중앙회의 임직원 2. 제80조제1항에 따른 경영지도 사항을 이행하지 아니한 금고 또는 중앙회의 임직원 3. 제80조의2제3항에 따른 경영개선명령이나 이행계획제출명령을 이행하지 아니한 임원, 관리인 또는 청산인은 5년 이하의 징역 또는 5천만원 이하의 벌금에 처한다."
+      },
+      {
+        "s": "새마을금고법 제86조(양벌규정)",
+        "t": "금고 또는 중앙회의 대표자나 대리인, 사용인, 그 밖의 종업원이 그 금고나 중앙회의 업무에 관하여 제85조제1항 또는 제2항의 위반행위를 하면 그 행위자를 벌하는 외에 그 금고나 중앙회에도 해당 조문의 벌금형을 과한다. 다만, 금고나 중앙회가 그 위반행위를 방지하기 위하여 해당 업무에 관하여 상당한 주의와 감독을 게을리하지 아니한 경우에는 그러하지 아니하다."
+      }
+    ]
+  }
+];
+
+const REVIEW_VARIANTS = {
+  "L01": {
+    "question": "새마을금고의 법적 성격에 관한 설명으로 옳은 것은?",
+    "options": [
+      "영리법인이다",
+      "비영리법인이다",
+      "주식회사이다",
+      "국가기관이다"
+    ],
+    "answer": 1,
+    "step1": "새마을금고는 <b>비영리법인</b>입니다."
+  },
+  "L02": {
+    "question": "금고 설립과 관련한 숫자의 연결로 옳은 것은?",
+    "options": [
+      "발기인 50명 이상 / 설립동의자 100명 이상",
+      "발기인 100명 이상 / 설립동의자 50명 이상",
+      "발기인 30명 이상 / 설립동의자 50명 이상",
+      "발기인 50명 이상 / 설립동의자 제한 없음"
+    ],
+    "answer": 0,
+    "step1": "발기인은 <b>50명 이상</b>, 시행령상 설립동의자는 <b>100명 이상</b>입니다."
+  },
+  "L03": {
+    "question": "탈퇴 회원의 출자금 환급청구권에 관한 설명으로 옳은 것은?",
+    "options": [
+      "탈퇴 즉시부터 2년이다",
+      "탈퇴 당시 회계연도 다음 회계연도부터 청구할 수 있다",
+      "예탁금·적금보다 시효가 길다",
+      "10년간 행사할 수 있다"
+    ],
+    "answer": 1,
+    "step1": "출자금은 <b>탈퇴 당시 회계연도 다음 회계연도부터</b> 청구할 수 있습니다."
+  },
+  "L04": {
+    "question": "재적회원 700명인 금고가 정관을 변경하려 한다. 가능한 의결요건은?",
+    "options": [
+      "251명 이상 출석 + 출석회원 3분의 2 이상 찬성",
+      "251명 이상 출석 + 출석회원 과반수 찬성",
+      "100명 이상 출석 + 출석회원 3분의 2 이상 찬성",
+      "재적회원 전원 출석"
+    ],
+    "answer": 0,
+    "step1": "500명 초과 금고의 정관 변경은 <b>251명 이상 출석 + 출석회원 3분의 2 이상 찬성</b>이 가능합니다."
+  },
+  "L05": {
+    "question": "임원의 임기 조합으로 옳은 것은?",
+    "options": [
+      "이사장 4년·이사 4년·감사 3년",
+      "이사장 3년·이사 4년·감사 4년",
+      "전원 3년",
+      "전원 4년"
+    ],
+    "answer": 0,
+    "step1": "<b>이사장·이사 4년, 감사 3년</b>입니다."
+  },
+  "L06": {
+    "question": "임원선거 후보자가 통상적인 범위에서 제공할 수 있는 음식물의 금액 한도는?",
+    "options": [
+      "1만원",
+      "3만원",
+      "5만원",
+      "10만원"
+    ],
+    "answer": 1,
+    "step1": "음식물은 <b>3만원 이내</b>입니다. 축·부의금 5, 음식 3, 답례 1, 선물 3으로 묶어 기억하세요."
+  },
+  "L07": {
+    "question": "2026년 9월 3일 현재 전월 말 예탁금·적금 잔액이 100억원이라면 최소 상환준비금과 중앙회 최소 예치액의 조합은?",
+    "options": [
+      "5억원 / 3억5천만원",
+      "10억원 / 6억원",
+      "10억원 / 7억원",
+      "10억원 / 8억원"
+    ],
+    "answer": 2,
+    "step1": "최소 상환준비금은 <b>10억원</b>, 2026.9.3. 현재 중앙회 최소 예치액은 그 70%인 <b>7억원</b>입니다."
+  },
+  "L08": {
+    "question": "새마을금고 예금자보호준비금은 어디에 설치·운영되는가?",
+    "options": [
+      "예금보험공사",
+      "행정안전부",
+      "새마을금고중앙회",
+      "한국은행"
+    ],
+    "answer": 2,
+    "step1": "예금자보호준비금은 <b>새마을금고중앙회</b>에 설치·운영됩니다."
+  }
+};
+
+</script>
+<script>
+const $ = (s) => document.querySelector(s);
+const body = $('#body');
+const title = $('#title');
+const back = $('#back');
+const hdr = $('#hdright');
+const pgw = $('#pgwrap');
+const pgb = $('#pgbar');
+const tabs = $('#tabs');
+
+const ACCESS_CODE_KEY = 'mg_law_access_code';
+const PENDING_KEY = 'mg_law_pending';
+const ENTITLEMENT_KEY = 'mg_law_entitlement';
+const DEVICE_SECRET_KEY = 'mg_law_device_secret_v1';
+
+// 지원용 복구 링크: 평소에는 노출하지 않으며, 관리자가 기기 연결을 초기화한 뒤
+// https://앱주소/?recover=MG-... 형태로 전달할 때만 기존 이용권 코드를 새 브라우저에 복원한다.
+(function acceptRecoveryLink(){
+  try{
+    const u=new URL(location.href);
+    const code=(u.searchParams.get('recover')||'').trim().toUpperCase();
+    if(/^MG-[A-Z2-9]{4}-[A-Z2-9]{4}(?:-[A-Z2-9]{4})?$/.test(code)){
+      localStorage.setItem(ACCESS_CODE_KEY,code);
+      localStorage.setItem(PENDING_KEY,'1');
+      localStorage.removeItem(ENTITLEMENT_KEY);
+      u.searchParams.delete('recover');
+      history.replaceState({},'',u.pathname+(u.search?u.search:'')+(u.hash||''));
+    }
+  }catch(e){}
+})();
+
+function readEntitlement(){
+  try{
+    const raw = localStorage.getItem(ENTITLEMENT_KEY);
+    if(!raw) return null;
+    const data = JSON.parse(raw);
+    if(!data.expiresAt || new Date(data.expiresAt).getTime() <= Date.now()){
+      localStorage.removeItem(ENTITLEMENT_KEY);
+      return null;
+    }
+    return data;
+  }catch(e){ return null; }
+}
+
+const state = {
+  view: (readEntitlement() || localStorage.getItem(PENDING_KEY)==='1') ? 'home' : 'learn',
+  study: null,
+  mock: null,
+  trial: { studyCompleted:false, mockCompleted:false },
+  accessCode: localStorage.getItem(ACCESS_CODE_KEY) || '',
+  pending: localStorage.getItem(PENDING_KEY) === '1',
+  entitlement: readEntitlement(),
+  statusBusy:false,
+  statusMessage:'',
+  toast:'',
+  contentManifest:null,
+  protected:null,
+  extraAcknowledged:false
+};
+
+function esc(s=''){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function stripHtml(s=''){ return String(s).replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim(); }
+function chrome(t,{showBack=false,progress=null,right='학습용 · 2026.09'}={}){
+  title.textContent=t;
+  back.classList.toggle('hidden',!showBack);
+  hdr.textContent=right;
+  if(progress===null){ pgw.classList.add('hidden'); }
+  else { pgw.classList.remove('hidden'); pgb.style.width=`${Math.max(0,Math.min(100,progress))}%`; }
+}
+function setTab(name){
+  [...tabs.querySelectorAll('.tab')].forEach(b=>b.classList.toggle('on',b.dataset.t===name));
+}
+function go(v){ state.view=v; render(); }
+function showToast(msg){
+  state.toast=msg; render();
+  setTimeout(()=>{ state.toast=''; render(); },1600);
+}
+function renderToast(){ return state.toast ? `<div class="toast">${esc(state.toast)}</div>` : ''; }
+
+function ensureAccessCode(){
+  if(state.accessCode) return state.accessCode;
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const block=()=>Array.from({length:4},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+  // 사용자가 직접 입력하지 않는 내부 연결값. v7부터 충돌/추측 가능성을 더 낮추기 위해 12자리 사용.
+  state.accessCode=`MG-${block()}-${block()}-${block()}`;
+  localStorage.setItem(ACCESS_CODE_KEY,state.accessCode);
+  return state.accessCode;
+}
+function ensureDeviceSecret(){
+  try{
+    let v=localStorage.getItem(DEVICE_SECRET_KEY)||'';
+    if(/^[a-f0-9]{64}$/i.test(v)) return v.toLowerCase();
+    const bytes=new Uint8Array(32);
+    crypto.getRandomValues(bytes);
+    v=Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
+    localStorage.setItem(DEVICE_SECRET_KEY,v);
+    return v;
+  }catch(e){
+    // localStorage 사용이 막힌 환경에서는 세션 내 임시값을 사용하되 이용권 유지가 제한될 수 있다.
+    if(!state._tempDeviceSecret){
+      const chars='abcdef0123456789';
+      state._tempDeviceSecret=Array.from({length:64},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+    }
+    return state._tempDeviceSecret;
+  }
+}
+async function getDeviceHash(){
+  const secret=ensureDeviceSecret();
+  try{
+    if(crypto.subtle && window.TextEncoder){
+      const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(secret));
+      return Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
+    }
+  }catch(e){}
+  // secret 자체도 256비트 무작위 값이므로 구형 환경에서는 이를 기기 연결값으로 사용한다.
+  return secret.toLowerCase();
+}
+function buildSurveyUrl(){
+  const code=ensureAccessCode();
+  try{
+    const u=new URL(APP_CONFIG.surveyUrl);
+    if(APP_CONFIG.surveyEntryId){ u.searchParams.set(APP_CONFIG.surveyEntryId,code); }
+    return u.toString();
+  }catch(e){ return APP_CONFIG.surveyUrl; }
+}
+function daysLeft(ent){
+  return Math.max(0,Math.ceil((new Date(ent.expiresAt).getTime()-Date.now())/86400000));
+}
+
+
+function jsonpApi(action, params={}){
+  return new Promise(async (resolve,reject)=>{
+    if(!APP_CONFIG.statusEndpoint) return reject(new Error('콘텐츠 서버가 연결되지 않았습니다.'));
+    const cb='__mgApi_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+    let timer;
+    window[cb]=(data)=>{
+      clearTimeout(timer);
+      try{ delete window[cb]; }catch(e){ window[cb]=undefined; }
+      const el=document.getElementById(cb); if(el) el.remove();
+      resolve(data||{});
+    };
+    try{
+      const deviceHash=await getDeviceHash();
+      const u=new URL(APP_CONFIG.statusEndpoint);
+      u.searchParams.set('action',action);
+      u.searchParams.set('code',ensureAccessCode());
+      u.searchParams.set('device',deviceHash);
+      Object.entries(params||{}).forEach(([k,v])=>u.searchParams.set(k,String(v)));
+      u.searchParams.set('callback',cb);
+      u.searchParams.set('_',Date.now());
+      const sc=document.createElement('script');
+      sc.id=cb; sc.src=u.toString();
+      sc.onerror=()=>{clearTimeout(timer);try{delete window[cb]}catch(e){};sc.remove();reject(new Error('서버 연결에 실패했습니다.'));};
+      timer=setTimeout(()=>{try{delete window[cb]}catch(e){};sc.remove();reject(new Error('서버 응답이 지연되고 있습니다.'));},15000);
+      document.body.appendChild(sc);
+    }catch(e){ reject(e); }
+  });
+}
+
+async function loadContentManifest(force=false){
+  if(state.contentManifest && !force) return state.contentManifest;
+  const r=await jsonpApi('manifest');
+  if(r.status!=='APPROVED') throw new Error('이용권 확인이 필요합니다.');
+  state.contentManifest=r;
+  return r;
+}
+
+async function loadProtectedBatch(tier,offset){
+  const r=await jsonpApi('questions',{tier,offset,limit:APP_CONFIG.contentBatchSize||10});
+  if(r.status!=='APPROVED') throw new Error('이용권 확인이 필요합니다.');
+  return r;
+}
+
+/* ---------- content helpers ---------- */
+function questionBubble(q,n,total,label){
+  return `<div class="who">새마을금고법 봇</div>
+  <div class="row"><div class="av">法</div>
+    <div class="bub"><div class="qmeta">${esc(q.category)} · ${esc(label)} ${n}/${total}</div>${q.question}</div>
+    <span class="tm">지금</span></div>`;
+}
+function optionsHtml(q,mode='learn',selected=null){
+  return `<div class="opts">${q.options.map((t,i)=>`<button class="opt ${selected===i?'chosen':''}" data-pick="${i}"><span class="n">${i+1}</span><span>${t}</span></button>`).join('')}</div>`;
+}
+function sourceClass(src){
+  const s=(src.s||src.title||'');
+  if(s.includes('시행규칙')) return 'rule';
+  if(s.includes('시행령')) return 'decree';
+  return '';
+}
+function explanationHtml(q,pick,{resultOnly=false}={}){
+  const ok=pick===q.answer;
+  const laws=(q.sources||[]).map(x=>`<div class="law ${sourceClass(x)}"><span class="src">📖 ${x.s||x.title||'근거'}</span>${x.t||x.text||''}</div>`).join('');
+  return `<div class="exp">
+    <div class="vd ${ok?'o':'x'}"><b>${ok?'⭕ 출제기준상 정답입니다':'❌ 출제기준상 오답입니다'}</b><div class="a">정답: <b>${q.answer+1}번</b> ${q.options[q.answer]}</div></div>
+    <div class="l1"><span class="tag">1단계 핵심</span>${q.step1}</div>
+    <details class="d2"><summary>📗 2단계 · 왜 그런가요?</summary><div class="c">${q.step2}</div></details>
+    <details class="d3"><summary>⚖️ 3단계 · 법령·해설 근거</summary><div class="c">${laws}<div class="mini">학습용 안내 · 문제와 해설은 표시된 자료를 바탕으로 학습을 위해 재구성했습니다. 실제 업무·권리관계 판단 시에는 해당 시점의 현행 법령, 정관·규정·업무방법 및 공식 해석을 함께 확인해 주세요.</div></div></details>
+  </div>`;
+}
+function markLearnOptions(idx,pick){
+  body.querySelectorAll('.opt').forEach(b=>{
+    const i=+b.dataset.pick; b.disabled=true;
+    if(i===idx) b.classList.add('ok');
+    else if(i===pick) b.classList.add('no');
+    else b.classList.add('dim');
+  });
+}
+
+/* ---------- study ---------- */
+function newStudySession(){
+  state.study={
+    queue:TRIAL_STUDY.map(q=>({baseId:q.id,question:q,isReview:false})),
+    index:0, answered:false, selected:null, repeatCount:{},
+    totalCore:TRIAL_STUDY.length, coreFinished:0, correct:0, wrong:0, transitioning:false
+  };
+}
+function currentStudyItem(){ return state.study.queue[state.study.index]; }
+function makeReviewItem(baseId){
+  const base=TRIAL_STUDY.find(q=>q.id===baseId);
+  const rv=REVIEW_VARIANTS[baseId];
+  if(!base||!rv) return null;
+  return {baseId, isReview:true, question:{...base,...rv,id:`${baseId}-R`,step2:base.step2,sources:base.sources}};
+}
+function insertReview(baseId,offset){
+  const s=state.study;
+  const used=s.repeatCount[baseId]||0;
+  if(used>=2) return;
+  const item=makeReviewItem(baseId); if(!item) return;
+  s.repeatCount[baseId]=used+1;
+  const pos=Math.min(s.queue.length,s.index+Math.max(1,offset));
+  s.queue.splice(pos,0,item);
+}
+function studyView(){
+  setTab('learn');
+  if(!state.study || state.study.index>=state.study.queue.length){ newStudySession(); }
+  const s=state.study, item=currentStudyItem(), q=item.question;
+  const coreDone=s.coreFinished;
+  const progress=Math.round(coreDone/s.totalCore*100);
+  chrome('학습 모드',{showBack:false,progress,right:item.isReview?'복습 확인':'체험 8개념'});
+  body.innerHTML=`<div class="chatbg">
+    ${s.index===0?'<div class="session-note"><b>바로 한 문제 시작합니다.</b> 답을 고르면 해설과 <b>‘다음 문제로 가기’</b>가 나타납니다. 개인별 정오답·진도·점수는 서버에 저장하지 않습니다.</div>':''}
+    ${questionBubble(q,Math.min(coreDone+1,s.totalCore),s.totalCore,item.isReview?'복습':'학습')}
+    ${optionsHtml(q)}
+    <div id="studyAfter"></div>
+  </div>${renderToast()}`;
+  body.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>answerStudy(+b.dataset.pick));
+}
+function answerStudy(pick){
+  const s=state.study; if(s.answered) return;
+  const item=currentStudyItem(), q=item.question;
+  s.answered=true; s.selected=pick;
+  const ok=pick===q.answer;
+  if(ok) s.correct++; else s.wrong++;
+  if(!item.isReview) s.coreFinished++;
+  markLearnOptions(q.answer,pick);
+  const after=$('#studyAfter');
+  const recommend = ok ? 'good' : 'again';
+  after.innerHTML=`<div class="row me"><span class="tm">지금</span><div class="bub">${pick+1}번</div></div>
+    ${explanationHtml(q,pick)}
+    <section class="next-step ${s.index===0?'coach':''}" aria-label="다음 문제로 이동">
+      <div class="next-step-head">
+        <span class="next-kicker">다음 문제로 가기</span>
+        <strong>지금 이 문제, 얼마나 기억나나요?</strong>
+        <p>아래에서 하나를 누르면 <b>바로 다음 문제로 넘어갑니다.</b></p>
+      </div>
+      <div class="rating-grid">
+        <button class="memory-btn again ${recommend==='again'?'recommended':''}" data-rate="again" aria-label="다시, 두 문제 뒤 다시 풀기">
+          ${recommend==='again'?'<span class="rec">오답 추천</span>':''}<span class="rate-word">다시</span><span class="rate-desc">2문제 뒤 다시</span><span class="rate-arrow">›</span>
+        </button>
+        <button class="memory-btn hard" data-rate="hard" aria-label="어려움, 다섯 문제 뒤 다시 풀기">
+          <span class="rate-word">어려움</span><span class="rate-desc">5문제 뒤 다시</span><span class="rate-arrow">›</span>
+        </button>
+        <button class="memory-btn good ${recommend==='good'?'recommended':''}" data-rate="good" aria-label="보통, 이해하고 다음 문제로 이동">
+          ${recommend==='good'?'<span class="rec">기본 선택</span>':''}<span class="rate-word">보통</span><span class="rate-desc">이해했어요 · 다음</span><span class="rate-arrow">›</span>
+        </button>
+        <button class="memory-btn easy" data-rate="easy" aria-label="쉬움, 확실히 알고 다음 문제로 이동">
+          <span class="rate-word">쉬움</span><span class="rate-desc">확실해요 · 다음</span><span class="rate-arrow">›</span>
+        </button>
+      </div>
+      <div class="rate-guide"><b>왜 고르나요?</b> ‘다시·어려움’은 같은 개념을 잠시 뒤 다른 형태로 한 번 더 보여주고, ‘보통·쉬움’은 다음 문제로 진행합니다.</div>
+      <div class="rate-status" aria-live="polite"></div>
+    </section>`;
+  after.querySelectorAll('[data-rate]').forEach(b=>b.onclick=()=>rateStudy(b.dataset.rate,b));
+  requestAnimationFrame(()=>{
+    const panel=after.querySelector('.next-step');
+    if(panel) panel.scrollIntoView({behavior:'smooth',block:'center'});
+  });
+}
+function rateStudy(rate,button){
+  const s=state.study, item=currentStudyItem();
+  if(s.transitioning) return;
+  s.transitioning=true;
+  const panel=button && button.closest('.next-step');
+  if(panel){
+    panel.querySelectorAll('[data-rate]').forEach(b=>{ b.disabled=true; b.classList.toggle('picked',b===button); });
+    const msg={
+      again:'같은 개념을 2문제 뒤 다시 보여드릴게요.',
+      hard:'같은 개념을 약 5문제 뒤 다시 확인합니다.',
+      good:'이해한 것으로 보고 다음 문제로 이동합니다.',
+      easy:'충분히 익힌 것으로 보고 다음 문제로 이동합니다.'
+    }[rate];
+    const status=panel.querySelector('.rate-status');
+    if(status) status.textContent=msg+'  다음 문제로 이동 중…';
+  }
+  window.setTimeout(()=>{
+    if(rate==='again') insertReview(item.baseId,3);
+    if(rate==='hard') insertReview(item.baseId,6);
+    s.index++; s.answered=false; s.selected=null; s.transitioning=false;
+    if(s.index>=s.queue.length){ state.trial.studyCompleted=true; return studyEndView(); }
+    studyView();
+  },420);
+}
+function studyEndView(){
+  setTab('learn'); chrome('학습 체험 완료',{progress:100,right:'학습용 · 2026.09'});
+  const s=state.study;
+  body.innerHTML=`<div class="res"><div class="sc">8<small> 개념</small></div><div class="msg">핵심 개념 체험을 마쳤습니다.<br>오답·어려움으로 표시한 개념은 세션 안에서 변형문제로 다시 확인했습니다.</div></div>
+  <div class="diag"><div class="diag-row"><span>이번 세션 정답</span><strong>${s.correct}회</strong></div><div class="diag-row"><span>이번 세션 오답</span><strong>${s.wrong}회</strong></div><div class="diag-row"><span>장기 학습기록</span><strong>저장하지 않음</strong></div></div>
+  <button class="wide b-y" data-action="mock">10문제 미니 모의고사 이어서 풀기</button>
+  <button class="wide b-g" data-action="home">홈에서 기능 보기</button>
+  <div class="center-note">이번 결과는 현재 학습 세션 안에서만 사용되며 서버에 저장되지 않습니다.</div>${renderToast()}`;
+  body.querySelector('[data-action="mock"]').onclick=()=>go('exam');
+  body.querySelector('[data-action="home"]').onclick=()=>go('home');
+}
+
+/* ---------- mock ---------- */
+function newMockSession(){
+  state.mock={index:0,answers:Array(TRIAL_MOCK.length).fill(null),submitted:false};
+}
+function mockView(){
+  setTab('exam');
+  if(!state.mock || state.mock.submitted){ newMockSession(); }
+  const m=state.mock, q=TRIAL_MOCK[m.index], selected=m.answers[m.index];
+  chrome('미니 모의고사',{progress:Math.round(m.index/TRIAL_MOCK.length*100),right:`${m.index+1} / ${TRIAL_MOCK.length}`});
+  body.innerHTML=`<div class="chatbg">
+    ${m.index===0?'<div class="session-note">시험 중에는 정답과 해설을 보여주지 않습니다. 10문항 제출 후 한 번에 확인합니다.</div>':''}
+    ${questionBubble(q,m.index+1,TRIAL_MOCK.length,'실전')}
+    ${optionsHtml(q,'mock',selected)}
+    <div class="mock-footer"><button class="btn b-y" id="mockNext" ${selected===null?'disabled style="opacity:.45"':''}>${m.index===TRIAL_MOCK.length-1?'답안 제출':'다음 문항 →'}</button></div>
+    <div class="mock-hint">선택 후 다음 문항으로 이동합니다. 정답 공개는 시험 종료 후입니다.</div>
+  </div>${renderToast()}`;
+  body.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>selectMock(+b.dataset.pick));
+  const nx=$('#mockNext'); if(nx && selected!==null) nx.onclick=advanceMock;
+}
+function selectMock(pick){
+  state.mock.answers[state.mock.index]=pick;
+  mockView();
+}
+function advanceMock(){
+  const m=state.mock;
+  if(m.answers[m.index]===null) return;
+  if(m.index<TRIAL_MOCK.length-1){ m.index++; return mockView(); }
+  m.submitted=true; state.trial.mockCompleted=true; mockResultView();
+}
+function categoryStats(){
+  const map={};
+  TRIAL_MOCK.forEach((q,i)=>{
+    const k=q.category; if(!map[k]) map[k]={right:0,total:0};
+    map[k].total++; if(state.mock.answers[i]===q.answer) map[k].right++;
+  });
+  return map;
+}
+function mockResultView(){
+  setTab('exam'); chrome('이번 학습진단',{progress:100,right:'결과 비저장'});
+  const right=TRIAL_MOCK.filter((q,i)=>state.mock.answers[i]===q.answer).length;
+  const stats=categoryStats();
+  const rows=Object.entries(stats).map(([k,v])=>`<div class="diag-row"><span>${esc(k)}</span><strong>${v.right}/${v.total}</strong></div>`).join('');
+  body.innerHTML=`<div class="res"><div class="sc">${right}<small> / 10</small></div><div class="msg">이번 10문항에서 확인된 결과입니다.<br>실제 시험 성적·합격 가능성이나 직무역량을 의미하지 않습니다.</div></div>
+  <div class="diag">${rows}</div>
+  <div class="bar">문항별 확인</div>
+  <div class="review-list">${TRIAL_MOCK.map((q,i)=>{
+    const pick=state.mock.answers[i], ok=pick===q.answer;
+    return `<div class="review-item"><div class="review-head"><span class="mk ${ok?'o':'x'}">${ok?'○':'✕'}</span><div><b>${i+1}. ${esc(q.category)}</b><br>${stripHtml(q.question)}</div></div><details><summary>정답·해설 확인</summary><div class="c">${explanationHtml(q,pick,{resultOnly:true})}</div></details></div>`;
+  }).join('')}</div>
+  <button class="wide b-g" data-action="retry">모의고사 다시 풀기</button>
+  ${state.trial.studyCompleted ? `<button class="wide b-y" data-action="research">연구 참여자용 전체 학습도구 안내</button>` : `<button class="wide b-y" data-action="learn">학습 체험도 이어서 하기</button>`}
+  <div class="center-note">개인별 정오답·점수·응시기록은 서버에 저장하지 않습니다.</div>${renderToast()}`;
+  body.querySelector('[data-action="retry"]').onclick=()=>{state.mock=null;mockView();};
+  const r=body.querySelector('[data-action="research"]'); if(r) r.onclick=()=>go('research');
+  const l=body.querySelector('[data-action="learn"]'); if(l) l.onclick=()=>go('learn');
+}
+
+/* ---------- home ---------- */
+function homeView(){
+  setTab('home'); chrome('새마을금고법 톡톡',{progress:null,right:'학습용 · 2026.09'});
+  const both=state.trial.studyCompleted&&state.trial.mockCompleted;
+  const ent=state.entitlement;
+  body.innerHTML=`<div class="profile"><div class="pf-ico">法</div><div><div class="pf-t">새마을금고법 톡톡</div><div class="pf-s">문제로 먼저 익히고, 필요할 때 법령·해설을 펼쳐보는 모바일 학습도구</div></div></div>
+  <div class="bar">학습 메뉴</div><ul class="menu">
+    <li data-go="learn"><div class="mi y">📘</div><div><div class="mt">학습 모드</div><div class="ms">8개념 + ANKI형 세션 반복 + 3단계 해설</div></div><span class="badge ${state.trial.studyCompleted?'g':''}">${state.trial.studyCompleted?'완료':'체험'}</span></li>
+    <li data-go="exam"><div class="mi b">📝</div><div><div class="mt">미니 모의고사</div><div class="ms">10문항 · 시험 종료 후 정답과 상세해설</div></div><span class="badge ${state.trial.mockCompleted?'g':''}">${state.trial.mockCompleted?'완료':'10'}</span></li>
+    ${ent?`<li data-go="full"><div class="mi y">🔓</div><div><div class="mt">전체 학습도구</div><div class="ms">승인일로부터 90일 · 현재 D-${daysLeft(ent)}</div></div><span class="badge g">이용중</span></li>`:
+      state.pending?`<li data-go="pending"><div class="mi">⏳</div><div><div class="mt">연구 참여 확인 중</div><div class="ms">통상 1~2일 정도 소요될 수 있습니다</div></div><span class="badge g">확인중</span></li>`:
+      `<li data-go="${both?'research':'home'}"><div class="mi">🎓</div><div><div class="mt">연구 참여자 학습지원</div><div class="ms">${both?'전체 학습도구 90일 무료 이용 안내':'학습·모의고사 체험 완료 후 안내'}</div></div><span class="badge ${both?'y':'g'}">${both?'열림':'체험후'}</span></li>`}
+  </ul>
+  <div class="bar">이 앱에서 기억할 것</div>
+  <div class="info" style="padding-top:5px"><div class="info-card"><h3>학습기록은 저장하지 않습니다</h3><p>정오답·점수·학습진도·학습시간은 서버에 저장하지 않습니다. 이용권 확인에 필요한 인증정보만 별도로 처리합니다.</p></div></div>${renderToast()}`;
+  body.querySelectorAll('[data-go]').forEach(x=>x.onclick=()=>{const v=x.dataset.go;if(v==='home') showToast('학습과 모의고사를 모두 체험하면 안내가 열립니다.'); else go(v);});
+}
+
+/* ---------- research / access ---------- */
+function researchView(){
+  setTab('home'); chrome('연구 참여자 학습지원',{showBack:true,progress:null,right:'90일 무료'});
+  ensureAccessCode();
+  body.innerHTML=`<section class="gate"><div class="lk">🎓</div><h2>연구에 참여해 주신 분에게<br>학습도구를 제공합니다.</h2>
+  <p class="lead">지금 경험하신 기능은 전체 학습도구의 일부입니다.</p>
+  <div class="steps"><b>기본 학습지원 범위</b><br>연구 참여가 확인되면 승인일부터 90일 동안 <b>검증된 기본 100문항</b>과 단계별 해설을 이용할 수 있도록 제공합니다.<br><br><b>100문항 이후</b>에 제공되는 문항은 학습에 도움을 드리기 위한 <b>추가 학습자료</b>입니다.</div>
+  <div class="info-card" style="margin:12px 0"><h3>운영 범위를 먼저 안내드립니다</h3><p>이 웹앱은 무료·비상업적 연구 및 학습지원 도구이며 상시 고객지원이 제공되는 상용 서비스가 아닙니다. 운영자는 웹개발 전문가가 아니며 본업과 연구를 병행하고 있어, 앱 오류·질문·건의에 대해 즉시 답변하거나 모든 요청을 수정·반영·업데이트하기는 어려울 수 있습니다.</p><p style="margin-top:8px">기본 100문항 이후의 추가 문항은 이러한 운영 특성을 인지한 상태에서 <b>단순 학습·참고용</b>으로 이용해 주세요. 문의나 제안은 참고할 수 있으나 개별 회신, 반영 여부 또는 처리 시점을 약속드리기 어렵습니다.</p></div>
+  <div class="steps"><b>설문은 연구자료로 활용됩니다.</b><br>문항 하나하나를 충분히 읽고 본인의 경험과 생각에 가장 가까운 응답을 선택해 주시면 연구에 큰 도움이 됩니다.<br><br>특정한 답변이나 응답의 방향을 요구하지 않습니다.</div>
+  <div class="pending-card"><div class="state">별도 인증코드 입력은 필요하지 않습니다</div><p>이 앱이 확인용 정보를 자동으로 만들고 설문에 연결합니다. 승인 후에는 <b>처음 이용을 활성화한 이 기기·브라우저</b>에서 90일간 이용됩니다.</p></div>
+  <button class="wide b-y" id="openSurvey" style="margin-left:0;width:100%">안내를 확인하고 연구 설문 참여하기</button>
+  <button class="wide b-g" id="surveyDone" style="margin-left:0;width:100%;margin-top:-5px">설문 제출을 마쳤어요</button>
+  <p style="margin-top:12px;font-size:11.5px;color:#777">이미 본 설문에 참여하신 경우에는 중복으로 응답하지 말아 주세요.</p></section>${renderToast()}`;
+  $('#openSurvey').onclick=()=>window.open(buildSurveyUrl(),'_blank','noopener');
+  $('#surveyDone').onclick=()=>{ state.pending=true; localStorage.setItem(PENDING_KEY,'1'); go('pending'); };
+}
+function pendingView(){
+  setTab('home'); chrome('연구 참여 확인',{showBack:true,progress:null,right:'통상 1~2일'});
+  const code=ensureAccessCode();
+  body.innerHTML=`<section class="gate"><div class="lk">⏳</div><h2>참여 내역을 확인하고 있습니다.</h2>
+  <p>연구 참여 내역은 순차적으로 확인되며 <b>통상 1~2일 정도</b> 소요될 수 있습니다.</p>
+  <div class="pending-card"><div class="state">현재 상태 · 확인 중</div><p>확인이 완료되면 <b>지금 사용 중인 이 기기·브라우저에 이용권이 자동 연결</b>됩니다. 별도의 인증코드를 입력할 필요는 없습니다.</p></div>
+  <button class="wide b-y" id="checkStatus" style="margin-left:0;width:100%">이용 가능 여부 확인</button>
+  <button class="wide b-g" id="reopenSurvey" style="margin-left:0;width:100%;margin-top:-5px">설문 화면 다시 열기</button>
+  <div class="center-note">설문을 아직 제출하지 않았거나 중간에 닫은 경우에만 다시 열어 주세요. 이미 제출했다면 중복 응답하지 않아도 됩니다.</div>
+  <div class="mail">급한 문의사항은 <a href="mailto:${esc(APP_CONFIG.supportEmail)}">${esc(APP_CONFIG.supportEmail)}</a>으로 요청해 주세요.</div>
+  ${state.statusMessage?`<div class="center-note">${esc(state.statusMessage)}</div>`:''}</section>${renderToast()}`;
+  $('#checkStatus').onclick=checkAccessStatus;
+  $('#reopenSurvey').onclick=()=>window.open(buildSurveyUrl(),'_blank','noopener');
+}
+function activateEntitlement(data){
+  state.entitlement={code:data.code||ensureAccessCode(),approvedAt:data.approvedAt,expiresAt:data.expiresAt};
+  state.pending=false; localStorage.removeItem(PENDING_KEY); localStorage.setItem(ENTITLEMENT_KEY,JSON.stringify(state.entitlement));
+  state.statusMessage=''; go('full');
+}
+async function checkAccessStatus(){
+  if(state.statusBusy) return;
+  if(!APP_CONFIG.statusEndpoint){ state.statusMessage='현재 파일은 UI 프로토타입입니다. Apps Script 배포 URL을 연결하면 실제 승인상태 확인이 작동합니다.'; return pendingView(); }
+  state.statusBusy=true; state.statusMessage='확인 중입니다…'; pendingView();
+  const cb='__mgStatusCallback';
+  const old=document.getElementById('mgStatusScript'); if(old) old.remove();
+  window[cb]=(data)=>{
+    state.statusBusy=false;
+    const sc=document.getElementById('mgStatusScript'); if(sc) sc.remove();
+    if(data && data.status==='APPROVED' && data.expiresAt){ return activateEntitlement(data); }
+    if(data && data.status==='EXPIRED'){ state.statusMessage='이용기간이 종료되었습니다.'; }
+    else if(data && data.status==='DEVICE_MISMATCH'){
+      state.statusMessage=`이 이용권은 이미 다른 기기·브라우저에 연결되어 있습니다. 급한 문의사항은 ${APP_CONFIG.supportEmail}으로 요청해 주세요.`;
+    }
+    else if(data && data.status==='DEVICE_REQUIRED'){
+      state.statusMessage='기기 확인정보를 만들 수 없습니다. 일반 브라우저에서 다시 시도해 주세요.';
+    }
+    else if(data && data.status==='BUSY'){
+      state.statusMessage='현재 확인 요청이 겹쳤습니다. 잠시 후 다시 눌러 주세요.';
+    }
+    else if(data && data.status==='REVIEW'){ state.statusMessage='참여 내역을 확인하고 있습니다. 통상 1~2일 정도 소요될 수 있습니다.'; }
+    else state.statusMessage='아직 이용 활성화 전입니다. 통상 1~2일 정도 소요될 수 있습니다.';
+    pendingView();
+  };
+  try{
+    const deviceHash=await getDeviceHash();
+    const u=new URL(APP_CONFIG.statusEndpoint);
+    u.searchParams.set('action','status');
+    u.searchParams.set('code',ensureAccessCode());
+    u.searchParams.set('device',deviceHash);
+    u.searchParams.set('callback',cb);
+    u.searchParams.set('_',Date.now());
+    const sc=document.createElement('script');
+    sc.id='mgStatusScript'; sc.src=u.toString();
+    sc.onerror=()=>{state.statusBusy=false;state.statusMessage='현재 확인에 실패했습니다. 잠시 후 다시 시도해 주세요.';pendingView();};
+    document.body.appendChild(sc);
+  }catch(e){
+    state.statusBusy=false;
+    state.statusMessage='기기 확인정보를 준비하지 못했습니다. 잠시 후 다시 시도해 주세요.';
+    pendingView();
+  }
+}
+
+function fullView(){
+  setTab('home'); chrome('전체 학습도구',{showBack:true,progress:null,right:`D-${daysLeft(state.entitlement)}`});
+  body.innerHTML=`<div class="profile"><div class="pf-ico">✓</div><div><div class="pf-t">학습도구가 열렸습니다</div><div class="pf-s">연구에 참여해 주셔서 감사합니다 · 승인일부터 90일</div></div></div>
+  <div class="bar">기본 학습지원</div><ul class="menu">
+    <li id="base100"><div class="mi y">📚</div><div><div class="mt">기본 100문항</div><div class="ms">승인된 기기에서 필요한 문항만 서버에서 불러옵니다</div></div><span class="badge g">기본</span></li>
+    <li id="extraLearn"><div class="mi">＋</div><div><div class="mt">추가 학습문항</div><div class="ms">100문항 이후 · 단순 학습·참고용 추가 자료</div></div><span class="badge">추가</span></li>
+  </ul>
+  <div class="info"><div class="info-card"><h3>기본 제공 범위와 추가 학습</h3><p>연구 참여자에게 제공하는 <b>기본 학습지원 범위는 100문항</b>입니다. 그 이후 문항은 가능한 범위에서 더 학습할 수 있도록 제공하는 추가 자료이며, 지속적인 추가 제공·수정·업데이트를 보장하지 않습니다.</p></div>
+  <div class="info-card"><h3>운영·문의 안내</h3><p>운영자는 웹개발 전문가가 아니며 본업과 연구를 병행합니다. 앱 오류·질문·건의는 확인할 수 있으나 즉각적인 해결, 개별 회신, 기능 반영 또는 유지보수 시점을 약속드리기 어렵습니다. 학습 내용은 무료 참고용으로 이용해 주세요.</p></div>
+  <div class="info-card"><h3>이용기간과 기기 연결</h3><p>남은 기간 <b>D-${daysLeft(state.entitlement)}</b>. 이용권은 처음 활성화한 현재 기기·브라우저에 연결됩니다. 개인별 학습 데이터는 저장하지 않습니다.</p></div></div>
+  <div id="contentState" class="center-note">문제은행 상태를 확인하는 중입니다…</div>${renderToast()}`;
+  $('#base100').onclick=()=>startProtectedTier('BASE');
+  $('#extraLearn').onclick=()=>go('extraNotice');
+  loadContentManifest(true).then(m=>{
+    state.contentManifest=m;
+    const el=$('#contentState'); if(!el) return;
+    if(m.releaseReady){ el.innerHTML=`기본 ${m.baseCount}/${m.baseRequired}문항 준비됨 · 추가 ${m.extraCount}문항`; }
+    else { el.innerHTML=`개발 점검: 기본 검증문항 ${m.baseLoaded||0}/${m.baseRequired||100}. <b>100문항 검증 전에는 공개 배포하지 않습니다.</b>`; }
+  }).catch(e=>{const el=$('#contentState'); if(el) el.textContent='현재 문제은행 상태를 확인하지 못했습니다.';});
+}
+
+async function startProtectedTier(tier){
+  try{
+    const manifest=await loadContentManifest(true);
+    if(tier==='BASE' && !manifest.releaseReady){
+      state.statusMessage=`기본 100문항의 법령·해설 검증이 완료된 뒤 공개됩니다. 현재 ${manifest.baseLoaded||0}/${manifest.baseRequired||100}문항입니다.`;
+      return fullViewWithMessage();
+    }
+    if(tier==='EXTRA' && !state.extraAcknowledged) return go('extraNotice');
+    if(tier==='EXTRA' && !(manifest.extraCount>0)){
+      state.statusMessage='현재 추가 학습문항을 준비 중입니다.';
+      return fullViewWithMessage();
+    }
+    const r=await loadProtectedBatch(tier,0);
+    state.protected={tier,total:r.total||0,nextOffset:r.nextOffset,queue:(r.questions||[]).map(q=>({question:q,isReview:false})),index:0,completed:0,answered:false,selected:null,loading:false};
+    go('protected');
+  }catch(e){ state.statusMessage=e.message||'문제은행을 불러오지 못했습니다.'; fullViewWithMessage(); }
+}
+function fullViewWithMessage(){
+  const msg=state.statusMessage; state.statusMessage=''; fullView();
+  if(msg){ const el=$('#contentState'); if(el) el.textContent=msg; }
+}
+
+function extraNoticeView(){
+  setTab('home'); chrome('추가 학습 안내',{showBack:true,progress:null,right:'100문항 이후'});
+  body.innerHTML=`<section class="gate"><div class="lk">＋</div><h2>여기부터는 추가 학습자료입니다.</h2>
+  <p>연구 참여자에게 약속하는 <b>기본 학습지원 범위는 100문항</b>입니다. 100문항 이후의 문제는 학습에 조금 더 도움을 드리기 위해 가능한 범위에서 추가로 제공합니다.</p>
+  <div class="steps"><b>추가 학습 전 확인해 주세요.</b><br>이 영역은 무료·비상업적 참고자료이며 운영자의 본업·연구 일정, 법령 변경, 기술적 문제 등에 따라 수정·추가·중단될 수 있습니다. 오류·질문·건의에 대해 즉시 답변하거나 모든 요청을 반영하는 상시 유지보수 서비스는 제공하기 어렵습니다.</div>
+  <p class="lead">이 점을 인지하고도 추가 학습을 원하시면 계속 진행해 주세요.</p>
+  <button class="wide b-y" id="continueExtra" style="margin-left:0;width:100%">인지하고 추가 학습 계속하기</button>
+  <button class="wide b-g" id="backBase" style="margin-left:0;width:100%;margin-top:-5px">기본 100문항으로 돌아가기</button></section>`;
+  $('#continueExtra').onclick=()=>{state.extraAcknowledged=true;startProtectedTier('EXTRA');};
+  $('#backBase').onclick=()=>go('full');
+}
+
+async function protectedView(){
+  setTab('home');
+  const s=state.protected;
+  if(!s || !s.queue || !s.queue.length) return go('full');
+  if(s.index>=s.queue.length){
+    if(s.nextOffset!==null && s.nextOffset!==undefined && !s.loading){
+      s.loading=true;
+      try{
+        const r=await loadProtectedBatch(s.tier,s.nextOffset);
+        s.queue.push(...(r.questions||[]).map(q=>({question:q,isReview:false})));
+        s.nextOffset=r.nextOffset; s.loading=false;
+      }catch(e){s.loading=false;state.statusMessage='다음 문제를 불러오지 못했습니다.';return fullViewWithMessage();}
+    }else{
+      return protectedEndView();
+    }
+  }
+  const item=s.queue[s.index],q=item.question;
+  chrome(s.tier==='BASE'?'기본 100문항':'추가 학습',{showBack:true,progress:s.total?Math.round(Math.min(s.completed,s.total)/s.total*100):0,right:s.tier==='BASE'?'기본 학습':'추가 자료'});
+  body.innerHTML=`<div class="chatbg">${questionBubble(q,Math.min(s.completed+1,s.total),s.total,s.tier==='BASE'?'기본':'추가')}${optionsHtml(q)}<div id="protectedAfter"></div></div>`;
+  body.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>answerProtected(+b.dataset.pick));
+}
+function answerProtected(pick){
+  const s=state.protected;if(!s||s.answered)return;const item=s.queue[s.index],q=item.question;s.answered=true;s.selected=pick;
+  if(!item.isReview)s.completed++;
+  markLearnOptions(q.answer,pick);
+  const ok=pick===q.answer;
+  $('#protectedAfter').innerHTML=`<div class="row me"><span class="tm">지금</span><div class="bub">${pick+1}번</div></div>${explanationHtml(q,pick)}<section class="next-step"><div class="next-step-head"><span class="next-kicker">다음 문제로 가기</span><strong>지금 이 문제, 얼마나 기억나나요?</strong><p>하나를 누르면 다음 문제로 이동합니다.</p></div><div class="rating-grid"><button class="memory-btn again" data-prate="again"><span class="rate-word">다시</span><span class="rate-desc">2문제 뒤 다시</span><span class="rate-arrow">›</span></button><button class="memory-btn hard" data-prate="hard"><span class="rate-word">어려움</span><span class="rate-desc">5문제 뒤 다시</span><span class="rate-arrow">›</span></button><button class="memory-btn good ${ok?'recommended':''}" data-prate="good"><span class="rate-word">보통</span><span class="rate-desc">이해했어요 · 다음</span><span class="rate-arrow">›</span></button><button class="memory-btn easy" data-prate="easy"><span class="rate-word">쉬움</span><span class="rate-desc">확실해요 · 다음</span><span class="rate-arrow">›</span></button></div></section>`;
+  body.querySelectorAll('[data-prate]').forEach(b=>b.onclick=()=>rateProtected(b.dataset.prate));
+  setTimeout(()=>{const el=body.querySelector('.next-step');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});},120);
+}
+function rateProtected(rate){
+  const s=state.protected,item=s.queue[s.index];
+  if((rate==='again'||rate==='hard') && item && !item.isReview){
+    const offset=rate==='again'?2:5;
+    const pos=Math.min(s.queue.length,s.index+offset);
+    s.queue.splice(pos,0,{question:item.question,isReview:true});
+  }
+  s.index++;s.answered=false;s.selected=null;protectedView();
+}
+function protectedEndView(){
+  const s=state.protected;
+  chrome(s.tier==='BASE'?'기본 학습 완료':'추가 학습',{showBack:true,progress:100,right:s.tier==='BASE'?'100문항 범위':'추가 자료'});
+  body.innerHTML=`<section class="gate"><div class="lk">✓</div><h2>${s.tier==='BASE'?'기본 학습세트를 모두 확인했습니다.':'이번 추가 학습세트를 마쳤습니다.'}</h2>${s.tier==='BASE'?'<p>기본 학습지원 범위 이후에도 더 풀고 싶다면 추가 학습자료를 이용할 수 있습니다.</p><button class="wide b-y" id="goExtra" style="margin-left:0;width:100%">추가 학습문항 보기</button>':''}<button class="wide b-g" id="goFull" style="margin-left:0;width:100%;margin-top:-5px">전체 메뉴로 돌아가기</button></section>`;
+  const x=$('#goExtra');if(x)x.onclick=()=>go('extraNotice');$('#goFull').onclick=()=>go('full');
+}
+
+/* ---------- info ---------- */
+function infoView(){
+  setTab('info'); chrome('이용안내',{progress:null,right:'학습용 · 2026.09'});
+  body.innerHTML=`<div class="info">
+    <div class="info-card"><h3>이 앱의 성격</h3><p>새마을금고법 학습과 연구 참여자의 역량개발을 지원하기 위한 무료·비상업적 학습도구입니다. 새마을금고중앙회 또는 행정안전부의 공식 서비스, 공식 유권해석, 업무지침 또는 법률자문을 대신하지 않습니다.</p></div>
+    <div class="info-card"><h3>기본 학습지원 범위</h3><p>연구 참여가 확인된 이용자에게 승인일부터 90일 동안 <b>검증된 기본 100문항</b>과 단계별 해설을 제공하는 것을 기본 범위로 합니다. 100문항 이후의 문항은 추가 학습을 돕기 위한 부가 자료입니다.</p></div>
+    <div class="info-card"><h3>운영·유지보수에 관한 안내</h3><p>이 앱은 개인이 연구와 본업을 병행하며 운영하는 무료 학습도구입니다. 운영자는 웹개발 전문가가 아니므로 앱 오류·기술 질문·건의에 대해 즉시 해결하거나 모든 요청을 반영하기 어려울 수 있습니다. 문의나 제안은 참고할 수 있으나 개별 회신, 수정·업데이트 여부 및 처리 시점을 보장하지 않습니다.</p><p style="margin-top:8px">특히 기본 100문항 이후의 추가 학습자료는 이러한 운영 특성을 인지한 상태에서 단순 학습·참고용으로 이용해 주세요.</p></div>
+    <div class="info-card"><h3>정답과 해설의 기준</h3><p>법·시행령·시행규칙을 정답 판단의 우선 근거로 사용하고, 중앙회 「새마을금고법 해설」을 이해를 돕는 자료로 연결합니다. 앱 학습해설은 이를 학습하기 쉽게 재구성한 내용입니다.</p></div>
+    <div class="info-card"><h3>학습 데이터</h3><p>정오답, 점수, 학습진도, 학습시간, 모의고사 결과는 서버에 저장하지 않습니다. 이용권 확인을 위한 내부 인증값·승인일·만료일과 1기기 이용을 위한 무작위 기기 연결값만 별도로 처리할 수 있습니다.</p></div>
+    <div class="info-card"><h3>실제 업무에 적용할 때</h3><p>문제의 정답은 제시된 조건과 표시된 기준일 자료에 따른 학습용 판단입니다. 실제 업무·권리·의무에 영향을 미치는 판단에는 해당 시점의 현행 법령과 정관·규정·업무방법 및 공식 해석을 다시 확인해 주세요.</p></div>
+    <div class="info-card"><h3>연구 참여자 학습지원</h3><p>연구 설문 참여는 자발적이며 특정한 답변이나 응답 방향을 요구하지 않습니다. 참여 내역 확인은 통상 1~2일 정도 소요될 수 있습니다.</p></div>
+    <div class="info-card"><h3>문의</h3><p>급한 이용 확인 문의는 <a href="mailto:${esc(APP_CONFIG.supportEmail)}" style="color:inherit;font-weight:800">${esc(APP_CONFIG.supportEmail)}</a>으로 요청할 수 있습니다. 다만 기술 문의·개선 제안의 개별 회신이나 반영은 어려울 수 있습니다.</p></div>
+  </div>${renderToast()}`;
+}
+
+/* ---------- navigation ---------- */
+function render(){
+  body.scrollTop=0;
+  if(state.view==='learn') studyView();
+  else if(state.view==='exam') mockView();
+  else if(state.view==='home') homeView();
+  else if(state.view==='research') researchView();
+  else if(state.view==='pending') pendingView();
+  else if(state.view==='full') fullView();
+  else if(state.view==='extraNotice') extraNoticeView();
+  else if(state.view==='protected') protectedView();
+  else if(state.view==='info') infoView();
+  else homeView();
+}
+
+tabs.addEventListener('click',e=>{
+  const b=e.target.closest('.tab'); if(!b) return;
+  const v=b.dataset.t;
+  if(v==='learn'){ state.study=null; go('learn'); }
+  else if(v==='exam'){ state.mock=null; go('exam'); }
+  else go(v);
+});
+back.addEventListener('click',()=>go('home'));
+
+render();
+
+</script>
+</body>
+</html>

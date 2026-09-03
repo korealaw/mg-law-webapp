@@ -1,0 +1,12 @@
+[GitHub 업로드 체크리스트]
+1. 저장소: korealaw/mg-law-webapp
+2. Code 탭 > Add file > Upload files
+3. 이 폴더의 아래 5개 파일을 저장소 루트에 업로드
+   - index.html
+   - README.md
+   - CHANGELOG.md
+   - PROJECT_HANDOFF_LATEST.md
+   - .nojekyll
+4. Commit message: Release v8.1 audited frontend
+5. main 브랜치에 커밋
+6. Pages 주소 확인: https://korealaw.github.io/mg-law-webapp/
