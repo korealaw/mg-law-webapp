@@ -2,11 +2,16 @@
 
 새마을금고법 학습 웹앱 공개 프런트엔드 저장소입니다.
 
-- 공개 버전: v8.1a
+- 공개 버전: v8.1b
 - 기준일: 2026-09-03
 - 배포: GitHub Pages (`main` / root)
 - 공개 주소: https://korealaw.github.io/mg-law-webapp/
 - 백엔드: Google Apps Script v8.1
+
+## v8.1b 핵심 개선
+
+- 카카오톡 링크 공유 시 로고 이미지가 큰 카드로 노출되도록 OG 이미지 규격을 1200×630(2:1)으로 교체
+- 파비콘은 `icon.jpg`(512×512)로 분리
 
 ## v8.1a 핵심 개선
 

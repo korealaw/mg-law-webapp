@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v8.1b — 2026-09-03
+
+- 카카오톡 링크 미리보기가 작은 썸네일 카드로 표시되던 문제 수정
+- `og-image.jpg` 규격 변경: 900×900(정사각) → 1200×630(2:1)
+- `og:image:width` / `og:image:height` 를 실제 이미지 크기와 일치하도록 정정
+- `og:image` URL의 쿼리스트링(`?v=20260903a`) 제거
+- `twitter:card` : `summary` → `summary_large_image`
+- 파비콘을 `icon.jpg`(512×512)로 분리
+- 배포 체크리스트에 Kakao 공유 디버거 캐시 초기화 단계 명시
+
 ## v8.1a — 2026-09-03
 
 - 40~50대 수강생 및 최신 Galaxy급 스마트폰을 고려한 가독성 상향

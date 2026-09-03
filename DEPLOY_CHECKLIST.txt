@@ -1,16 +1,33 @@
-[v8.1a 업로드 체크리스트]
+[v8.1b 업로드 체크리스트]
 
+A. 파일 업로드
 1. GitHub > korealaw/mg-law-webapp > Code > Add file > Upload files
-2. ZIP을 풀고 아래 파일을 저장소 루트에 업로드/덮어쓰기
-   - index.html
-   - og-image.jpg
+2. 아래 파일을 저장소 루트에 업로드/덮어쓰기
+   - index.html            (필수: OG 메타 수정본)
+   - og-image.jpg          (필수: 1200x630)
+   - icon.jpg              (필수: 512x512 파비콘)
    - README.md
    - CHANGELOG.md
    - PROJECT_HANDOFF_LATEST.md
    - .nojekyll
-3. Commit message: Release v8.1a mobile readability and Kakao preview
+3. Commit message: Release v8.1b fix Kakao large preview card
 4. main 브랜치에 직접 커밋
-5. Pages 재배포 완료 후 https://korealaw.github.io/mg-law-webapp/ 접속
-6. 카카오톡 채팅방에 위 URL 붙여넣기
-7. 이미지/제목/설명 카드가 뜨는지 확인
-8. 예전 미리보기가 남으면 Kakao URL 캐시 갱신이 필요할 수 있음
+
+B. 배포 반영 확인 (건너뛰지 말 것)
+5. 1~2분 대기 후 https://korealaw.github.io/mg-law-webapp/ 접속
+6. 페이지 소스 보기(Ctrl+U) > og:image:width 값 확인
+   - 1200 이면 정상 반영
+   - 900 이면 index.html 미반영 -> A단계 다시 수행
+7. https://korealaw.github.io/mg-law-webapp/og-image.jpg 직접 열기
+   - 가로로 긴 이미지가 나와야 정상 (정사각형이면 미반영)
+
+C. 카카오 캐시 초기화 (이 단계 없으면 옛 미리보기가 계속 뜸)
+8. https://developers.kakao.com/tool/debugger/sharing 접속
+9. URL 입력: https://korealaw.github.io/mg-law-webapp/
+   (https 포함, 끝 슬래시 포함)
+10. 스크랩 결과 확인 후 [초기화] 클릭
+
+D. 최종 확인
+11. 모바일 카카오톡 "나와의 채팅"에 URL 붙여넣기
+12. 로고 이미지가 크게 뜨고 그 아래 제목/설명/URL이 표시되는지 확인
+13. 정상 확인 후 대상 채팅방에 배포
