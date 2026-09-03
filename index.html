@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- MG Law Webapp v8.1d · post-survey approval flow + explanation-first UX -->
+<!-- MG Law Webapp v8.1e · return-home + automatic approval unlock + prominent BASE100 CTA -->
 <html lang="ko">
 <head>
 <meta charset="utf-8">
@@ -116,6 +116,7 @@ details .c{padding:0 16px 16px;font-size:15px;line-height:1.84;letter-spacing:-.
 .hidden{display:none!important}.spacer{height:12px}.center-note{text-align:center;color:#666;font-size:12px;line-height:1.65;padding:10px 18px 22px}
 .toast{position:fixed;z-index:100;left:50%;bottom:86px;transform:translateX(-50%);width:min(410px,calc(100% - 28px));background:#252525;color:#fff;padding:13px 15px;border-radius:13px;font-size:14px;text-align:center;box-shadow:0 7px 26px rgba(0,0,0,.22)}
 .approval-note{background:#EAF7EF;border:1px solid #BFE4CB;border-radius:14px;padding:14px 15px;margin:14px 0;text-align:left}.approval-note strong{display:block;font-size:16px;color:#0B6B31;margin-bottom:5px}.approval-note p{margin:0;font-size:13px;line-height:1.68;color:#405149}
+.return-hero{margin:16px 18px 18px;border-radius:20px;padding:18px 16px;box-shadow:0 7px 22px rgba(38,53,65,.12);border:2px solid var(--kakao-yellow);background:#FFFDF0}.return-hero.approved{background:#EDFAF2;border-color:#75C991}.return-hero .hero-kicker{display:inline-block;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:900;background:var(--kakao-brown);color:var(--kakao-yellow);margin-bottom:8px}.return-hero.approved .hero-kicker{background:#0B8A3D;color:#fff}.return-hero h2{font-size:21px;line-height:1.35;letter-spacing:-.55px;margin:0 0 7px;color:#191919}.return-hero p{font-size:14px;line-height:1.68;color:#4C555B;margin:0 0 12px;word-break:keep-all}.return-hero .hero-btn{display:block;width:100%;border:0;border-radius:14px;min-height:58px;padding:14px 12px;background:var(--kakao-yellow);color:var(--kakao-brown);font-size:17px;font-weight:900;letter-spacing:-.3px}.return-hero.approved .hero-btn{background:#0B8A3D;color:#fff}.return-hero .hero-sub{margin-top:9px;font-size:11.5px;line-height:1.55;color:#68737A}.return-hero .hero-status{margin-top:9px;border-radius:10px;padding:9px 10px;background:rgba(255,255,255,.72);font-size:12.5px;font-weight:800;line-height:1.55;color:#3C1E1E}.return-hero .hero-secondary{display:block;width:100%;border:1px solid #DDD;border-radius:12px;min-height:46px;padding:10px 12px;margin-top:9px;background:#fff;color:#4A4A4A;font-size:13px;font-weight:800}
 .post-survey-backdrop{position:fixed;inset:0;z-index:150;background:rgba(0,0,0,.48);display:flex;align-items:flex-end;justify-content:center;padding:18px 14px calc(18px + env(safe-area-inset-bottom))}.post-survey-modal{width:min(500px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:22px;padding:20px 18px 18px;box-shadow:0 18px 54px rgba(0,0,0,.28)}.post-survey-modal .modal-kicker{display:inline-block;background:var(--kakao-yellow);color:var(--kakao-brown);border-radius:999px;padding:5px 9px;font-size:12px;font-weight:900;margin-bottom:8px}.post-survey-modal h2{font-size:21px;line-height:1.35;letter-spacing:-.5px;margin:0 0 8px}.post-survey-modal .modal-lead{font-size:15px;line-height:1.7;color:#333;margin:0 0 12px}.post-survey-modal .modal-steps{background:#F7F8FA;border-radius:14px;padding:13px 14px;margin:12px 0;font-size:13.5px;line-height:1.78;color:#333}.post-survey-modal .modal-steps b{color:var(--kakao-brown)}.post-survey-modal .modal-warn{background:#FFF9D8;border:1px solid #F1DF71;border-radius:12px;padding:11px 12px;font-size:12.5px;line-height:1.65;color:#5C5100;margin:12px 0}.post-survey-modal .wide{margin:12px 0 0;width:100%}@media (min-width:700px){.post-survey-backdrop{align-items:center}}
 
 /* v4: ANKI 선택을 '다음 문제로 가는 동작'으로 재설계 */
@@ -745,14 +746,16 @@ function readEntitlement(){
 
 const bootstrapEntitlement = readEntitlement();
 const bootstrapPending = localStorage.getItem(PENDING_KEY) === '1';
+const bootstrapAccessCode = localStorage.getItem(ACCESS_CODE_KEY) || '';
 
 const state = {
-  // 승인된 이용자는 체험을 다시 거치지 않고 100문항 화면으로, 설문 제출자는 승인확인 화면으로 바로 이동한다.
-  view: bootstrapEntitlement ? 'full' : (bootstrapPending ? 'pending' : 'learn'),
+  // 최초 접속만 체험 문제로 시작한다. 설문을 한 번이라도 연 브라우저는 재접속 시 반드시 홈으로 돌아온다.
+  // 승인된 이용자도 홈에서 '기본 100문항 바로 시작' 버튼을 명확히 보고 진입한다.
+  view: (bootstrapEntitlement || bootstrapPending || bootstrapAccessCode) ? 'home' : 'learn',
   study: null,
   mock: null,
   trial: { studyCompleted:false, mockCompleted:false },
-  accessCode: localStorage.getItem(ACCESS_CODE_KEY) || '',
+  accessCode: bootstrapAccessCode,
   pending: bootstrapPending,
   entitlement: bootstrapEntitlement,
   statusBusy:false,
@@ -760,7 +763,9 @@ const state = {
   toast:'',
   contentManifest:null,
   protected:null,
-  extraAcknowledged:false
+  extraAcknowledged:false,
+  autoAccessChecked:false,
+  homeStatus:''
 };
 
 function esc(s=''){
@@ -1136,17 +1141,37 @@ function homeView(){
   setTab('home'); chrome('새마을금고법 톡톡',{progress:null,right:'학습용 · 2026.09'});
   const both=state.trial.studyCompleted&&state.trial.mockCompleted;
   const ent=state.entitlement;
+  const returning=!!(state.accessCode || state.pending || ent);
+  let hero='';
+  if(ent){
+    hero=`<section class="return-hero approved"><span class="hero-kicker">승인 완료</span><h2>기본 100문항을 바로 이용할 수 있습니다.</h2><p>앞서 풀었던 체험 8개념과 미니 모의고사 10문항을 다시 풀 필요가 없습니다.</p><button class="hero-btn" id="homeStart100">기본 100문항 바로 시작 →</button><div class="hero-sub">승인일부터 90일 · 현재 D-${daysLeft(ent)}</div></section>`;
+  }else if(returning){
+    hero=`<section class="return-hero"><span class="hero-kicker">설문 참여 후</span><h2>승인을 확인하고 기본 100문항을 여세요.</h2><p>설문을 제출했다면 체험문제를 다시 풀 필요가 없습니다. 운영자 승인 후 이 버튼으로 바로 100문항 학습을 시작합니다.</p><button class="hero-btn" id="homeCheck100">승인 확인하고 100문항 열기 →</button><button class="hero-secondary" id="homeOpenSurvey">설문을 아직 제출하지 않았다면 설문 열기</button>${state.homeStatus?`<div class="hero-status">${esc(state.homeStatus)}</div>`:''}<div class="hero-sub">가능하면 설문에 참여한 것과 같은 기기·같은 브라우저에서 이용하세요.</div></section>`;
+  }else if(both){
+    hero=`<section class="return-hero"><span class="hero-kicker">체험 완료</span><h2>설문 참여 후 기본 100문항 학습을 이용할 수 있습니다.</h2><p>설문 참여내역이 승인되면 90일 동안 기본 100문항과 단계별 해설이 열립니다.</p><button class="hero-btn" id="homeGoSurvey">설문 참여하고 100문항 열기 →</button></section>`;
+  }
   body.innerHTML=`<div class="profile"><div class="pf-ico">法</div><div><div class="pf-t">새마을금고법 톡톡</div><div class="pf-s">문제로 먼저 익히고, 필요할 때 법령·해설을 펼쳐보는 모바일 학습도구</div></div></div>
+  ${hero}
   <div class="bar">학습 메뉴</div><ul class="menu">
     <li data-go="learn"><div class="mi y">📘</div><div><div class="mt">학습 모드</div><div class="ms">8개념 + ANKI형 세션 반복 + 3단계 해설</div></div><span class="badge ${state.trial.studyCompleted?'g':''}">${state.trial.studyCompleted?'완료':'체험'}</span></li>
     <li data-go="exam"><div class="mi b">📝</div><div><div class="mt">미니 모의고사</div><div class="ms">10문항 · 시험 종료 후 정답과 상세해설</div></div><span class="badge ${state.trial.mockCompleted?'g':''}">${state.trial.mockCompleted?'완료':'10'}</span></li>
-    ${ent?`<li data-go="full"><div class="mi y">🔓</div><div><div class="mt">기본 100문항 학습</div><div class="ms">승인 완료 · 체험을 다시 풀 필요 없이 바로 이용 · D-${daysLeft(ent)}</div></div><span class="badge g">이용중</span></li>`:
-      state.pending?`<li data-go="pending"><div class="mi">⏳</div><div><div class="mt">설문 제출 완료 · 승인 확인</div><div class="ms">같은 기기·브라우저에서 승인 여부만 확인하면 됩니다</div></div><span class="badge g">대기중</span></li>`:
+    ${ent?`<li data-go="full"><div class="mi y">🔓</div><div><div class="mt">기본 100문항 학습</div><div class="ms">승인 완료 · 체험 재응시 없이 바로 이용 · D-${daysLeft(ent)}</div></div><span class="badge g">이용중</span></li>`:
+      returning?`<li id="homeAccessMenu"><div class="mi y">🎓</div><div><div class="mt">설문 참여 후 기본 100문항 학습</div><div class="ms">승인 확인 → 기본 100문항 바로 시작</div></div><span class="badge y">확인</span></li>`:
       `<li data-go="${both?'research':'home'}"><div class="mi">🎓</div><div><div class="mt">설문 참여 후 기본 100문항 학습</div><div class="ms">${both?'승인 후 90일 · 기본 100문항 + 단계별 해설':'학습·모의고사 체험 완료 후 설문 참여 안내'}</div></div><span class="badge ${both?'y':'g'}">${both?'100문항':'체험후'}</span></li>`}
   </ul>
   <div class="bar">이 앱에서 기억할 것</div>
   <div class="info" style="padding-top:5px"><div class="info-card"><h3>학습기록은 저장하지 않습니다</h3><p>정오답·점수·학습진도·학습시간은 서버에 저장하지 않습니다. 이용권 확인에 필요한 인증정보만 별도로 처리합니다.</p></div></div>${renderToast()}`;
   body.querySelectorAll('[data-go]').forEach(x=>x.onclick=()=>{const v=x.dataset.go;if(v==='home') showToast('학습과 모의고사를 모두 체험하면 안내가 열립니다.'); else go(v);});
+  const s100=$('#homeStart100'); if(s100) s100.onclick=()=>go('full');
+  const c100=$('#homeCheck100'); if(c100) c100.onclick=()=>checkAccessStatusFromHome(true);
+  const am=$('#homeAccessMenu'); if(am) am.onclick=()=>checkAccessStatusFromHome(true);
+  const hos=$('#homeOpenSurvey'); if(hos) hos.onclick=()=>{ state.pending=true; localStorage.setItem(PENDING_KEY,'1'); window.open(buildSurveyUrl(),'_blank','noopener'); };
+  const gs=$('#homeGoSurvey'); if(gs) gs.onclick=()=>go('research');
+  // 설문을 열었던 브라우저로 재접속하면 서버 승인상태를 1회 자동 확인한다.
+  if(returning && !ent && !state.autoAccessChecked){
+    state.autoAccessChecked=true;
+    setTimeout(()=>checkAccessStatusFromHome(false),120);
+  }
 }
 
 /* ---------- research / access ---------- */
@@ -1162,7 +1187,7 @@ function researchView(){
   <button class="wide b-y" id="openSurvey" style="margin-left:0;width:100%">연구 설문 참여하기</button>
   <button class="wide b-g" id="surveyDone" style="margin-left:0;width:100%;margin-top:-5px">설문 제출 완료 → 다음 단계 안내</button>
   <p style="margin-top:12px;font-size:12px;line-height:1.6;color:#666">설문을 이미 제출했다면 중복 응답하지 말고 아래 ‘설문 제출 완료’ 버튼을 눌러 다음 안내로 이동하세요.</p></section>${renderToast()}`;
-  $('#openSurvey').onclick=()=>window.open(buildSurveyUrl(),'_blank','noopener');
+  $('#openSurvey').onclick=()=>{ state.pending=true; localStorage.setItem(PENDING_KEY,'1'); ensureAccessCode(); window.open(buildSurveyUrl(),'_blank','noopener'); };
   $('#surveyDone').onclick=showPostSurveyGuide;
 }
 
@@ -1175,13 +1200,13 @@ function showPostSurveyGuide(){
       <span class="modal-kicker">설문 제출 후 다음 단계</span>
       <h2 id="postSurveyGuideTitle">이제 체험문제를 다시 풀 필요가 없습니다.</h2>
       <p class="modal-lead">설문 제출이 끝났다면 남은 절차는 <b>운영자의 참여 확인·승인</b>뿐입니다.</p>
-      <div class="modal-steps"><b>앞으로 이렇게 이용하세요</b><br>① 운영자가 설문 참여 내역을 확인합니다.<br>② 통상 <b>다음 날 또는 1~2일 뒤</b> 이 웹앱 주소를 다시 여세요.<br>③ 반드시 가능하면 <b>지금과 같은 스마트폰·같은 브라우저</b>로 접속하세요.<br>④ 화면의 <b>‘승인 여부 확인하고 100문항 열기’</b>를 누르세요.<br>⑤ 승인되었다면 체험 18문항을 반복하지 않고 <b>기본 100문항 학습으로 바로 이동</b>합니다.</div>
+      <div class="modal-steps"><b>앞으로 이렇게 이용하세요</b><br>① 운영자가 설문 참여 내역을 확인합니다.<br>② 설문 제출을 마친 뒤 이 웹앱을 닫아도 됩니다. 운영자 승인 후 <b>같은 웹앱 링크를 다시 여세요.</b><br>③ 재접속하면 <b>홈 화면</b>이 열리고 ‘승인 확인하고 100문항 열기’ 버튼이 크게 표시됩니다.<br>④ 통상 승인 확인은 <b>다음 날 또는 1~2일</b> 정도 걸릴 수 있습니다.<br>⑤ 가능하면 <b>지금과 같은 스마트폰·같은 브라우저</b>로 접속하세요.<br>⑥ 홈 화면의 <b>‘승인 확인하고 100문항 열기’</b>를 누르세요.<br>⑦ 승인되었다면 체험 18문항을 반복하지 않고 <b>기본 100문항 학습으로 바로 이동</b>합니다.</div>
       <div class="modal-warn"><b>중요</b> · 시크릿 모드 사용, 브라우저 데이터 삭제, 다른 기기·브라우저로 변경하면 기존 확인정보가 이어지지 않을 수 있습니다.</div>
-      <button class="wide b-y" id="postSurveyContinue">확인했습니다 · 승인 대기 화면으로</button>
+      <button class="wide b-y" id="postSurveyContinue">확인했습니다 · 홈에서 승인 확인하기</button>
     </div>
   </div>`);
   const btn=document.getElementById('postSurveyContinue');
-  if(btn) btn.onclick=()=>{ const m=document.getElementById('postSurveyGuide'); if(m)m.remove(); go('pending'); };
+  if(btn) btn.onclick=()=>{ const m=document.getElementById('postSurveyGuide'); if(m)m.remove(); go('home'); };
 }
 
 function pendingView(){
@@ -1199,6 +1224,42 @@ function pendingView(){
   $('#checkStatus').onclick=checkAccessStatus;
   $('#reopenSurvey').onclick=()=>window.open(buildSurveyUrl(),'_blank','noopener');
 }
+async function checkAccessStatusFromHome(openWhenApproved=false){
+  if(state.statusBusy) return;
+  if(!state.accessCode){
+    state.homeStatus='이 브라우저에서 설문 연결정보를 찾지 못했습니다. 설문에 참여했던 같은 기기·브라우저로 다시 접속해 주세요.';
+    return homeView();
+  }
+  state.statusBusy=true;
+  state.homeStatus='승인 상태를 확인하는 중입니다…';
+  homeView();
+  try{
+    const data=await jsonpApi('status');
+    state.statusBusy=false;
+    if(data && data.status==='APPROVED' && data.expiresAt){
+      state.entitlement={code:data.code||ensureAccessCode(),approvedAt:data.approvedAt,expiresAt:data.expiresAt};
+      state.pending=false;
+      localStorage.removeItem(PENDING_KEY);
+      localStorage.setItem(ENTITLEMENT_KEY,JSON.stringify(state.entitlement));
+      state.homeStatus='승인이 완료되었습니다. 기본 100문항을 이용할 수 있습니다.';
+      if(openWhenApproved) return go('full');
+      return homeView();
+    }
+    state.pending=true;
+    localStorage.setItem(PENDING_KEY,'1');
+    if(data && data.status==='DEVICE_MISMATCH') state.homeStatus='이미 다른 기기·브라우저에 연결된 이용권입니다. 처음 활성화한 기기·브라우저에서 이용해 주세요.';
+    else if(data && data.status==='EXPIRED') state.homeStatus='90일 이용기간이 종료되었습니다.';
+    else if(data && data.status==='BUSY') state.homeStatus='확인 요청이 겹쳤습니다. 잠시 후 다시 눌러 주세요.';
+    else if(data && data.status==='REVIEW') state.homeStatus='설문은 확인되었고 현재 운영자 승인 대기 중입니다. 승인 후 같은 링크를 다시 열어 주세요.';
+    else state.homeStatus='아직 승인 전이거나 설문 확인 전입니다. 운영자 승인 후 같은 링크를 다시 열어 주세요.';
+    homeView();
+  }catch(e){
+    state.statusBusy=false;
+    state.homeStatus='승인 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.';
+    homeView();
+  }
+}
+
 function activateEntitlement(data){
   state.entitlement={code:data.code||ensureAccessCode(),approvedAt:data.approvedAt,expiresAt:data.expiresAt};
   state.pending=false; localStorage.removeItem(PENDING_KEY); localStorage.setItem(ENTITLEMENT_KEY,JSON.stringify(state.entitlement));
