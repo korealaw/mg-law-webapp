@@ -1,33 +1,61 @@
-[v8.1b 업로드 체크리스트]
+[v8.2 공개 프런트 배포 체크리스트]
 
-A. 파일 업로드
-1. GitHub > korealaw/mg-law-webapp > Code > Add file > Upload files
-2. 아래 파일을 저장소 루트에 업로드/덮어쓰기
-   - index.html            (필수: OG 메타 수정본)
-   - og-image.jpg          (필수: 1200x630)
-   - icon.jpg              (필수: 512x512 파비콘)
-   - README.md
-   - CHANGELOG.md
-   - PROJECT_HANDOFF_LATEST.md
-   - .nojekyll
-3. Commit message: Release v8.1b fix Kakao large preview card
-4. main 브랜치에 직접 커밋
+A. GitHub에 올릴 파일
+1. index.html
+2. README.md
+3. CHANGELOG.md
+4. PROJECT_HANDOFF_LATEST.md
+5. DEPLOY_CHECKLIST.txt
+6. AUDIT_v8.2_SYSTEM_FINAL.md
+7. RELEASE_MANIFEST_v8.2.txt
 
-B. 배포 반영 확인 (건너뛰지 말 것)
-5. 1~2분 대기 후 https://korealaw.github.io/mg-law-webapp/ 접속
-6. 페이지 소스 보기(Ctrl+U) > og:image:width 값 확인
-   - 1200 이면 정상 반영
-   - 900 이면 index.html 미반영 -> A단계 다시 수행
-7. https://korealaw.github.io/mg-law-webapp/og-image.jpg 직접 열기
-   - 가로로 긴 이미지가 나와야 정상 (정사각형이면 미반영)
+※ Code.gs / Admin.html / PRIVATE_APPS_SCRIPT_v8.2.zip은 공개 GitHub에 올리지 말 것.
+※ icon.jpg, og-image.jpg, .nojekyll은 기존 파일을 그대로 유지.
 
-C. 카카오 캐시 초기화 (이 단계 없으면 옛 미리보기가 계속 뜸)
-8. https://developers.kakao.com/tool/debugger/sharing 접속
-9. URL 입력: https://korealaw.github.io/mg-law-webapp/
-   (https 포함, 끝 슬래시 포함)
-10. 스크랩 결과 확인 후 [초기화] 클릭
+B. 업로드
+1. https://github.com/korealaw/mg-law-webapp 접속
+2. Add file → Upload files
+3. 위 공개 파일들을 저장소 루트에 업로드/덮어쓰기
+4. Commit message 예시: Release v8.2 survey and BASE100 hardening
+5. main 브랜치에 커밋
 
-D. 최종 확인
-11. 모바일 카카오톡 "나와의 채팅"에 URL 붙여넣기
-12. 로고 이미지가 크게 뜨고 그 아래 제목/설명/URL이 표시되는지 확인
-13. 정상 확인 후 대상 채팅방에 배포
+C. GitHub Pages 확인
+1. https://korealaw.github.io/mg-law-webapp/ 접속
+2. 홈/학습/모의고사/안내 탭이 정상 표시되는지 확인
+3. 모바일 확대(핀치줌)가 가능한지 확인
+4. 카카오 공유 미리보기는 필요 시 Kakao 공유 디버거에서 캐시 초기화 후 확인
+
+D. 설문 흐름 실기기 확인 — 반드시 새/테스트 브라우저에서
+1. 무료 학습 30문항 완료
+2. 미니 모의고사 20문항 답변
+3. 제출 후 20문항 해설을 끝까지 확인
+4. 두 체험 완료 전에는 설문 진입이 열리지 않는지 확인
+5. 설문 버튼을 눌러도 앱 상태가 곧바로 '제출 완료'가 되지 않는지 확인
+6. Google Form에서 '웹앱 이용 인증코드'가 자동 입력되는지 확인
+7. 실제 제출 후 앱으로 돌아와 '설문 제출 완료' 클릭
+8. 홈에서 '승인 확인하고 100문항 열기'가 표시되는지 확인
+9. 관리자 승인 전에는 PENDING/REVIEW 안내가 맞는지 확인
+10. 승인 후 처음 확인하는 기기·브라우저에 이용권이 연결되는지 확인
+
+E. 승인 후 BASE100
+1. '이어서 학습하기'를 누르면 즉시 '문제 불러오는 중…' 표시
+2. 1~10 등 실제 문제 로딩 확인
+3. 중간 종료 후 동일 브라우저 재접속 → 진도 복원
+4. '범위를 선택해서 학습하기' → 12개 파트 표시
+5. 직접 범위 입력 정상
+6. 기본 학습: 정답 시 3단계 근거는 필요할 때 펼침
+7. 심화 학습: 3단계 법령근거 자동 펼침
+8. '이미 학습한 문항 제외' 동작 확인
+9. 예: 연속 23/100 + 50~60 별도학습 후 일반 이어하기 → 24부터 시작하고 50~60은 건너뜀
+10. EXTRA=0이면 추가문항 시작버튼이 나타나지 않는지 확인
+
+F. 백엔드 v8.2 적용 후 확인
+1. 기존 Apps Script 배포 URL을 유지한 채 새 버전으로 업데이트
+2. /exec?action=health → version 8.2
+3. questionBank.releaseReady = true
+4. baseLoaded=100, baseUnique=true, baseOrderOk=true
+5. 관리자 화면 자가점검 전체 PASS
+6. 실제 승인 테스트 이용자에서 manifest/questions 정상
+7. 다른 기기에서 DEVICE_MISMATCH 확인
+
+※ 브라우저/모바일 E2E는 정적 QA와 별개입니다. 위 실제기기 점검을 통과하기 전에는 '실서비스 E2E 통과'로 기록하지 말 것.

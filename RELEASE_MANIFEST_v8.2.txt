@@ -1,0 +1,9 @@
+dc95b926e83f345080994121d64d576fc63609c4ec5fe40bc3ba282948a6bd1b  index.html
+66e93042248eddd2b1237665a65f1901a1f21c4c6aabd9608201969a62ab055e  README.md
+69efaaef5e49ee1dc4538d35389738cf4ebfd6744d5298f301121ca5d665e2cf  CHANGELOG.md
+37d3665595ec4560fc5cd7f5179fe04c28935d4ae3073ca8f7721e56a31d8834  PROJECT_HANDOFF_LATEST.md
+befda802fc155b3d623aa9d467ca133ad8cebd7461c26de3e62d0b3f9dbfbe7d  DEPLOY_CHECKLIST.txt
+70521c1191aa8d171cbde5daa628c88dacd18794405cebdf7c72eab988f60db9  AUDIT_v8.2_SYSTEM_FINAL.md
+
+index.html Git blob SHA: 273d167b4968804e4f20ba74cc668e3c0131d3fc
+Public package rule: protected BASE100 question content and private Apps Script files are not included.
