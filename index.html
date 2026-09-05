@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- MG Law Webapp v8.1g · final hardening: explanation-gated progress + verified BASE100 completion + mock-review gate -->
+<!-- MG Law Webapp v8.1j · FREE50 QA: continuity + accurate local-data disclosure + checkpoint copy hardening -->
 <html lang="ko">
 <head>
 <meta charset="utf-8">
@@ -214,7 +214,7 @@ const TRIAL_STUDY = [
   {
     "id": "L02",
     "category": "금고의 설립",
-    "question": "금고 설립에 필요한 <b>발기인</b>의 최소 인원은?",
+    "question": "금고를 설립하려면 <b>발기인</b>이 적어도 몇 명 필요할까요?",
     "options": [
       "20명 이상",
       "30명 이상",
@@ -370,6 +370,534 @@ const TRIAL_STUDY = [
         "t": "① 준비금은 1. 금고 및 중앙회가 납입하는 출연금 2. 타회계에서 넘어온 전입금 및 차입금 3. 준비금의 운용에 의하여 생기는 수익금 4. 정부, 한국은행 또는 금융기관으로부터의 차입금 5. 그 밖의 수입금으로 조성한다.<br>③ 금고 및 중앙회는 제1항제1호에 따라 납입한 출연금의 반환을 청구할 수 없다.<br>④ 제1항제1호에 따른 출연금은 금고별로 경영 및 재무 상황 등을 고려하여 그 비율을 다르게 할 수 있다."
       }
     ]
+  },
+  {
+    "category": "총론",
+    "question": "새마을금고중앙회의 법적 성격을 가장 정확하게 설명한 것은 무엇인가요?",
+    "options": [
+      "비영리법인",
+      "국가기관",
+      "지방공기업",
+      "영리법인"
+    ],
+    "answer": 0,
+    "step1": "중앙회 역시 법에 따라 설립되는 비영리법인입니다.",
+    "step2": "중앙회는 모든 금고의 공동이익 증진과 지속적인 발전을 도모하기 위해 설립되는 비영리법인입니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제2조제3항",
+        "t": "“중앙회”는 모든 금고의 공동이익 증진과 지속적인 발전을 도모하기 위하여 설립한 비영리법인이다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제1장 총론",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L09"
+  },
+  {
+    "category": "총론",
+    "question": "금고와 중앙회의 정치 관여에 관해 가장 정확한 설명은 무엇인가요?",
+    "options": [
+      "정치에 관여하는 일체의 행위를 할 수 없다",
+      "중앙회만 가능하다",
+      "정관으로 허용할 수 있다",
+      "회원 과반수 찬성 시 가능하다"
+    ],
+    "answer": 0,
+    "step1": "금고와 중앙회는 정치에 관여하는 일체의 행위를 할 수 없습니다.",
+    "step2": "정치관여 금지는 법률에 직접 규정된 금지사항입니다. 내부 의결이나 정관으로 허용범위를 만들어 우회할 수 있는 성격의 규정이 아닙니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제5조",
+        "t": "금고와 중앙회는 정치에 관여하는 일체의 행위를 할 수 없다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제1장 총론",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L10"
+  },
+  {
+    "category": "총론",
+    "question": "금고와 중앙회의 사업에 관한 다른 법률 적용관계로 가장 정확한 것은 무엇인가요?",
+    "options": [
+      "은행법이 금고 전체에 직접 적용된다",
+      "보험업법이 전면 적용된다",
+      "보험업법은 적용하지 않는다",
+      "상법은 모든 경우 적용되지 않는다"
+    ],
+    "answer": 2,
+    "step1": "금고와 중앙회의 사업에는 보험업법 규정을 적용하지 않습니다.",
+    "step2": "다른 법률과의 관계는 조문별로 다릅니다. “모든 금융법이 적용된다/적용되지 않는다”가 아니라 새마을금고법 제6조의 구체적 준용·배제 규정을 봐야 합니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제6조제2항",
+        "t": "금고와 중앙회의 사업에 관하여는 「보험업법」의 규정을 적용하지 아니한다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제1장 총론",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L11"
+  },
+  {
+    "category": "금고의 개관",
+    "question": "“지역금고”의 업무구역 개념을 가장 정확하게 설명한 것은 무엇인가요?",
+    "options": [
+      "동일한 행정구역·경제권 또는 생활권",
+      "중앙회가 지정한 해외지역",
+      "특별시만",
+      "전국 전체"
+    ],
+    "answer": 0,
+    "step1": "지역금고는 동일한 행정구역, 경제권 또는 생활권을 업무구역으로 하는 금고입니다.",
+    "step2": "지역금고 여부는 명칭이 아니라 업무구역의 성격으로 구분합니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제2조제2항",
+        "t": "지역금고는 동일한 행정구역, 경제권 또는 생활권을 업무구역으로 하는 금고를 말한다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제2장 금고의 개관",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L12"
+  },
+  {
+    "category": "금고의 개관",
+    "question": "다음 내용을 새마을금고법 기준으로 판단하세요. 금고의 명칭에 반드시 사용되어야 하는 문자는?",
+    "options": [
+      "새마을금고",
+      "상호금융",
+      "협동은행",
+      "지역금융"
+    ],
+    "answer": 0,
+    "step1": "금고는 명칭 중 “새마을금고”라는 문자를 사용해야 합니다.",
+    "step2": "중앙회는 “새마을금고중앙회” 문자를 사용해야 하며, 법은 명칭의 사용과 보호를 직접 규정합니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제2조제4항",
+        "t": "금고나 중앙회는 그 명칭 중 “새마을금고” 또는 “새마을금고중앙회”라는 문자를 사용하여야 한다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제2장 금고의 개관",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L13"
+  },
+  {
+    "category": "금고의 개관",
+    "question": "금고나 중앙회가 아닌 자의 명칭 사용에 관해 가장 정확한 설명은 무엇인가요?",
+    "options": [
+      "광고에서만 사용할 수 있다",
+      "유사 명칭도 자유롭게 사용할 수 있다",
+      "“새마을금고” 또는 유사 명칭을 사용할 수 없다",
+      "시·군의 허가만 받으면 된다"
+    ],
+    "answer": 2,
+    "step1": "금고나 중앙회가 아닌 자는 해당 명칭이나 유사 명칭을 사용할 수 없습니다.",
+    "step2": "명칭 보호규정은 이용자가 공식 금고·중앙회로 오인하는 것을 막는 기능이 있습니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제2조제5항",
+        "t": "금고나 중앙회가 아니면 법정 명칭이나 이와 유사한 명칭을 사용할 수 없다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제2장 금고의 개관",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L14"
+  },
+  {
+    "category": "금고의 개관",
+    "question": "국가나 지방자치단체의 협력의무에 관해 가장 정확한 설명은 무엇인가요?",
+    "options": [
+      "필요한 지원을 하여야 하며 국공유재산을 우선 대여·사용수익하게 할 수 있다",
+      "중앙회에는 보조금을 줄 수 없다",
+      "지원은 회원에게만 가능하다",
+      "금고 지원은 법으로 금지된다"
+    ],
+    "answer": 0,
+    "step1": "국가·지자체는 금고나 중앙회의 사업 육성을 위해 필요한 지원을 하여야 합니다.",
+    "step2": "국공유재산은 필요한 경우 우선 대여하거나 사용·수익하게 할 수 있고, 중앙회에는 예산 범위에서 보조금을 줄 수 있습니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제3조",
+        "t": "국가나 지방자치단체는 필요한 지원을 하여야 하며, 필요한 경우 국공유재산을 우선 대여·사용수익하게 할 수 있다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제2장 금고의 개관",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L15"
+  },
+  {
+    "category": "금고의 개관",
+    "question": "다른 협동조합과의 관계에 관해 가장 정확한 설명은 무엇인가요?",
+    "options": [
+      "국내 협동조합과만 협력 가능하다",
+      "중앙회만 협력할 수 있다",
+      "상호협력을 위하여 노력하여야 한다",
+      "경쟁관계이므로 협력이 금지된다"
+    ],
+    "answer": 2,
+    "step1": "금고와 중앙회는 국내외 협동조합과 상호협력을 위해 노력하여야 합니다.",
+    "step2": "이 규정은 협동조합 간 협력이라는 협동조합 기본원칙과 연결해서 이해하면 기억하기 쉽습니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제4조",
+        "t": "금고와 중앙회는 다른 법률에 따른 협동조합 및 외국의 협동조합과의 상호협력을 위하여 노력하여야 한다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제2장 금고의 개관",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L16"
+  },
+  {
+    "category": "금고의 개관",
+    "question": "금고의 사무소에 관해 가장 정확한 설명은 무엇인가요?",
+    "options": [
+      "주된 사무소는 매년 총회에서 다시 정한다",
+      "주된 사무소는 행정안전부장관이 정한다",
+      "주된 사무소는 정관으로 정하고 필요하면 정관에 따라 분사무소를 둘 수 있다",
+      "분사무소 설치는 금지된다"
+    ],
+    "answer": 2,
+    "step1": "주된 사무소는 정관으로 정하며, 필요한 곳에 분사무소를 둘 수 있습니다.",
+    "step2": "사무소의 소재지는 정관·등기와 연결되므로 설립·변경등기 문제와 함께 학습하는 것이 좋습니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제8조의2",
+        "t": "주된 사무소는 정관으로 정하고, 정관으로 정하는 바에 따라 필요한 곳에 분사무소를 둘 수 있다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제2장 금고의 개관",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L17"
+  },
+  {
+    "category": "금고의 설립",
+    "question": "창립총회 개최 전 공고기간을 가장 정확하게 설명한 것은 무엇인가요?",
+    "options": [
+      "7일 이상",
+      "10일 이상",
+      "15일 이상",
+      "3일 이상"
+    ],
+    "answer": 2,
+    "step1": "창립총회 관련 사항은 15일 이상 공고한 후 개최합니다.",
+    "step2": "공고사항은 창립총회의 일시·장소, 회원의 자격, 창립총회에 부칠 사항입니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 시행령 제2조제1항",
+        "t": "발기인은 정관안과 사업계획안을 작성하고 창립총회 관련 사항을 15일 이상 공고한 후 창립총회를 개최한다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제3장 금고의 설립",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L18"
+  },
+  {
+    "category": "금고의 설립",
+    "question": "금고 설립 시 창립총회 어떤 방법으로 공고해야 하나요?",
+    "options": [
+      "전국 일간신문 2곳에 게재",
+      "회원 개별 등기우편만 허용",
+      "관보에만 게재",
+      "주된 사무소 게시판에 게시"
+    ],
+    "answer": 3,
+    "step1": "창립총회 공고는 금고의 주된 사무소 게시판에 게시하는 방법으로 합니다.",
+    "step2": "중앙회 설립절차의 공고방법과 구별해야 합니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 시행령 제2조제2항",
+        "t": "창립총회 공고는 금고의 주된 사무소 게시판에 게시하는 방법으로 한다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제3장 금고의 설립",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L19"
+  },
+  {
+    "category": "금고의 설립",
+    "question": "설립인가 출자금 요건에서 설립동의자는 법에서 요구하는 최소 인원은 몇 명인가요?",
+    "options": [
+      "200명",
+      "50명",
+      "70명",
+      "100명"
+    ],
+    "answer": 3,
+    "step1": "출자금 산정에 포함되는 설립동의자는 100명 이상이어야 합니다.",
+    "step2": "발기인 최소 50명과 설립동의자 100명 이상은 서로 다른 숫자입니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 시행령 제4조제1항",
+        "t": "설립인가 출자금은 회원 자격이 있는 설립동의자 100명 이상이 납입한 출자금 총액을 기준으로 한다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제3장 금고의 설립",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L20"
+  },
+  {
+    "category": "금고의 설립",
+    "question": "다음 내용을 새마을금고법 기준으로 판단하세요. 2026년 9월 기준, 특별자치시 또는 시에 지역금고를 설립하는 경우 출자금 기준은?",
+    "options": [
+      "5억원 이상",
+      "6억원 이상",
+      "10억원 이상",
+      "3억원 이상"
+    ],
+    "answer": 1,
+    "step1": "2025.7.1.~2028.6.30. 구간의 특별자치시·시 기준은 6억원 이상입니다.",
+    "step2": "같은 기간 특별시·광역시는 10억원, 읍·면은 2억원입니다. 설립 시점에 따라 금액이 달라지므로 기준일을 반드시 확인해야 합니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 시행령 제4조제1항제1호나목",
+        "t": "2025.7.1.~2028.6.30. 설립 지역금고는 특별시·광역시 10억원, 특별자치시·시 6억원, 읍·면 2억원 이상이다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제3장 금고의 설립",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L21"
+  },
+  {
+    "category": "금고의 설립",
+    "question": "금고가 법인으로 언제 법인으로 성립하나요?",
+    "options": [
+      "설립인가를 받은 때",
+      "주된 사무소 소재지에서 설립등기를 한 때",
+      "정관을 작성한 때",
+      "창립총회를 마친 때"
+    ],
+    "answer": 1,
+    "step1": "설립등기를 함으로써 금고가 성립합니다.",
+    "step2": "설립인가는 중요한 절차이지만 그 자체만으로 법인 성립이 완성되는 것은 아닙니다. 설립등기가 성립요건입니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제7조제1항",
+        "t": "인가를 받은 뒤 주된 사무소의 소재지에서 설립등기를 함으로써 성립한다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제3장 금고의 설립",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L22"
+  },
+  {
+    "category": "회원과 출자",
+    "question": "금고 회원의 기본 자격을 가장 정확하게 설명한 것은 무엇인가요?",
+    "options": [
+      "법인만 회원이 될 수 있다",
+      "전국 어디에 살든 자동으로 회원이 된다",
+      "업무구역에 주소·거소가 있거나 생업에 종사하면서 출자 1좌 이상을 현금 납입한 자",
+      "출자 없이 예금만 하면 된다"
+    ],
+    "answer": 2,
+    "step1": "업무구역과의 생활·생업 연계 + 출자 1좌 이상 현금 납입이 기본입니다.",
+    "step2": "주소·거소 또는 생업 중 하나의 지역연계 요건과 출자 요건을 함께 봐야 합니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제9조제1항",
+        "t": "회원은 업무구역에 주소·거소가 있거나 생업에 종사하고 출자 1좌 이상을 현금으로 납입한 자로 한다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제4장 회원과 출자",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L23"
+  },
+  {
+    "category": "회원과 출자",
+    "question": "한 금고의 회원 수 법정 최소기준은 얼마인가요?",
+    "options": [
+      "80명",
+      "100명",
+      "500명",
+      "50명"
+    ],
+    "answer": 1,
+    "step1": "한 금고의 회원 수는 100명 이상입니다.",
+    "step2": "설립 발기인 50명과 회원 수 100명 이상을 구분해서 기억해야 합니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제9조제2항",
+        "t": "한 금고의 회원 수는 100명 이상으로 한다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제4장 회원과 출자",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L24"
+  },
+  {
+    "category": "회원과 출자",
+    "question": "회원 가입에 관한 금고의 의무로 가장 정확한 것은 무엇인가요?",
+    "options": [
+      "출자좌수가 적으면 반드시 거절해야 한다",
+      "기존 회원 2인의 추천이 없으면 법상 금지된다",
+      "이사장이 자유롭게 거절할 수 있다",
+      "정당한 사유 없이 자격 있는 자의 가입을 거절할 수 없다"
+    ],
+    "answer": 3,
+    "step1": "정당한 사유 없이 회원 자격이 있는 자의 가입을 거절할 수 없습니다.",
+    "step2": "구체적인 가입 절차는 정관으로 정하지만, 자격 있는 자를 자의적으로 배제할 수는 없습니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제9조제3항",
+        "t": "금고는 정당한 사유 없이 회원이 될 수 있는 자격을 가진 자의 가입을 거절할 수 없다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제4장 회원과 출자",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L25"
+  },
+  {
+    "category": "회원과 출자",
+    "question": "회원의 의결권·선거권 원칙을 가장 정확하게 설명한 것은 무엇인가요?",
+    "options": [
+      "이사장이 정한 등급에 따라 달라진다",
+      "출자좌수에 비례한다",
+      "출자금액에 관계없이 원칙적으로 평등하다",
+      "10좌 이상만 인정된다"
+    ],
+    "answer": 2,
+    "step1": "원칙은 출자좌수와 관계없는 평등한 의결권·선거권입니다.",
+    "step2": "주식회사의 “지분 수에 따른 의결권”과 다르게 인적 결합을 중시합니다. 다만 법이 정한 일부 회원은 정관으로 제한할 수 있습니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제9조제5항",
+        "t": "회원은 출자좌수에 관계없이 평등한 의결권과 선거권을 가진다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제4장 회원과 출자",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L26"
+  },
+  {
+    "category": "회원과 출자",
+    "question": "다음 내용을 새마을금고법 기준으로 판단하세요. 정관으로 의결권·선거권을 제한할 수 있는 회원에 해당하지 않는 것은?",
+    "options": [
+      "회원자격 유지기간 6개월 미만인 회원",
+      "고시 기준보다 출자액이 적은 회원",
+      "출자좌수가 많은 회원",
+      "미성년 회원"
+    ],
+    "answer": 2,
+    "step1": "출자좌수가 많다는 이유만으로 의결권·선거권을 제한하는 규정은 없습니다.",
+    "step2": "법이 열거한 제한 가능 대상은 미성년, 회원자격 6개월 미만, 고시 기준 미만 출자액 회원입니다. 기준 시행 전 가입자에 대해서는 경과조치가 있을 수 있어 실제 판단 시 기준일 확인이 필요합니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제9조제5항 및 부칙 제16조",
+        "t": "법은 의결권·선거권 제한 가능 대상을 열거하고, 개정 시행 전 가입자에 대한 경과조치를 둔다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제4장 회원과 출자",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L27"
+  },
+  {
+    "category": "회원과 출자",
+    "question": "한 회원이 대리하여 의결권을 행사할 수 있는 다른 회원의 수는 법상 최대 몇 명까지 가능한가요?",
+    "options": [
+      "3명",
+      "5명",
+      "1명",
+      "2명"
+    ],
+    "answer": 3,
+    "step1": "한 회원이 대리할 수 있는 회원은 최대 2명입니다.",
+    "step2": "대리인 역시 회원이어야 하며, 대리 가능한 인원에 상한을 두어 의결권 집중을 막습니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제9조제6항",
+        "t": "회원은 다른 회원을 대리인으로 하여 의결권을 행사할 수 있고, 한 회원이 대리할 수 있는 회원 수는 두 명을 초과할 수 없다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제4장 회원과 출자",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L28"
+  },
+  {
+    "category": "회원과 출자",
+    "question": "회원이 납입할 출자금과 금고에 대한 채권의 상계에 관해 가장 정확한 설명은 무엇인가요?",
+    "options": [
+      "총회 결의 시 상계할 수 있다",
+      "언제나 상계할 수 있다",
+      "이사장 승인 시 상계할 수 있다",
+      "상계하지 못한다"
+    ],
+    "answer": 3,
+    "step1": "회원이 납입할 출자금은 금고에 대한 채권과 상계하지 못합니다.",
+    "step2": "출자금은 금고의 자본기초가 되므로 일반 채권처럼 상계로 납입을 대신할 수 없습니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제9조제7항",
+        "t": "회원이 금고에 납입할 출자금은 금고에 대한 채권과 상계하지 못한다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제4장 회원과 출자",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L29"
+  },
+  {
+    "category": "회원과 출자",
+    "question": "출자금의 질권 설정에 관해 가장 정확한 설명은 무엇인가요?",
+    "options": [
+      "이사장 승인 시 가능하다",
+      "질권의 목적이 될 수 없다",
+      "1좌에 한해 가능하다",
+      "질권의 목적이 될 수 있다"
+    ],
+    "answer": 1,
+    "step1": "출자금은 질권의 목적이 될 수 없습니다.",
+    "step2": "출자금의 양도는 일정 조건 아래 가능하지만, 질권 설정은 법이 명시적으로 금지합니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제9조제8항",
+        "t": "출자금은 질권의 목적이 될 수 없다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제4장 회원과 출자",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "L30"
   }
 ];
 
@@ -605,6 +1133,246 @@ const TRIAL_MOCK = [
         "t": "금고 또는 중앙회의 대표자나 대리인, 사용인, 그 밖의 종업원이 그 금고나 중앙회의 업무에 관하여 제85조제1항 또는 제2항의 위반행위를 하면 그 행위자를 벌하는 외에 그 금고나 중앙회에도 해당 조문의 벌금형을 과한다. 다만, 금고나 중앙회가 그 위반행위를 방지하기 위하여 해당 업무에 관하여 상당한 주의와 감독을 게을리하지 아니한 경우에는 그러하지 아니하다."
       }
     ]
+  },
+  {
+    "category": "금고의 기관",
+    "question": "다음 내용을 새마을금고법 기준으로 판단하세요. 이사장이 정당한 사유 없이 기간 내 총회를 개최하지 않는 경우 감사의 조치는?",
+    "options": [
+      "중앙회에만 보고",
+      "10일 이내 소집",
+      "5일 이내 소집하고 의장 직무 대행",
+      "즉시 해산 신청"
+    ],
+    "answer": 2,
+    "step1": "감사는 5일 이내에 총회를 소집하고 의장 직무를 대행합니다.",
+    "step2": "감사까지 기간 내 소집하지 않으면 회원대표가 총회를 개최하는 단계로 이어질 수 있습니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제14조제4항·제5항",
+        "t": "이사장이 개최하지 않으면 감사가 5일 이내 소집하고, 감사도 하지 않으면 요구 회원의 대표가 개최할 수 있다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제5장 금고의 기관",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "M11"
+  },
+  {
+    "category": "금고의 기관",
+    "question": "다음 내용을 새마을금고법 기준으로 판단하세요. 총회 소집 통지는 총회 개최일 며칠 전에 해야 하는가?",
+    "options": [
+      "5일 전",
+      "7일 전",
+      "14일 전",
+      "3일 전"
+    ],
+    "answer": 1,
+    "step1": "총회 개최일 7일 전에 개회 일시·장소·회의 목적사항을 제시하여 정관이 정한 방법으로 공고해야 합니다.",
+    "step2": "개회 일시, 장소, 회의 목적사항을 제시하여 정관으로 정한 방법에 따라 공고해야 합니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제15조제2항",
+        "t": "총회 소집 통지는 총회 개최일 7일 전에 개회 일시·장소·목적사항을 제시해 공고한다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제5장 금고의 기관",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "M12"
+  },
+  {
+    "category": "금고의 기관",
+    "question": "다음 내용을 새마을금고법 기준으로 판단하세요. 2026년 9월 현행법상 총회를 갈음할 대의원회를 둘 수 있는 금고의 회원 수 기준은?",
+    "options": [
+      "500명 초과",
+      "1,000명 이상",
+      "100명 초과",
+      "300명 초과"
+    ],
+    "answer": 0,
+    "step1": "회원이 500명을 초과하는 금고는 대의원회를 둘 수 있습니다.",
+    "step2": "현행법상 회원이 500명을 초과하면 대의원회를 둘 수 있습니다. 다만 개정규정 시행 당시 종전 규정에 따라 이미 구성된 대의원회는 해당 대의원의 임기가 끝날 때까지 종전 규정이 적용될 수 있습니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제16조제1항 및 부칙 제18조",
+        "t": "회원이 500명을 초과하는 금고는 총회를 갈음할 대의원회를 둘 수 있다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제5장 금고의 기관",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "M13"
+  },
+  {
+    "category": "금고의 기관",
+    "question": "대의원의 법정 임기는 얼마인가요?",
+    "options": [
+      "5년",
+      "2년",
+      "3년",
+      "4년"
+    ],
+    "answer": 2,
+    "step1": "대의원의 임기는 3년입니다.",
+    "step2": "재선거·보궐선거로 선임된 대의원은 각각 종전 선거 또는 전임자의 남은 임기를 따릅니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제16조제2항·제3항",
+        "t": "대의원의 임기는 3년이며 재선거·보궐선거의 경우 남은 임기를 따른다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제5장 금고의 기관",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "M14"
+  },
+  {
+    "category": "금고의 기관",
+    "question": "대의원 자격의 원칙을 가장 정확하게 설명한 것은 무엇인가요?",
+    "options": [
+      "회원가입 후 6개월",
+      "회원가입 후 1년이 지난 자",
+      "회원가입 후 2년",
+      "회원가입 즉시 가능"
+    ],
+    "answer": 1,
+    "step1": "원칙적으로 회원가입 후 1년이 지나야 합니다.",
+    "step2": "금고 설립 후 1년이 지나지 않았거나 직장금고인 경우에는 예외가 있습니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 시행령 제6조제2항",
+        "t": "대의원 자격은 정관으로 정하되 회원가입 후 1년이 지난 자가 원칙이다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제5장 금고의 기관",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "M15"
+  },
+  {
+    "category": "금고의 기관",
+    "question": "금고 대의원의 법정 최소 정수는 몇 명인가요?",
+    "options": [
+      "100명",
+      "200명",
+      "50명",
+      "80명"
+    ],
+    "answer": 0,
+    "step1": "대의원 수는 100명 이상입니다.",
+    "step2": "구체적인 수는 회원 수에 비례하여 정관으로 정합니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 시행령 제6조제3항",
+        "t": "대의원 수는 회원 수에 비례하여 정관으로 정하되 100명 이상으로 한다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제5장 금고의 기관",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "M16"
+  },
+  {
+    "category": "금고의 기관",
+    "question": "2026년 9월 현행법상 이사장 선출의 원칙을 가장 정확하게 설명한 것은 무엇인가요?",
+    "options": [
+      "직원이 선출한다",
+      "중앙회장이 임명한다",
+      "회원 중에서 회원의 무기명 비밀투표로 직접 선출한다",
+      "감사가 임명한다"
+    ],
+    "answer": 2,
+    "step1": "원칙은 회원의 무기명 비밀투표에 의한 직접선출입니다.",
+    "step2": "원칙은 회원의 무기명 비밀투표에 의한 직접선출입니다. 다만 이사장 선출연도의 전전 사업연도 결산보고서상 자산총액이 2,000억원 미만인 지역금고 또는 지역금고 외의 금고는 직접선출·총회선출·대의원회선출 중 정관이 정한 방법을 선택할 수 있습니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제18조제5항 및 시행령 제8조의3",
+        "t": "이사장은 회원 중에서 직접 선출하는 것이 원칙이며 일정 금고에는 선출방법 선택 특례가 있다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제5장 금고의 기관",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "M17"
+  },
+  {
+    "category": "금고의 기관",
+    "question": "금고 이사회의 구성을 가장 정확하게 설명한 것은 무엇인가요?",
+    "options": [
+      "이사장을 포함한 이사로 구성",
+      "회원 전원으로 구성",
+      "대의원 전원으로 구성",
+      "감사만으로 구성"
+    ],
+    "answer": 0,
+    "step1": "이사회는 이사장을 포함한 이사로 구성합니다.",
+    "step2": "이사장이 이사회를 소집하며, 일정 수 이상의 이사는 소집을 요구할 수 있습니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제17조제2항",
+        "t": "이사회는 이사장을 포함한 이사로 구성하며 이사장이 소집한다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제5장 금고의 기관",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "M18"
+  },
+  {
+    "category": "금고의 기관",
+    "question": "이사회 소집을 요구할 수 있는 재적이사의 법정 비율은 얼마인가요?",
+    "options": [
+      "3분의 1 이상",
+      "과반수",
+      "10분의 1 이상",
+      "4분의 1 이상"
+    ],
+    "answer": 0,
+    "step1": "재적이사 3분의 1 이상이면 이사회 소집을 요구할 수 있습니다.",
+    "step2": "이사장이 정당한 이유 없이 2주일 이내 소집하지 않으면 요구한 이사의 대표가 이사회를 소집하고 의장 직무를 대행합니다.",
+    "sources": [
+      {
+        "s": "새마을금고법 제17조제3항",
+        "t": "재적이사 3분의 1 이상의 요구가 있으면 이사장은 지체 없이 소집해야 하며, 정당한 이유 없이 요구를 받은 날부터 2주일 이내에 소집하지 않으면 그 소집을 요구한 이사의 대표가 이사회를 소집하고 의장의 직무를 대행한다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제5장 금고의 기관",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "M19"
+  },
+  {
+    "category": "금고의 기관",
+    "question": "다음 내용을 새마을금고법 기준으로 판단하세요. 이사회의 일반적인 개의·의결요건은?",
+    "options": [
+      "재적이사 전원 출석 + 과반수 찬성",
+      "재적이사 과반수 출석 + 출석이사 과반수 찬성",
+      "재적이사 3분의 1 출석 + 출석이사 과반수 찬성",
+      "재적이사 과반수 출석 + 출석이사 3분의 2 찬성"
+    ],
+    "answer": 1,
+    "step1": "재적이사 과반수 출석, 출석이사 과반수 찬성입니다.",
+    "step2": "총회의 500명 초과 특례나 특별의결 3분의 2와 혼동하지 마세요.",
+    "sources": [
+      {
+        "s": "새마을금고법 제17조제7항",
+        "t": "이사회는 재적이사 과반수 출석으로 개의하고 출석이사 과반수 찬성으로 의결한다."
+      },
+      {
+        "s": "중앙회 「새마을금고법 해설」 제5장 금고의 기관",
+        "t": "해당 주제를 법 체계와 금고 운영 맥락에서 설명하는 중앙회 배포 해설자료."
+      }
+    ],
+    "id": "M20"
   }
 ];
 
@@ -715,6 +1483,9 @@ const PENDING_KEY = 'mg_law_pending';
 const ENTITLEMENT_KEY = 'mg_law_entitlement';
 const DEVICE_SECRET_KEY = 'mg_law_device_secret_v1';
 const BASE_PROGRESS_KEY = 'mg_law_base_progress_v1';
+const TRIAL_STATUS_KEY = 'mg_law_trial_status_v1';
+const TRIAL_STUDY_PROGRESS_KEY = 'mg_law_trial_study_progress_v1';
+const TRIAL_MOCK_PROGRESS_KEY = 'mg_law_trial_mock_progress_v1';
 
 // 지원용 복구 링크: 평소에는 노출하지 않으며, 관리자가 기기 연결을 초기화한 뒤
 // https://앱주소/?recover=MG-... 형태로 전달할 때만 기존 이용권 코드를 새 브라우저에 복원한다.
@@ -745,17 +1516,97 @@ function readEntitlement(){
   }catch(e){ return null; }
 }
 
+function readTrialStatus(){
+  try{
+    const raw=localStorage.getItem(TRIAL_STATUS_KEY);
+    if(!raw) return {studyCompleted:false,mockCompleted:false};
+    const d=JSON.parse(raw)||{};
+    return {studyCompleted:!!d.studyCompleted,mockCompleted:!!d.mockCompleted};
+  }catch(e){ return {studyCompleted:false,mockCompleted:false}; }
+}
+function writeTrialStatus(status){
+  try{ localStorage.setItem(TRIAL_STATUS_KEY,JSON.stringify({studyCompleted:!!status.studyCompleted,mockCompleted:!!status.mockCompleted})); }catch(e){}
+}
+function loadTrialStudyProgress(){
+  try{
+    const raw=localStorage.getItem(TRIAL_STUDY_PROGRESS_KEY); if(!raw) return null;
+    const d=JSON.parse(raw); if(!d || !Array.isArray(d.queue) || !Number.isInteger(d.index)) return null;
+    const queue=d.queue.map(x=>{
+      if(!x || !x.baseId) return null;
+      if(x.isReview) return makeReviewItem(x.baseId);
+      const q=TRIAL_STUDY.find(v=>v.id===x.baseId);
+      return q?{baseId:q.id,question:q,isReview:false}:null;
+    }).filter(Boolean);
+    if(!queue.length || d.index<0 || d.index>=queue.length) return null;
+    return {queue,index:d.index,answered:false,selected:null,repeatCount:d.repeatCount||{},totalCore:TRIAL_STUDY.length,coreFinished:Math.max(0,Math.min(TRIAL_STUDY.length,Number(d.coreFinished)||0)),correct:Number(d.correct)||0,wrong:Number(d.wrong)||0,transitioning:false};
+  }catch(e){ return null; }
+}
+function saveTrialStudyProgress(){
+  try{
+    const s=state.study; if(!s) return;
+    const d={queue:s.queue.map(x=>({baseId:x.baseId,isReview:!!x.isReview})),index:s.index,repeatCount:s.repeatCount||{},coreFinished:s.coreFinished||0,correct:s.correct||0,wrong:s.wrong||0};
+    localStorage.setItem(TRIAL_STUDY_PROGRESS_KEY,JSON.stringify(d));
+  }catch(e){}
+}
+function clearTrialStudyProgress(){ try{ localStorage.removeItem(TRIAL_STUDY_PROGRESS_KEY); }catch(e){} }
+function loadTrialMockProgress(){
+  try{
+    const raw=localStorage.getItem(TRIAL_MOCK_PROGRESS_KEY); if(!raw) return null;
+    const d=JSON.parse(raw); if(!d || !Array.isArray(d.answers) || d.answers.length!==TRIAL_MOCK.length) return null;
+    const answers=d.answers.map(v=>(v===null||v===undefined)?null:Number(v));
+    if(answers.some(v=>v!==null && (!Number.isInteger(v)||v<0||v>3))) return null;
+    return {index:Math.max(0,Math.min(TRIAL_MOCK.length-1,Number(d.index)||0)),answers,submitted:!!d.submitted,reviewIndex:Math.max(0,Math.min(TRIAL_MOCK.length,Number(d.reviewIndex)||0)),reviewDone:!!d.reviewDone};
+  }catch(e){ return null; }
+}
+function saveTrialMockProgress(){
+  try{
+    const m=state.mock; if(!m) return;
+    localStorage.setItem(TRIAL_MOCK_PROGRESS_KEY,JSON.stringify({index:m.index,answers:m.answers,submitted:!!m.submitted,reviewIndex:m.reviewIndex||0,reviewDone:!!m.reviewDone}));
+  }catch(e){}
+}
+function clearTrialMockProgress(){ try{ localStorage.removeItem(TRIAL_MOCK_PROGRESS_KEY); }catch(e){} }
+function trialStudyDoneCount(){
+  if(state && state.study) return Math.max(0,Math.min(TRIAL_STUDY.length,state.study.coreFinished||0));
+  const s=loadTrialStudyProgress(); return s?Math.max(0,Math.min(TRIAL_STUDY.length,s.coreFinished||0)):0;
+}
+function trialMockAnsweredCount(){
+  const m=(state && state.mock)||loadTrialMockProgress();
+  return m&&Array.isArray(m.answers)?m.answers.filter(v=>v!==null).length:0;
+}
+function trialMockHomeText(){
+  if(state.trial.mockCompleted) return `${TRIAL_MOCK.length}문항 + 해설 완료 · 다시보기 가능`;
+  const m=(state && state.mock)||loadTrialMockProgress();
+  if(m && m.submitted) return `해설 ${Math.min(TRIAL_MOCK.length,m.reviewIndex||0)}/${TRIAL_MOCK.length} 확인 · 이어서 해설`;
+  const n=trialMockAnsweredCount();
+  return n>0?`${n}/${TRIAL_MOCK.length} 답변 저장 · 이어서 응시`:`${TRIAL_MOCK.length}문항 · 시험 종료 후 정답과 상세해설`;
+}
+function trialMockHomeBadge(){
+  if(state.trial.mockCompleted) return '완료';
+  const m=(state && state.mock)||loadTrialMockProgress();
+  if(m && m.submitted) return `해설 ${Math.min(TRIAL_MOCK.length,m.reviewIndex||0)}`;
+  const n=trialMockAnsweredCount();
+  return n>0?`${n}/${TRIAL_MOCK.length}`:String(TRIAL_MOCK.length);
+}
+
 const bootstrapEntitlement = readEntitlement();
 const bootstrapPending = localStorage.getItem(PENDING_KEY) === '1';
 const bootstrapAccessCode = localStorage.getItem(ACCESS_CODE_KEY) || '';
+const bootstrapTrialStatus = readTrialStatus();
+const bootstrapStudy = loadTrialStudyProgress();
+const bootstrapMock = loadTrialMockProgress();
+const bootstrapView = (bootstrapEntitlement || bootstrapPending || bootstrapAccessCode) ? 'home'
+  : (bootstrapMock && !bootstrapTrialStatus.mockCompleted) ? 'exam'
+  : (bootstrapStudy && !bootstrapTrialStatus.studyCompleted) ? 'learn'
+  : (bootstrapTrialStatus.studyCompleted || bootstrapTrialStatus.mockCompleted) ? 'home'
+  : 'learn';
 
 const state = {
-  // 최초 접속만 체험 문제로 시작한다. 설문을 한 번이라도 연 브라우저는 재접속 시 반드시 홈으로 돌아온다.
-  // 승인된 이용자도 홈에서 '기본 100문항 바로 시작' 버튼을 명확히 보고 진입한다.
-  view: (bootstrapEntitlement || bootstrapPending || bootstrapAccessCode) ? 'home' : 'learn',
-  study: null,
-  mock: null,
-  trial: { studyCompleted:false, mockCompleted:false },
+  // 최초 접속은 체험 문제로 시작한다. 진행 중인 무료 체험은 같은 브라우저에서 이어서 시작한다.
+  // 설문을 한 번이라도 연 브라우저와 승인된 이용자는 재접속 시 반드시 홈으로 돌아온다.
+  view: bootstrapView,
+  study: bootstrapStudy,
+  mock: bootstrapMock,
+  trial: bootstrapTrialStatus,
   accessCode: bootstrapAccessCode,
   pending: bootstrapPending,
   entitlement: bootstrapEntitlement,
@@ -972,19 +1823,41 @@ function markLearnOptions(idx,pick){
 }
 
 /* ---------- study ---------- */
-function newStudySession(){
+function newStudySession(force=false){
+  if(!force){
+    const saved=loadTrialStudyProgress();
+    if(saved){ state.study=saved; return; }
+  }
   state.study={
     queue:TRIAL_STUDY.map(q=>({baseId:q.id,question:q,isReview:false})),
     index:0, answered:false, selected:null, repeatCount:{},
     totalCore:TRIAL_STUDY.length, coreFinished:0, correct:0, wrong:0, transitioning:false
   };
+  saveTrialStudyProgress();
+}
+function studyCheckpointView(done){
+  setTab('learn'); chrome('학습 중간점검',{progress:Math.round(done/TRIAL_STUDY.length*100),right:`${done} / ${TRIAL_STUDY.length}`});
+  const remain=Math.max(0,TRIAL_STUDY.length-done);
+  body.innerHTML=`<section class="gate"><div class="lk">✓</div><h2>${done}/${TRIAL_STUDY.length}문항 완료</h2>
+    <p class="lead"><b>여기까지 잘 저장되었습니다.</b><br>같은 브라우저라면 잠시 나갔다 와도 이어서 학습할 수 있습니다.</p>
+    <div class="steps"><b>남은 무료 학습</b><br>${remain}문항 + 오답·어려움으로 표시한 복습문항<br><br>지금 계속해도 되고, 잠시 쉬었다가 홈의 학습모드에서 이어서 시작해도 됩니다.</div>
+    <button class="wide b-y" id="checkpointContinue" style="margin-left:0;width:100%">다음 학습 계속하기 →</button>
+    <button class="wide b-g" id="checkpointHome" style="margin-left:0;width:100%;margin-top:-5px">홈에서 잠시 쉬기</button>
+  </section>${renderToast()}`;
+  $('#checkpointContinue').onclick=()=>studyView();
+  $('#checkpointHome').onclick=()=>go('home');
 }
 function currentStudyItem(){ return state.study.queue[state.study.index]; }
 function makeReviewItem(baseId){
   const base=TRIAL_STUDY.find(q=>q.id===baseId);
+  if(!base) return null;
   const rv=REVIEW_VARIANTS[baseId];
-  if(!base||!rv) return null;
-  return {baseId, isReview:true, question:{...base,...rv,id:`${baseId}-R`,step2:base.step2,sources:base.sources}};
+  if(rv) return {baseId, isReview:true, question:{...base,...rv,id:`${baseId}-R`,step2:base.step2,sources:base.sources}};
+  // 별도 변형문항이 없는 무료 학습문항도 선택지 순서를 바꿔 실제 복습되도록 한다.
+  const shift=((Number(String(baseId).replace(/\D/g,''))||1)%3)+1;
+  const options=base.options.slice(shift).concat(base.options.slice(0,shift));
+  const answer=(base.answer-shift+base.options.length)%base.options.length;
+  return {baseId,isReview:true,question:{...base,id:`${baseId}-R`,question:`복습 확인 · ${base.question}`,options,answer}};
 }
 function insertReview(baseId,offset){
   const s=state.study;
@@ -1001,9 +1874,9 @@ function studyView(){
   const s=state.study, item=currentStudyItem(), q=item.question;
   const coreDone=s.coreFinished;
   const progress=Math.round(coreDone/s.totalCore*100);
-  chrome('학습 모드',{showBack:false,progress,right:item.isReview?'복습 확인':'체험 8개념'});
+  chrome('학습 모드',{showBack:false,progress,right:item.isReview?'복습 확인':`무료 학습 ${TRIAL_STUDY.length}문항`});
   body.innerHTML=`<div class="chatbg">
-    ${s.index===0?'<div class="session-note"><b>바로 한 문제 시작합니다.</b> 답을 고르면 <b>해설이 먼저</b> 나타납니다. 해설을 확인한 뒤 다음 문제로 진행합니다. 개인별 정오답·진도·점수는 서버에 저장하지 않습니다.</div>':''}
+    ${s.index===0?'<div class="session-note"><b>바로 한 문제 시작합니다.</b> 답을 고르면 <b>해설이 먼저</b> 나타납니다. 해설을 확인한 뒤 다음 문제로 진행합니다. 정오답·점수는 서버에 저장하지 않으며, <b>무료 체험 이어하기 위치만 이 브라우저에 저장</b>합니다.</div>':''}
     ${questionBubble(q,Math.min(coreDone+1,s.totalCore),s.totalCore,item.isReview?'복습':'학습')}
     ${optionsHtml(q)}
     <div id="studyAfter"></div>
@@ -1071,16 +1944,24 @@ function rateStudy(rate,button){
     if(rate==='again') insertReview(item.baseId,3);
     if(rate==='hard') insertReview(item.baseId,6);
     s.index++; s.answered=false; s.selected=null; s.transitioning=false;
-    if(s.index>=s.queue.length){ state.trial.studyCompleted=true; return studyEndView(); }
+    if(s.index>=s.queue.length){
+      state.trial.studyCompleted=true; writeTrialStatus(state.trial); clearTrialStudyProgress();
+      return studyEndView();
+    }
+    saveTrialStudyProgress();
+    if(!item.isReview && s.coreFinished>0 && s.coreFinished<TRIAL_STUDY.length && s.coreFinished%10===0){
+      return studyCheckpointView(s.coreFinished);
+    }
     studyView();
   },420);
 }
 function studyEndView(){
+  state.trial.studyCompleted=true; writeTrialStatus(state.trial); clearTrialStudyProgress();
   setTab('learn'); chrome('학습 체험 완료',{progress:100,right:'학습용 · 2026.09'});
   const s=state.study;
-  body.innerHTML=`<div class="res"><div class="sc">8<small> 개념</small></div><div class="msg">핵심 개념 체험을 마쳤습니다.<br>오답·어려움으로 표시한 개념은 세션 안에서 변형문제로 다시 확인했습니다.</div></div>
+  body.innerHTML=`<div class="res"><div class="sc">${TRIAL_STUDY.length}<small> 문항</small></div><div class="msg">무료 학습모드 문항을 모두 마쳤습니다.<br>오답·어려움으로 표시한 개념은 세션 안에서 변형문제로 다시 확인했습니다.</div></div>
   <div class="diag"><div class="diag-row"><span>이번 세션 정답</span><strong>${s.correct}회</strong></div><div class="diag-row"><span>이번 세션 오답</span><strong>${s.wrong}회</strong></div><div class="diag-row"><span>장기 학습기록</span><strong>저장하지 않음</strong></div></div>
-  <button class="wide b-y" data-action="mock">10문제 미니 모의고사 이어서 풀기</button>
+  <button class="wide b-y" data-action="mock">${TRIAL_MOCK.length}문항 미니 모의고사 이어서 풀기</button>
   <button class="wide b-g" data-action="home">홈에서 기능 보기</button>
   <div class="center-note">이번 결과는 현재 학습 세션 안에서만 사용되며 서버에 저장되지 않습니다.</div>${renderToast()}`;
   body.querySelector('[data-action="mock"]').onclick=()=>go('exam');
@@ -1088,8 +1969,13 @@ function studyEndView(){
 }
 
 /* ---------- mock ---------- */
-function newMockSession(){
+function newMockSession(force=false){
+  if(!force){
+    const saved=loadTrialMockProgress();
+    if(saved){ state.mock=saved; return; }
+  }
   state.mock={index:0,answers:Array(TRIAL_MOCK.length).fill(null),submitted:false,reviewIndex:0,reviewDone:false};
+  saveTrialMockProgress();
 }
 function mockView(){
   setTab('exam');
@@ -1100,28 +1986,31 @@ function mockView(){
   const m=state.mock, q=TRIAL_MOCK[m.index], selected=m.answers[m.index];
   chrome('미니 모의고사',{progress:Math.round(m.index/TRIAL_MOCK.length*100),right:`${m.index+1} / ${TRIAL_MOCK.length}`});
   body.innerHTML=`<div class="chatbg">
-    ${m.index===0?'<div class="session-note"><b>실전처럼 먼저 10문항을 풉니다.</b> 시험 중에는 정답과 해설을 공개하지 않고, 제출 직후 <b>1번부터 10번까지 해설 복습</b>이 자동으로 이어집니다.</div>':''}
+    ${m.index===0?`<div class="session-note"><b>실전처럼 먼저 ${TRIAL_MOCK.length}문항을 풉니다.</b> 시험 중에는 정답과 해설을 공개하지 않고, 제출 직후 <b>1번부터 ${TRIAL_MOCK.length}번까지 해설 복습</b>이 자동으로 이어집니다. 응시 위치는 같은 브라우저에서 이어볼 수 있도록 기기 내부에만 저장합니다.</div>`:''}
+    ${m.index===Math.floor(TRIAL_MOCK.length/2)?`<div class="session-note"><b>절반 완료 · ${m.index}/${TRIAL_MOCK.length}</b><br>지금부터 ${TRIAL_MOCK.length-m.index}문항 남았습니다. 시험 흐름을 유지해 계속 진행하세요.</div>`:''}
     ${questionBubble(q,m.index+1,TRIAL_MOCK.length,'실전')}
     ${optionsHtml(q,'mock',selected)}
     <div class="mock-footer"><button class="btn b-y" id="mockNext" ${selected===null?'disabled style="opacity:.45"':''}>${m.index===TRIAL_MOCK.length-1?'답안 제출':'다음 문항 →'}</button></div>
-    <div class="mock-hint">선택 후 다음 문항으로 이동합니다. 정답·상세해설은 10문항 제출 직후 순서대로 확인합니다.</div>
+    <div class="mock-hint">선택 후 다음 문항으로 이동합니다. 정답·상세해설은 ${TRIAL_MOCK.length}문항 제출 직후 순서대로 확인합니다.</div>
   </div>${renderToast()}`;
   body.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>selectMock(+b.dataset.pick));
   const nx=$('#mockNext'); if(nx && selected!==null) nx.onclick=advanceMock;
 }
 function selectMock(pick){
   state.mock.answers[state.mock.index]=pick;
+  saveTrialMockProgress();
   mockView();
 }
 function advanceMock(){
   const m=state.mock;
   if(m.answers[m.index]===null) return;
-  if(m.index<TRIAL_MOCK.length-1){ m.index++; return mockView(); }
+  if(m.index<TRIAL_MOCK.length-1){ m.index++; saveTrialMockProgress(); return mockView(); }
   m.submitted=true;
   m.reviewIndex=0;
   m.reviewDone=false;
-  // 모의고사는 10문항 답안 제출만으로 완료 처리하지 않는다.
-  // 1~10번 해설을 모두 확인한 뒤에만 설문 단계가 열린다.
+  saveTrialMockProgress();
+  // 모의고사는 전체 답안 제출만으로 완료 처리하지 않는다.
+  // 전체 문항 해설을 모두 확인한 뒤에만 설문 단계가 열린다.
   mockReviewView();
 }
 function categoryStats(){
@@ -1141,8 +2030,9 @@ function mockReviewView(){
   const right=TRIAL_MOCK.filter((x,j)=>m.answers[j]===x.answer).length;
   chrome('모의고사 해설',{progress:Math.round((i+1)/TRIAL_MOCK.length*100),right:`해설 ${i+1} / ${TRIAL_MOCK.length}`});
   body.innerHTML=`<div class="chatbg">
-    ${i===0?'<div class="mock-review-note"><b>지금부터가 핵심 학습입니다.</b><br>정답 번호만 확인하지 말고, 자동으로 펼쳐진 <b>2단계 ‘왜 그런가요?’</b>를 먼저 읽어보세요. 오답 문항은 <b>3단계 법령 근거</b>도 자동으로 펼쳐집니다.</div>':''}
-    <div class="mock-review-score"><span>채점 결과</span><strong>${right} / 10</strong><span>${ok?'이번 문항 정답':'이번 문항 오답'}</span></div>
+    ${i===0?'<div class="mock-review-note"><b>지금부터가 핵심 학습입니다.</b><br>정답 번호만 확인하지 말고, 자동으로 펼쳐진 <b>2단계 ‘왜 그런가요?’</b>를 먼저 읽어보세요. 오답 문항은 <b>3단계 법령 근거</b>도 자동으로 펼쳐집니다. 해설 확인 위치도 같은 브라우저에 저장됩니다.</div>':''}
+    ${i===Math.floor(TRIAL_MOCK.length/2)?`<div class="mock-review-note"><b>해설 절반 확인 · ${i}/${TRIAL_MOCK.length}</b><br>남은 ${TRIAL_MOCK.length-i}문항도 같은 방식으로 확인하면 설문 단계가 열립니다.</div>`:''}
+    <div class="mock-review-score"><span>채점 결과</span><strong>${right} / ${TRIAL_MOCK.length}</strong><span>${ok?'이번 문항 정답':'이번 문항 오답'}</span></div>
     ${questionBubble(q,i+1,TRIAL_MOCK.length,'해설')}
     ${reviewOptionsHtml(q,pick)}
     <div class="row me"><span class="tm">내 답</span><div class="bub">${pick+1}번</div></div>
@@ -1157,24 +2047,28 @@ function mockReviewView(){
   });
   $('#mockReviewNext').onclick=()=>{
     m.reviewIndex++;
-    if(m.reviewIndex>=TRIAL_MOCK.length){ m.reviewDone=true; state.trial.mockCompleted=true; return mockResultView(); }
+    if(m.reviewIndex>=TRIAL_MOCK.length){
+      m.reviewDone=true; state.trial.mockCompleted=true; writeTrialStatus(state.trial); saveTrialMockProgress();
+      return mockResultView();
+    }
+    saveTrialMockProgress();
     mockReviewView();
   };
 }
 function mockResultView(){
-  if(state.mock && state.mock.reviewDone) state.trial.mockCompleted=true;
-  setTab('exam'); chrome('이번 학습진단',{progress:100,right:'해설 10/10 완료'});
+  if(state.mock && state.mock.reviewDone){ state.trial.mockCompleted=true; writeTrialStatus(state.trial); saveTrialMockProgress(); }
+  setTab('exam'); chrome('이번 학습진단',{progress:100,right:`해설 ${TRIAL_MOCK.length}/${TRIAL_MOCK.length} 완료`});
   const right=TRIAL_MOCK.filter((q,i)=>state.mock.answers[i]===q.answer).length;
   const stats=categoryStats();
   const rows=Object.entries(stats).map(([k,v])=>`<div class="diag-row"><span>${esc(k)}</span><strong>${v.right}/${v.total}</strong></div>`).join('');
-  body.innerHTML=`<div class="res"><div class="sc">${right}<small> / 10</small></div><div class="msg"><b>10문항 해설까지 모두 확인했습니다.</b><br>아래 결과는 이번 학습 세션의 진단이며 실제 시험 성적·합격 가능성이나 직무역량을 의미하지 않습니다.</div></div>
+  body.innerHTML=`<div class="res"><div class="sc">${right}<small> / ${TRIAL_MOCK.length}</small></div><div class="msg"><b>${TRIAL_MOCK.length}문항 해설까지 모두 확인했습니다.</b><br>아래 결과는 이번 학습 세션의 진단이며 실제 시험 성적·합격 가능성이나 직무역량을 의미하지 않습니다.</div></div>
   <div class="diag">${rows}</div>
-  <button class="wide b-y" data-action="review">10문항 해설 다시 보기</button>
+  <button class="wide b-y" data-action="review">${TRIAL_MOCK.length}문항 해설 다시 보기</button>
   <button class="wide b-g" data-action="retry">모의고사 다시 풀기</button>
   ${state.trial.studyCompleted ? `<button class="wide b-y" data-action="research">설문 참여 후 기본 100문항 학습 열기</button>` : `<button class="wide b-y" data-action="learn">학습 체험도 이어서 하기</button>`}
   <div class="center-note">개인별 정오답·점수·응시기록은 서버에 저장하지 않습니다.</div>${renderToast()}`;
-  body.querySelector('[data-action="review"]').onclick=()=>{state.mock.reviewIndex=0;state.mock.reviewDone=false;mockReviewView();};
-  body.querySelector('[data-action="retry"]').onclick=()=>{state.mock=null;mockView();};
+  body.querySelector('[data-action="review"]').onclick=()=>{state.mock.reviewIndex=0;state.mock.reviewDone=false;saveTrialMockProgress();mockReviewView();};
+  body.querySelector('[data-action="retry"]').onclick=()=>{clearTrialMockProgress();state.mock=null;newMockSession(true);mockView();};
   const r=body.querySelector('[data-action="research"]'); if(r) r.onclick=()=>go('research');
   const l=body.querySelector('[data-action="learn"]'); if(l) l.onclick=()=>go('learn');
 }
@@ -1191,7 +2085,7 @@ function homeView(){
     const done=bp>=APP_CONFIG.baseQuestionCommitment;
     const titleText=done?'기본 100문항 학습을 완료했습니다.':(bp>0?`기본 100문항 ${bp}/100까지 학습했습니다.`:'기본 100문항을 바로 시작할 수 있습니다.');
     const btnText=done?'기본 100문항 다시 학습하기 →':(bp>0?`${bp+1}번부터 이어서 학습하기 →`:'기본 100문항 학습 시작 →');
-    hero=`<section class="return-hero approved"><span class="hero-kicker">승인 완료</span><h2>${titleText}</h2><p>체험 8개념과 미니 모의고사 10문항은 다시 풀 필요가 없습니다. 기본 100문항 학습으로 바로 이동합니다.</p><button class="hero-btn" id="homeStart100">${btnText}</button><div class="hero-sub">승인일부터 90일 · 현재 D-${daysLeft(ent)} · 학습 위치는 이 브라우저에만 저장</div></section>`;
+    hero=`<section class="return-hero approved"><span class="hero-kicker">승인 완료</span><h2>${titleText}</h2><p>무료 학습 ${TRIAL_STUDY.length}문항과 미니 모의고사 ${TRIAL_MOCK.length}문항은 다시 풀 필요가 없습니다. 기본 100문항 학습으로 바로 이동합니다.</p><button class="hero-btn" id="homeStart100">${btnText}</button><div class="hero-sub">승인일부터 90일 · 현재 D-${daysLeft(ent)} · 학습 위치는 이 브라우저에만 저장</div></section>`;
   }else if(returning){
     hero=`<section class="return-hero"><span class="hero-kicker">설문 참여 후</span><h2>승인을 확인하고 기본 100문항을 여세요.</h2><p>설문을 제출했다면 체험문제를 다시 풀 필요가 없습니다. 운영자 승인 후 이 버튼으로 바로 100문항 학습을 시작합니다.</p><button class="hero-btn" id="homeCheck100">승인 확인하고 100문항 열기 →</button><button class="hero-secondary" id="homeOpenSurvey">설문을 아직 제출하지 않았다면 설문 열기</button>${state.homeStatus?`<div class="hero-status">${esc(state.homeStatus)}</div>`:''}<div class="hero-sub">가능하면 설문에 참여한 것과 같은 기기·같은 브라우저에서 이용하세요.</div></section>`;
   }else if(both){
@@ -1199,10 +2093,24 @@ function homeView(){
   }
   body.innerHTML=`<div class="profile"><div class="pf-ico">法</div><div><div class="pf-t">새마을금고법 톡톡</div><div class="pf-s">문제로 먼저 익히고, 필요할 때 법령·해설을 펼쳐보는 모바일 학습도구</div></div></div>
   ${hero}
-  ${ent?`<div class="bar">승인 후 학습</div><ul class="menu"><li id="homeBase100Menu"><div class="mi y">📚</div><div><div class="mt">기본 100문항 학습</div><div class="ms">${readBaseProgress()>0&&readBaseProgress()<100?`${readBaseProgress()+1}번부터 이어서 학습`:'지금 바로 본 학습 시작'} · D-${daysLeft(ent)}</div></div><span class="badge g">100</span></li></ul><div class="bar">체험 다시보기</div><ul class="menu"><li data-go="learn"><div class="mi">📘</div><div><div class="mt">체험 8개념 다시보기</div><div class="ms">초기 체험문제를 다시 보고 싶을 때만 이용</div></div><span class="badge g">체험</span></li><li data-go="exam"><div class="mi">📝</div><div><div class="mt">미니 모의고사 다시보기</div><div class="ms">10문항 · 시험 종료 후 상세해설</div></div><span class="badge g">10</span></li></ul>`:`<div class="bar">학습 메뉴</div><ul class="menu"><li data-go="learn"><div class="mi y">📘</div><div><div class="mt">학습 모드</div><div class="ms">8개념 + ANKI형 세션 반복 + 3단계 해설</div></div><span class="badge ${state.trial.studyCompleted?'g':''}">${state.trial.studyCompleted?'완료':'체험'}</span></li><li data-go="exam"><div class="mi b">📝</div><div><div class="mt">미니 모의고사</div><div class="ms">10문항 · 시험 종료 후 정답과 상세해설</div></div><span class="badge ${state.trial.mockCompleted?'g':''}">${state.trial.mockCompleted?'완료':'10'}</span></li>${returning?`<li id="homeAccessMenu"><div class="mi y">🎓</div><div><div class="mt">설문 참여 후 기본 100문항 학습</div><div class="ms">승인 확인 → 기본 100문항 바로 시작</div></div><span class="badge y">확인</span></li>`:`<li data-go="${both?'research':'home'}"><div class="mi">🎓</div><div><div class="mt">설문 참여 후 기본 100문항 학습</div><div class="ms">${both?'승인 후 90일 · 기본 100문항 + 단계별 해설':'학습·모의고사 체험 완료 후 설문 참여 안내'}</div></div><span class="badge ${both?'y':'g'}">${both?'100문항':'체험후'}</span></li>`}</ul>`}
+  ${ent?`<div class="bar">승인 후 학습</div><ul class="menu"><li id="homeBase100Menu"><div class="mi y">📚</div><div><div class="mt">기본 100문항 학습</div><div class="ms">${readBaseProgress()>0&&readBaseProgress()<100?`${readBaseProgress()+1}번부터 이어서 학습`:'지금 바로 본 학습 시작'} · D-${daysLeft(ent)}</div></div><span class="badge g">100</span></li></ul><div class="bar">체험 다시보기</div><ul class="menu"><li data-go="learn"><div class="mi">📘</div><div><div class="mt">무료 학습 ${TRIAL_STUDY.length}문항 다시보기</div><div class="ms">초기 체험문제를 다시 보고 싶을 때만 이용</div></div><span class="badge g">체험</span></li><li data-go="exam"><div class="mi">📝</div><div><div class="mt">미니 모의고사 다시보기</div><div class="ms">${TRIAL_MOCK.length}문항 · 시험 종료 후 상세해설</div></div><span class="badge g">${TRIAL_MOCK.length}</span></li></ul>`:`<div class="bar">학습 메뉴</div><ul class="menu"><li data-go="learn"><div class="mi y">📘</div><div><div class="mt">학습 모드</div><div class="ms">${state.trial.studyCompleted?`${TRIAL_STUDY.length}문항 완료 · 다시보기 가능`:(trialStudyDoneCount()>0?`${trialStudyDoneCount()}/${TRIAL_STUDY.length}까지 완료 · 이어서 학습`:`${TRIAL_STUDY.length}문항 + ANKI형 세션 반복 + 3단계 해설`)}</div></div><span class="badge ${state.trial.studyCompleted?'g':''}">${state.trial.studyCompleted?'완료':(trialStudyDoneCount()>0?`${trialStudyDoneCount()}/${TRIAL_STUDY.length}`:'체험')}</span></li><li data-go="exam"><div class="mi b">📝</div><div><div class="mt">미니 모의고사</div><div class="ms">${trialMockHomeText()}</div></div><span class="badge ${state.trial.mockCompleted?'g':''}">${trialMockHomeBadge()}</span></li>${returning?`<li id="homeAccessMenu"><div class="mi y">🎓</div><div><div class="mt">설문 참여 후 기본 100문항 학습</div><div class="ms">승인 확인 → 기본 100문항 바로 시작</div></div><span class="badge y">확인</span></li>`:`<li data-go="${both?'research':'home'}"><div class="mi">🎓</div><div><div class="mt">설문 참여 후 기본 100문항 학습</div><div class="ms">${both?'승인 후 90일 · 기본 100문항 + 단계별 해설':'학습·모의고사 체험 완료 후 설문 참여 안내'}</div></div><span class="badge ${both?'y':'g'}">${both?'100문항':'체험후'}</span></li>`}</ul>`}
   <div class="bar">이 앱에서 기억할 것</div>
-  <div class="info" style="padding-top:5px"><div class="info-card"><h3>학습기록은 저장하지 않습니다</h3><p>정오답·점수·학습시간은 서버에 저장하지 않습니다. 다만 기본 100문항을 같은 브라우저에서 이어서 볼 수 있도록 <b>해설 확인 후 완료한 마지막 문항 위치</b>만 기기 내부에 저장합니다.</p></div></div>${renderToast()}`;
-  body.querySelectorAll('[data-go]').forEach(x=>x.onclick=()=>{const v=x.dataset.go;if(v==='home') showToast('학습과 모의고사를 모두 체험하면 안내가 열립니다.'); else go(v);});
+  <div class="info" style="padding-top:5px"><div class="info-card"><h3>정오답·점수는 서버에 저장하지 않습니다</h3><p>무료 체험을 같은 브라우저에서 이어서 볼 수 있도록 <b>무료 학습의 진행 위치·복습 대기·세션 내 정오답 집계와 미니 모의고사의 선택 답안·응시/해설 위치</b>를 현재 브라우저 내부에만 저장합니다. 기본 100문항은 해설 확인 후 완료한 마지막 문항 위치만 브라우저 내부에 저장합니다. 개인별 정오답·점수·학습시간은 서버에 저장하지 않습니다.</p></div></div>${renderToast()}`;
+  body.querySelectorAll('[data-go]').forEach(x=>x.onclick=()=>{
+    const v=x.dataset.go;
+    if(v==='home') return showToast('학습과 모의고사를 모두 체험하면 안내가 열립니다.');
+    if(v==='learn'){
+      if(state.trial.studyCompleted){ clearTrialStudyProgress(); state.study=null; newStudySession(true); }
+      else if(!state.study) state.study=loadTrialStudyProgress();
+      return go('learn');
+    }
+    if(v==='exam'){
+      if(state.trial.mockCompleted){ clearTrialMockProgress(); state.mock=null; newMockSession(true); }
+      else if(!state.mock) state.mock=loadTrialMockProgress();
+      return go('exam');
+    }
+    go(v);
+  });
   const s100=$('#homeStart100'); if(s100) s100.onclick=()=>{ if(readBaseProgress()>=APP_CONFIG.baseQuestionCommitment) clearBaseProgress(); startProtectedTier('BASE'); };
   const bm=$('#homeBase100Menu'); if(bm) bm.onclick=()=>{ if(readBaseProgress()>=APP_CONFIG.baseQuestionCommitment) clearBaseProgress(); startProtectedTier('BASE'); };
   const c100=$('#homeCheck100'); if(c100) c100.onclick=()=>checkAccessStatusFromHome(true);
@@ -1221,7 +2129,7 @@ function researchView(){
   setTab('home'); chrome('기본 100문항 이용 안내',{showBack:true,progress:null,right:'승인 후 90일'});
   ensureAccessCode();
   body.innerHTML=`<section class="gate"><div class="lk">🎓</div><h2>설문 참여 후<br>기본 100문항 학습이 열립니다.</h2>
-  <p class="lead"><b>체험 8개념과 미니 모의고사 10문항은 다시 풀 필요가 없습니다.</b></p>
+  <p class="lead"><b>무료 학습 ${TRIAL_STUDY.length}문항과 미니 모의고사 ${TRIAL_MOCK.length}문항은 다시 풀 필요가 없습니다.</b></p>
   <div class="steps"><b>이후 이용 순서</b><br>① 연구 설문 제출<br>② 운영자가 참여 내역 확인·승인<br>③ 같은 기기·같은 브라우저로 이 웹앱에 다시 접속<br>④ <b>‘승인 여부 확인하고 100문항 열기’</b>를 누르면 기본 100문항 학습으로 바로 이동<br><br>승인 확인은 통상 <b>1~2일 정도</b> 소요될 수 있습니다.</div>
   <div class="steps"><b>승인 후 제공되는 학습</b><br>승인일부터 90일 동안 <b>기본 100문항 + 1단계 핵심 + 2단계 이해 + 3단계 법령근거</b>를 이용할 수 있습니다.<br><br>기본 100문항 이후의 문항은 가능한 범위에서 제공하는 추가 학습·참고 자료입니다.</div>
   <div class="info-card" style="margin:12px 0"><h3>운영 범위를 먼저 안내드립니다</h3><p>이 웹앱은 무료·비상업적 연구 및 학습지원 도구이며 상시 고객지원이 제공되는 상용 서비스가 아닙니다. 운영자는 웹개발 전문가가 아니며 본업과 연구를 병행하고 있어, 앱 오류·질문·건의에 대해 즉시 답변하거나 모든 요청을 수정·반영·업데이트하기는 어려울 수 있습니다.</p></div>
@@ -1242,7 +2150,7 @@ function showPostSurveyGuide(){
       <span class="modal-kicker">설문 제출 후 다음 단계</span>
       <h2 id="postSurveyGuideTitle">이제 체험문제를 다시 풀 필요가 없습니다.</h2>
       <p class="modal-lead">설문 제출이 끝났다면 남은 절차는 <b>운영자의 참여 확인·승인</b>뿐입니다.</p>
-      <div class="modal-steps"><b>앞으로 이렇게 이용하세요</b><br>① 운영자가 설문 참여 내역을 확인합니다.<br>② 설문 제출을 마친 뒤 이 웹앱을 닫아도 됩니다. 운영자 승인 후 <b>같은 웹앱 링크를 다시 여세요.</b><br>③ 재접속하면 <b>홈 화면</b>이 열리고 ‘승인 확인하고 100문항 열기’ 버튼이 크게 표시됩니다.<br>④ 통상 승인 확인은 <b>다음 날 또는 1~2일</b> 정도 걸릴 수 있습니다.<br>⑤ 가능하면 <b>지금과 같은 스마트폰·같은 브라우저</b>로 접속하세요.<br>⑥ 홈 화면의 <b>‘승인 확인하고 100문항 열기’</b>를 누르세요.<br>⑦ 승인되었다면 체험 18문항을 반복하지 않고 <b>기본 100문항 학습으로 바로 이동</b>합니다.</div>
+      <div class="modal-steps"><b>앞으로 이렇게 이용하세요</b><br>① 운영자가 설문 참여 내역을 확인합니다.<br>② 설문 제출을 마친 뒤 이 웹앱을 닫아도 됩니다. 운영자 승인 후 <b>같은 웹앱 링크를 다시 여세요.</b><br>③ 재접속하면 <b>홈 화면</b>이 열리고 ‘승인 확인하고 100문항 열기’ 버튼이 크게 표시됩니다.<br>④ 통상 승인 확인은 <b>다음 날 또는 1~2일</b> 정도 걸릴 수 있습니다.<br>⑤ 가능하면 <b>지금과 같은 스마트폰·같은 브라우저</b>로 접속하세요.<br>⑥ 홈 화면의 <b>‘승인 확인하고 100문항 열기’</b>를 누르세요.<br>⑦ 승인되었다면 무료 체험 ${TRIAL_STUDY.length+TRIAL_MOCK.length}문항을 반복하지 않고 <b>기본 100문항 학습으로 바로 이동</b>합니다.</div>
       <div class="modal-warn"><b>중요</b> · 시크릿 모드 사용, 브라우저 데이터 삭제, 다른 기기·브라우저로 변경하면 기존 확인정보가 이어지지 않을 수 있습니다.</div>
       <button class="wide b-y" id="postSurveyContinue">확인했습니다 · 홈에서 승인 확인하기</button>
     </div>
@@ -1566,7 +2474,7 @@ function infoView(){
     <div class="info-card"><h3>기본 학습지원 범위</h3><p>연구 참여가 확인된 이용자에게 승인일부터 90일 동안 <b>검증된 기본 100문항</b>과 단계별 해설을 제공하는 것을 기본 범위로 합니다. 100문항 이후의 문항은 추가 학습을 돕기 위한 부가 자료입니다.</p></div>
     <div class="info-card"><h3>운영·유지보수에 관한 안내</h3><p>이 앱은 개인이 연구와 본업을 병행하며 운영하는 무료 학습도구입니다. 운영자는 웹개발 전문가가 아니므로 앱 오류·기술 질문·건의에 대해 즉시 해결하거나 모든 요청을 반영하기 어려울 수 있습니다. 문의나 제안은 참고할 수 있으나 개별 회신, 수정·업데이트 여부 및 처리 시점을 보장하지 않습니다.</p><p style="margin-top:8px">특히 기본 100문항 이후의 추가 학습자료는 이러한 운영 특성을 인지한 상태에서 단순 학습·참고용으로 이용해 주세요.</p></div>
     <div class="info-card"><h3>정답과 해설의 기준</h3><p>법·시행령·시행규칙을 정답 판단의 우선 근거로 사용하고, 중앙회 「새마을금고법 해설」을 이해를 돕는 자료로 연결합니다. 앱 학습해설은 이를 학습하기 쉽게 재구성한 내용입니다.</p></div>
-    <div class="info-card"><h3>학습 데이터</h3><p>정오답, 점수, 학습시간, 모의고사 결과는 서버에 저장하지 않습니다. 기본 100문항을 같은 브라우저에서 이어서 볼 수 있도록 <b>해설 확인 후 완료한 마지막 문항 위치만 기기 내부에 저장</b>합니다. 이용권 확인을 위한 내부 인증값·승인일·만료일과 1기기 이용을 위한 무작위 기기 연결값만 별도로 처리할 수 있습니다.</p></div>
+    <div class="info-card"><h3>학습 데이터</h3><p>정오답, 점수, 학습시간, 모의고사 결과는 서버에 저장하지 않습니다. 무료 체험 50문항을 중간에 닫아도 이어서 할 수 있도록 <b>무료 학습의 진행 위치·복습 대기·세션 내 정오답 집계와 미니 모의고사의 선택 답안·응시 위치·해설 확인 위치를 현재 브라우저 내부에만 저장</b>합니다. 기본 100문항도 해설 확인 후 완료한 마지막 문항 위치만 브라우저 내부에 저장합니다. 이용권 확인을 위한 내부 인증값·승인일·만료일과 1기기 이용을 위한 무작위 기기 연결값만 별도로 처리할 수 있습니다.</p></div>
     <div class="info-card"><h3>실제 업무에 적용할 때</h3><p>문제의 정답은 제시된 조건과 표시된 기준일 자료에 따른 학습용 판단입니다. 실제 업무·권리·의무에 영향을 미치는 판단에는 해당 시점의 현행 법령과 정관·규정·업무방법 및 공식 해석을 다시 확인해 주세요.</p></div>
     <div class="info-card"><h3>설문 제출 후 이용방법</h3><p>설문 제출 후에는 체험문제를 다시 풀 필요가 없습니다. 운영자의 참여 확인·승인 후 같은 기기·브라우저에서 승인 여부를 확인하면 기본 100문항 학습으로 바로 이동합니다. 확인은 통상 1~2일 정도 소요될 수 있습니다.</p></div>
     <div class="info-card"><h3>문의</h3><p>급한 이용 확인 문의는 <a href="mailto:${esc(APP_CONFIG.supportEmail)}" style="color:inherit;font-weight:800">${esc(APP_CONFIG.supportEmail)}</a>으로 요청할 수 있습니다. 다만 기술 문의·개선 제안의 개별 회신이나 반영은 어려울 수 있습니다.</p></div>
@@ -1593,9 +2501,15 @@ tabs.addEventListener('click',e=>{
   const v=b.dataset.t;
   if(v==='learn'){
     if(state.entitlement) return startProtectedTier('BASE');
-    state.study=null; go('learn');
+    if(state.trial.studyCompleted){ clearTrialStudyProgress(); state.study=null; newStudySession(true); }
+    else if(!state.study) state.study=loadTrialStudyProgress();
+    go('learn');
   }
-  else if(v==='exam'){ state.mock=null; go('exam'); }
+  else if(v==='exam'){
+    if(state.trial.mockCompleted){ clearTrialMockProgress(); state.mock=null; newMockSession(true); }
+    else if(!state.mock) state.mock=loadTrialMockProgress();
+    go('exam');
+  }
   else go(v);
 });
 back.addEventListener('click',()=>go('home'));
