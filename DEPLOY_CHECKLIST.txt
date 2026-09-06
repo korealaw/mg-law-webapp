@@ -1,61 +1,45 @@
-[v8.2 공개 프런트 배포 체크리스트]
+MG 새마을금고법 톡톡 v8.4 배포 체크리스트
 
-A. GitHub에 올릴 파일
-1. index.html
-2. README.md
-3. CHANGELOG.md
-4. PROJECT_HANDOFF_LATEST.md
-5. DEPLOY_CHECKLIST.txt
-6. AUDIT_v8.2_SYSTEM_FINAL.md
-7. RELEASE_MANIFEST_v8.2.txt
+[중요] 공개 GitHub보다 비공개 Apps Script v8.4를 먼저 적용한다.
 
-※ Code.gs / Admin.html / PRIVATE_APPS_SCRIPT_v8.2.zip은 공개 GitHub에 올리지 말 것.
-※ icon.jpg, og-image.jpg, .nojekyll은 기존 파일을 그대로 유지.
+A. PRIVATE Apps Script
+[ ] 기존 Code.gs / Admin.html 백업
+[ ] PRIVATE_APPS_SCRIPT_v8.4의 Code.gs로 교체
+[ ] Admin.html 교체
+[ ] Google Form에 '웹앱 이용 인증코드' 문항이 존재하는지 확인
+[ ] 현재 프런트 entry.310247277가 위 문항과 대응하는지 확인
+[ ] Apps Script에서 setupProject() 1회 실행 및 권한 승인
+[ ] _WEBAPP_ACCESS_V84 시트 생성 확인
+[ ] onResearchFormSubmit 설치형 트리거 생성 확인
+[ ] 기존 Web App 배포를 '새 버전'으로 갱신하여 기존 /exec URL 유지
+[ ] ?action=health 응답 version=8.4 확인
+[ ] 관리자 자가점검 전체 PASS
 
-B. 업로드
-1. https://github.com/korealaw/mg-law-webapp 접속
-2. Add file → Upload files
-3. 위 공개 파일들을 저장소 루트에 업로드/덮어쓰기
-4. Commit message 예시: Release v8.2 survey and BASE100 hardening
-5. main 브랜치에 커밋
+B. PUBLIC GitHub
+[ ] index.html 교체
+[ ] extra/ 폴더 생성
+[ ] extra/index.html 업로드
+[ ] README.md 교체
+[ ] CHANGELOG.md 교체
+[ ] PROJECT_HANDOFF_LATEST.md 교체
+[ ] AUDIT_v8.4_ARCHITECTURE_FINAL.md 업로드
+[ ] RELEASE_MANIFEST_v8.4.txt 업로드
+[ ] 기존 icon.jpg / og-image.jpg / .nojekyll 유지
 
-C. GitHub Pages 확인
-1. https://korealaw.github.io/mg-law-webapp/ 접속
-2. 홈/학습/모의고사/안내 탭이 정상 표시되는지 확인
-3. 모바일 확대(핀치줌)가 가능한지 확인
-4. 카카오 공유 미리보기는 필요 시 Kakao 공유 디버거에서 캐시 초기화 후 확인
+C. 실제 휴대폰 E2E
+[ ] 무료 기본 50 완료 전 설문 잠금
+[ ] 기본50 완료 + 모의49/50 상태에서도 설문 잠금
+[ ] 모의 50번째 답안 제출 후 무료100 완주 표시
+[ ] 설문 안내에 생성형 AI 연구 목적 표시
+[ ] 기존 참여자 재참여 안내 표시
+[ ] 설문 새 탭 열림 + 인증코드 자동입력
+[ ] 실제 설문 제출 후 원래 학습창 복귀
+[ ] 수초 내 /extra/ 자동 이동 또는 확인 버튼으로 이동
+[ ] /extra/에서 추가100 정상 로드
+[ ] 다른 브라우저/시크릿창에서 /extra/ 주소만 열면 차단
+[ ] 추가100 범위 선택·기본/심화·이어하기 정상
 
-D. 설문 흐름 실기기 확인 — 반드시 새/테스트 브라우저에서
-1. 무료 학습 30문항 완료
-2. 미니 모의고사 20문항 답변
-3. 제출 후 20문항 해설을 끝까지 확인
-4. 두 체험 완료 전에는 설문 진입이 열리지 않는지 확인
-5. 설문 버튼을 눌러도 앱 상태가 곧바로 '제출 완료'가 되지 않는지 확인
-6. Google Form에서 '웹앱 이용 인증코드'가 자동 입력되는지 확인
-7. 실제 제출 후 앱으로 돌아와 '설문 제출 완료' 클릭
-8. 홈에서 '승인 확인하고 100문항 열기'가 표시되는지 확인
-9. 관리자 승인 전에는 PENDING/REVIEW 안내가 맞는지 확인
-10. 승인 후 처음 확인하는 기기·브라우저에 이용권이 연결되는지 확인
-
-E. 승인 후 BASE100
-1. '이어서 학습하기'를 누르면 즉시 '문제 불러오는 중…' 표시
-2. 1~10 등 실제 문제 로딩 확인
-3. 중간 종료 후 동일 브라우저 재접속 → 진도 복원
-4. '범위를 선택해서 학습하기' → 12개 파트 표시
-5. 직접 범위 입력 정상
-6. 기본 학습: 정답 시 3단계 근거는 필요할 때 펼침
-7. 심화 학습: 3단계 법령근거 자동 펼침
-8. '이미 학습한 문항 제외' 동작 확인
-9. 예: 연속 23/100 + 50~60 별도학습 후 일반 이어하기 → 24부터 시작하고 50~60은 건너뜀
-10. EXTRA=0이면 추가문항 시작버튼이 나타나지 않는지 확인
-
-F. 백엔드 v8.2 적용 후 확인
-1. 기존 Apps Script 배포 URL을 유지한 채 새 버전으로 업데이트
-2. /exec?action=health → version 8.2
-3. questionBank.releaseReady = true
-4. baseLoaded=100, baseUnique=true, baseOrderOk=true
-5. 관리자 화면 자가점검 전체 PASS
-6. 실제 승인 테스트 이용자에서 manifest/questions 정상
-7. 다른 기기에서 DEVICE_MISMATCH 확인
-
-※ 브라우저/모바일 E2E는 정적 QA와 별개입니다. 위 실제기기 점검을 통과하기 전에는 '실서비스 E2E 통과'로 기록하지 말 것.
+D. 주의
+- PRIVATE_APPS_SCRIPT_v8.4.zip은 공개 GitHub에 업로드 금지
+- 보호 B001~B100 원문 공개 금지
+- 실제 E2E 전에는 '운영 검증 완료'로 표시하지 않음
