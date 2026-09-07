@@ -50,3 +50,24 @@ GitHub `main`의 공개 v8.4 프런트는 무료100 구조와 진행 이어하�
 - 실제 Galaxy/iPad에서 전체 E2E
 
 특히 기존 `AUDIT_v8.4_ARCHITECTURE_FINAL.md`의 `B001~B100 순서: FAIL`은 비공개 백엔드 기준 재검증 전까지 미해결 항목으로 유지한다.
+
+## 비공개 백엔드 계보 확인
+
+현재 제공된 2026-09-04 인계본의 v8.1 `Code.gs`를 별도 진단기로 확인한 결과:
+
+- BUILD_INFO version: 8.1
+- 공개대상 BASE: 100/100
+- ID 고유성: 100/100
+- 반환 순서: B001~B100 정확히 일치
+- 선택지·정답·단계형 해설·근거 구조: PASS
+- questions/health API 함수 존재: PASS
+
+따라서 v8.4 감사의 순서 FAIL은 v8.1 원본 문제은행 자체에서 이어진 결함으로 단정할 수 없다. **v8.4 비공개 `Code.gs`의 배열 또는 v8.4 단위테스트를 직접 대조해야 원인을 확정할 수 있다.**
+
+재검증 명령:
+
+```bash
+node tools/qa-private-backend.mjs /path/to/Code.gs --expected-version=8.4
+```
+
+진단기는 문제·정답 원문을 출력하지 않고 수량, ID, 순서, 필수 구조만 검사한다.
