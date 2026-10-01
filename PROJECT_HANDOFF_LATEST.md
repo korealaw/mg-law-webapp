@@ -74,3 +74,25 @@
 - v8.4 감사의 순서 FAIL은 v8.4 비공개 파일 또는 당시 테스트를 직접 확인해야 원인 확정 가능
 - 진단기 추가: `node tools/qa-private-backend.mjs /path/to/Code.gs --expected-version=8.4`
 - 진단기는 보호문항 원문을 공개하지 않고 버전·수량·ID·순서·필수 구조만 출력
+
+## 2026-10-02 재개 검증
+
+- GitHub `main/index.html` 운영본 확인: **v8.4**
+- 과거 로컬 v8.1i/v8.1g를 운영 기준으로 되돌리지 않음
+- 공개 무료학습 구조 재확인: **L01~L50 = 50문항 / M01~M50 = 50문항**, ID 연속성 PASS
+- 무료 기본50·모의50 이어하기 localStorage 키 유지 확인
+- 무료100 완료 게이트 및 동일 브라우저 device gate 유지 확인
+- 공개 `index.html` / `extra/index.html` 내 보호문항 `B###` 토큰 0건 확인
+- root/extra 실행 스크립트 동일성 확인
+- 90일 이용제한 코드·문구 없음 확인
+- 현재 프런트 endpoint: `AKfycbzRUrMwptwCVNWP_WOcTkFkwigEZC6X9Ybe1h_Q2wEZk4qUhY7jtoORu3QvnZPO0NDv`
+- 외부 도구에서는 Apps Script `?action=health` 직접 호출이 차단되어 health v8.4는 이번 재개 시점에도 운영응답 PASS로 표기하지 않음
+- 현재 세션 작업공간에는 과거에 언급된 `PRIVATE_APPS_SCRIPT_v8.4_NEW_BACKEND(1).zip` 실파일이 없어 비공개 v8.4 `Code.gs`의 B001~B100 실제 반환 순서 재검증은 보류
+
+### 다음 실제 작업
+1. v8.4 비공개 Apps Script ZIP 또는 `Code.gs` 확보
+2. `tools/qa-private-backend.mjs`로 version=8.4, B001~B100 수량·ID·순서·필수구조 검사
+3. Apps Script 프로젝트에 반영 후 `setupProject()` 및 기존 `/exec` 배포 URL 유지 확인
+4. 실제 Google Form 1건 제출 → 자동개방 → `/extra/` 진입 E2E
+5. Galaxy/iPad에서 무료50+모의50 전체 완주 종단간 검증
+
