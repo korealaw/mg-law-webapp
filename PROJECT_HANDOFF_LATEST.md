@@ -1,3 +1,11 @@
+# ⚠️ LEGACY / 연구 설문 연계 웹앱 — [new]간부자격 기준 저장소 아님
+
+> 이 저장소(`korealaw/mg-law-webapp`)는 과거 **무료100 → 생성형 AI 연구 설문 → 추가100** 구조의 웹앱이다.
+> 현재 프로젝트 **[new]간부자격 / 간부직원 자격전형 DAILY** 작업에는 사용하지 않는다.
+> 현재 단일 진실 소스: `kfcccpro-ship-it/mind_law` · `main`
+> 현재 학생용: `https://kfcccpro-ship-it.github.io/mind_law/` 및 `/daily/`
+> 새 채팅에서 "다음 작업 진행" 요청 시 이 저장소가 아니라 `mind_law/PROJECT_HANDOFF_LATEST.md`를 읽는다.
+
 # PROJECT HANDOFF LATEST — MG 새마을금고법 톡톡
 
 기준일: 2026-09-06
