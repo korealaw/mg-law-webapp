@@ -126,3 +126,33 @@
 
 외부 검사 도구에서는 script.google.com 운영 `/exec` 직접 호출이 차단될 수 있으므로, health는 실제 브라우저 또는 Apps Script 운영환경에서 최종 확인한다.
 
+## 2026-10-06 운영 health 직접 확인
+
+사용자 실제 브라우저에서 현재 운영 Apps Script endpoint의 `?action=health` 응답을 직접 확인함.
+
+확인값:
+- `status: OK`
+- `version: 8.4`
+- `deviceBinding: true`
+- `free100Gate: true`
+- `automaticSurveyUnlock: true`
+- `accessExpiry: false`
+- `productionFilter: "MG_ONLY"`
+- `selfTest: true`
+- `protectedContent: true`
+- `questionBank.baseCount: 100`
+- `questionBank.baseLoaded: 100`
+- `questionBank.baseRequired: 100`
+- `questionBank.baseUnique: true`
+- `questionBank.baseOrderOk: true`
+- `questionBank.extraCount: 0`
+- `questionBank.totalReleased: 100`
+- `questionBank.releaseReady: true`
+
+판정:
+- **현재 운영 백엔드는 정상 v8.4로 확인됨**
+- 복구한 `PRIVATE_APPS_SCRIPT_v8.4_NEW_BACKEND(1)(1).zip`으로 재설치/덮어쓰기하지 않음
+- 기존 `/exec` 배포 URL 유지
+- 백엔드 정적 QA + 운영 health 모두 PASS
+- 다음 미완료 검증은 실제 사용자 흐름 E2E(무료100 완주 → 설문 제출 → APPROVED → /extra/ 자동진입 및 타 브라우저 차단)임
+
