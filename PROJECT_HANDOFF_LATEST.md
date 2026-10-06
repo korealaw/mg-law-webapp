@@ -96,3 +96,33 @@
 4. 실제 Google Form 1건 제출 → 자동개방 → `/extra/` 진입 E2E
 5. Galaxy/iPad에서 무료50+모의50 전체 완주 종단간 검증
 
+## 2026-10-06 비공개 v8.4 백엔드 복구·검증
+
+- 복구 파일: `PRIVATE_APPS_SCRIPT_v8.4_NEW_BACKEND(1)(1).zip`
+- ZIP SHA-256: `c1dc02bba1ff2f37000c9bdd40054bf3621e08588a6ccacc650568d01f1b43d6`
+- 내부 `SHA256SUMS.txt`와 실제 파일 해시 전부 일치
+- `Code.gs` BUILD_INFO.VERSION: **8.4**
+- `BASE_REQUIRED`: 100, `MAX_CONTENT_BATCH`: 20
+- 접근 레지스트리: `_WEBAPP_ACCESS_V84`
+- 구형 `ACCESS_DAYS` 없음, 기간 만료 구조 없음
+- `setupProject()`, `onResearchFormSubmit`, `runSelfTest()` 존재
+- 공개 API: `health`, `registerFree100`, `status`, `manifest`, `questions` 존재
+- 보호 BASE 문제은행 정적 QA: **17/17 PASS**
+  - B001~B100 정확히 100문항
+  - ID 100/100 고유
+  - 반환 순서 B001→B100 PASS
+  - 선택지 4개, answer 0~3, 질문/1단계/2단계/sources 모두 PASS
+  - 질문문장 고유성 PASS
+- 현재 GitHub `main/index.html`의 v8.4 API 계약과 구조적으로 호환
+- 비공개 ZIP은 공개 GitHub에 업로드하지 않음
+
+### 현재 남은 운영 검증
+
+1. 현재 프런트 endpoint의 `?action=health` 운영 응답 직접 확인
+2. health가 version=8.4 / releaseReady=true이면 **백엔드 재설치 금지**, 현행 유지
+3. health가 구버전·오류이면 복구 ZIP을 기준으로 Apps Script 교체/배포
+4. 실제 Google Form 1건 제출 → 자동 APPROVED → `/extra/` 진입 E2E
+5. 실제 Galaxy/iPad에서 무료50+모의50 전체 완주 종단간 확인
+
+외부 검사 도구에서는 script.google.com 운영 `/exec` 직접 호출이 차단될 수 있으므로, health는 실제 브라우저 또는 Apps Script 운영환경에서 최종 확인한다.
+
